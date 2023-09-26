@@ -1,22 +1,31 @@
-import { Box, Button, Paper, Step, StepLabel, Stepper } from '@mui/material'
-import { useContext } from 'react'
-// import { useNavigate } from 'react-router-dom'
+import { Box, Button, MobileStepper, Paper } from '@mui/material'
+import { useContext, useEffect } from 'react'
+import { useGetQuestionsQuery } from './slices'
 import { PatientStep } from './views/PatientStep'
+import { ResultStep } from './views/ResultStep'
+import { SurveyStep } from './views/SurveyStep'
 import { SurveyContext } from './views/context/SurveyContext'
 import {
   doNextStep,
   doPreviousStep,
+  doSetTotalSteps,
 } from './views/reducer/actions/survey.action'
-import { ResultStep } from './views/ResultStep'
-import { SurveyStep } from './views/SurveyStep'
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material'
 
 export const Survey = () => {
   // const navigate = useNavigate()
   const { state, dispatch } = useContext(SurveyContext)
-  const steps = ['Paciente', 'Encuesta', 'Resultado']
+
+  const { data, isSuccess, isError } = useGetQuestionsQuery(null)
+
+  useEffect(() => {
+    if (isSuccess && data) dispatch(doSetTotalSteps(data.length))
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess, isError])
 
   const handleNext = () => {
-    if (state.stepPosition == steps.length - 1) navigate(-1)
+    //if (state.stepPosition == state.totalSteps - 1)
     dispatch(doNextStep())
   }
 
@@ -27,13 +36,19 @@ export const Survey = () => {
   function renderStepContent(step: number) {
     switch (step) {
       case 0:
-        return <PatientStep handleNext={handleNext} stepPosition="Step1" />
-      case 1:
-        return <SurveyStep handleNext={handleNext} stepPosition="Step2" />
-      case 2:
-        return <ResultStep handleNext={handleNext} stepPosition="Step3" />
-      // case 3:
-      //   return <MwlStep4 handleNext={handleNext} stepPosition="Step4" />
+        return <PatientStep handleNext={handleNext} stepPosition="Step0" />
+
+      case state.totalSteps + 1:
+        return <ResultStep handleNext={handleNext} />
+
+      default:
+        return (
+          <SurveyStep
+            handleNext={handleNext}
+            question={data[state.stepPosition - 1]}
+            key={data[state.stepPosition - 1]._id}
+          />
+        )
     }
   }
 
@@ -47,43 +62,37 @@ export const Survey = () => {
         }}
       >
         <Box sx={{ width: '100%', pt: 2 }}>
-          <Stepper
-            activeStep={state.stepPosition}
-            style={{ wordBreak: 'break-all' }}
-          >
-            {steps.map((label) => {
-              return (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              )
-            })}
-          </Stepper>
-          <Box sx={{ width: '100%', pt: 2 }}>
+          {renderStepContent(state.stepPosition)}
+          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <>
-              {renderStepContent(state.stepPosition)}
-              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                <Button
-                  disabled={
-                    state.stepPosition === 0 || !state.enablePreviousButton
-                  }
-                  onClick={handleBack}
-                  sx={{ mr: 1 }}
-                >
-                  ATRAS
-                </Button>
-                <Box sx={{ flex: '1 1 auto' }} />
-
-                <Button
-                  disabled={!state.enableNextButton}
-                  type="submit"
-                  form={'Step' + (state.stepPosition + 1)}
-                >
-                  {state.stepPosition === steps.length - 1
-                    ? 'FINALIZAR'
-                    : 'SIGUIENTE'}
-                </Button>
-              </Box>
+              <MobileStepper
+                variant="dots"
+                steps={state.totalSteps + 2}
+                position="static"
+                activeStep={state.stepPosition}
+                sx={{ flexGrow: 1 }}
+                nextButton={
+                  <Button
+                    size="small"
+                    type="submit"
+                    form={'Step' + state.stepPosition}
+                    disabled={state.stepPosition == state.totalSteps + 1}
+                  >
+                    Siguiente
+                    <KeyboardArrowRight />
+                  </Button>
+                }
+                backButton={
+                  <Button
+                    size="small"
+                    onClick={handleBack}
+                    disabled={state.stepPosition === 0}
+                  >
+                    <KeyboardArrowLeft />
+                    Anterior
+                  </Button>
+                }
+              />
             </>
           </Box>
         </Box>

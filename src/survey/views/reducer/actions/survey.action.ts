@@ -13,6 +13,7 @@ export enum SurveyActionType {
   STEP_VALID = 'STEP_VALID',
   STEP_READY = 'STEP_READY',
   SET_FORM_NAME = 'SET_FORM_NAME',
+  SET_TOTAL_STEPS = 'SET_TOTAL_STEPS',
 }
 
 export type SurveyAction =
@@ -27,6 +28,10 @@ export type SurveyAction =
   | {
       type: SurveyActionType.SET_FORM_NAME
       payload: { value: string }
+    }
+  | {
+      type: SurveyActionType.SET_TOTAL_STEPS
+      payload: { value: number }
     }
   | {
       type:
@@ -97,5 +102,10 @@ export const doStepReady = (value: boolean): SurveyAction => ({
 
 export const doSetFormName = (value: string): SurveyAction => ({
   type: SurveyActionType.SET_FORM_NAME,
+  payload: { value },
+})
+
+export const doSetTotalSteps = (value: number): SurveyAction => ({
+  type: SurveyActionType.SET_TOTAL_STEPS,
   payload: { value },
 })

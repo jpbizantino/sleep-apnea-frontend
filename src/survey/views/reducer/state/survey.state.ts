@@ -11,13 +11,6 @@ export const surveyReducer = (
         ...state,
         patient: action.payload.value,
       }
-
-    // case SurveyActionType.ADD_STUDY_DATA:
-    //   return {
-    //     ...state,
-    //     mwlItem: action.payload.value,
-    //   }
-
     case SurveyActionType.TOGGLE_DELETE_MODAL_OPEN:
       return {
         ...state,
@@ -69,6 +62,11 @@ export const surveyReducer = (
       return {
         ...state,
         formName: action.payload.value,
+      }
+    case SurveyActionType.SET_TOTAL_STEPS:
+      return {
+        ...state,
+        totalSteps: action.payload.value,
       }
     default:
       return state

@@ -18,6 +18,7 @@ const initialPatient: Patient = {
 
 const initialState: SurveyState = {
   stepPosition: 0,
+  totalSteps: 0,
   enableNextButton: true,
   enablePreviousButton: false,
   patient: initialPatient,

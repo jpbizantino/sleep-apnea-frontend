@@ -9,7 +9,10 @@ import {
 import { Choice, Question } from '../entities'
 import { QuestionType } from '../enums/question.enum'
 
-export const QuestionComponent = (props: { question: Question }) => (
+export const QuestionComponent = (props: {
+  question: Question
+  handleSelection: any
+}) => (
   <>
     <Box sx={{ m: 1 }}>
       <Typography variant="h6" gutterBottom>
@@ -25,13 +28,16 @@ export const QuestionComponent = (props: { question: Question }) => (
           label="Respuesta"
           variant="standard"
           fullWidth
+          onChange={props.handleSelection}
         />
       ) : (
-        <RadioGroup>
+        <RadioGroup key={props.question._id} onChange={props.handleSelection}>
           {props.question.choices.map((item: Choice) => {
             return (
               <>
                 <FormControlLabel
+                  key={props.question._id + item.choiceValue}
+                  id={props.question._id + item.choiceValue}
                   value={item.choiceValue}
                   control={<Radio />}
                   label={item.description}
