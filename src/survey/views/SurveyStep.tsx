@@ -4,18 +4,21 @@ import { useContext } from 'react'
 import { QuestionComponent } from '../components/QuestionComponent'
 import { Question } from '../entities'
 import { SurveyContext } from './context/SurveyContext'
-import { doNextStep } from './reducer/actions/survey.action'
+import {
+  doAddAnswer,
+  doNextStep,
+  doRemoveAnswer,
+} from './reducer/actions/survey.action'
 import { Answer } from '../entities/answer.entity'
 import * as yup from 'yup'
 import { QuestionType } from '../enums/question.enum'
 
 export const SurveyStep = (props: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleNext: any
-  question: Question | undefined
+  question: Question
 }) => {
   const { state, dispatch } = useContext(SurveyContext)
-
-  if (props.question == undefined) return <>No hay preguntas</>
 
   const initialValue: Answer = {
     questionId: props.question._id,
@@ -37,14 +40,17 @@ export const SurveyStep = (props: {
     initialValues: initialValue,
     validationSchema: validationSchema,
     onSubmit: (values: Answer) => {
-      console.log(values)
-      // // Add a Patient to the context
-      // dispatch(doAddPatient(values))
+      // Add Answer
+      if (state.answerExist(values)) dispatch(doRemoveAnswer(values))
+
+      dispatch(doAddAnswer(values))
+
       // Enable Next Button
       dispatch(doNextStep())
     },
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlSelection = (e: any) => {
     console.log(e.target.value)
     formik.setFieldValue('selectedValue', e.target.value, true)
@@ -54,7 +60,7 @@ export const SurveyStep = (props: {
     <>
       <form id={'Step' + state.stepPosition} onSubmit={formik.handleSubmit}>
         <Box sx={{ m: 1 }}>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="caption" gutterBottom>
             Pregunta {state.stepPosition} de {state.totalSteps}
           </Typography>
         </Box>
@@ -66,7 +72,12 @@ export const SurveyStep = (props: {
         />
         {/* Signature error message */}
         {!formik.values.selectedValue && (
-          <Typography color="error" variant="caption" display="block">
+          <Typography
+            color="error"
+            variant="button"
+            fontWeight="bold"
+            display="block"
+          >
             {formik.touched.selectedValue && formik.errors.selectedValue}
           </Typography>
         )}

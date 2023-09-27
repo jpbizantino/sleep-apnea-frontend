@@ -1,4 +1,5 @@
 import { Patient } from '../../../../patient/types'
+import { Answer } from '../../../entities/answer.entity'
 
 export interface SurveyState {
   patient: Patient
@@ -6,9 +7,6 @@ export interface SurveyState {
   totalSteps: number
   enableNextButton: boolean
   enablePreviousButton: boolean
-  isDeleteModalOpen: boolean
-  isPrintLabelModalOpen: boolean
-  stepValid: boolean
-  stepReady: boolean
-  formName: string
+  surveyResults: Answer[]
+  answerExist: (answer: Answer) => boolean
 }

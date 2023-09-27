@@ -13,6 +13,7 @@ import {
   REGISTER,
 } from 'redux-persist'
 import { questionQuerySlice } from '../survey/slices'
+import { patientQuerySlice } from '../patient/slices'
 
 // import { calendarSlice2 } from '../appointment/services/calendarSlice2'
 
@@ -31,7 +32,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat([questionQuerySlice.middleware]),
+    }).concat([questionQuerySlice.middleware, patientQuerySlice.middleware]),
 })
 
 setupListeners(store.dispatch)

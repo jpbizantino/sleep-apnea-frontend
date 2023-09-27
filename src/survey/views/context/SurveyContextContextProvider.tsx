@@ -3,6 +3,7 @@ import { Patient } from '../../../patient/types'
 import { surveyReducer } from '../reducer/state/survey.state'
 import { SurveyState } from '../reducer/types/survey.type'
 import { SurveyContext } from './SurveyContext'
+import { Answer } from '../../entities/answer.entity'
 
 interface Props {
   children?: ReactNode
@@ -13,7 +14,7 @@ const initialPatient: Patient = {
   lastName: '',
   birthDate: null,
   email: '',
-  gender: null,
+  _gender: null,
 }
 
 const initialState: SurveyState = {
@@ -22,11 +23,10 @@ const initialState: SurveyState = {
   enableNextButton: true,
   enablePreviousButton: false,
   patient: initialPatient,
-  isDeleteModalOpen: false,
-  isPrintLabelModalOpen: false,
-  stepValid: false,
-  stepReady: false,
-  formName: '',
+  surveyResults: [],
+  answerExist: function (answer: Answer): boolean {
+    return this.surveyResults.some((p) => p.questionId == answer.questionId)
+  },
 }
 
 export const SurveyContextProvider = ({ children }: Props) => {

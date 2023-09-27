@@ -11,26 +11,44 @@ import {
   doSetTotalSteps,
 } from './views/reducer/actions/survey.action'
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material'
+import { Loader } from '../common/components/Loader'
 
 export const Survey = () => {
   // const navigate = useNavigate()
   const { state, dispatch } = useContext(SurveyContext)
 
-  const { data, isSuccess, isError } = useGetQuestionsQuery(null)
+  const { data, isSuccess, isFetching } = useGetQuestionsQuery(null)
+
+  const isLastStep = (lastStep = state.totalSteps + 1): boolean => {
+    return state.stepPosition == lastStep
+  }
 
   useEffect(() => {
     if (isSuccess && data) dispatch(doSetTotalSteps(data.length))
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess, isError])
+  }, [isSuccess])
 
   const handleNext = () => {
-    //if (state.stepPosition == state.totalSteps - 1)
     dispatch(doNextStep())
   }
 
   const handleBack = () => {
     dispatch(doPreviousStep())
+  }
+
+  const showData = () => {
+    if (!data || data.length < state.stepPosition) return <>No hay Preguntas</>
+
+    return (
+      <>
+        <SurveyStep
+          handleNext={handleNext}
+          question={data[state.stepPosition - 1]}
+          key={data[state.stepPosition - 1]._id}
+        />
+      </>
+    )
   }
 
   function renderStepContent(step: number) {
@@ -39,16 +57,10 @@ export const Survey = () => {
         return <PatientStep handleNext={handleNext} stepPosition="Step0" />
 
       case state.totalSteps + 1:
-        return <ResultStep handleNext={handleNext} />
+        return <ResultStep />
 
       default:
-        return (
-          <SurveyStep
-            handleNext={handleNext}
-            question={data[state.stepPosition - 1]}
-            key={data[state.stepPosition - 1]._id}
-          />
-        )
+        return showData()
     }
   }
 
@@ -61,6 +73,7 @@ export const Survey = () => {
           p: 2,
         }}
       >
+        <Loader open={isFetching} />
         <Box sx={{ width: '100%', pt: 2 }}>
           {renderStepContent(state.stepPosition)}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
@@ -76,9 +89,9 @@ export const Survey = () => {
                     size="small"
                     type="submit"
                     form={'Step' + state.stepPosition}
-                    disabled={state.stepPosition == state.totalSteps + 1}
+                    disabled={isLastStep()}
                   >
-                    Siguiente
+                    {isLastStep(state.totalSteps) ? 'Finalizar' : 'Siguiente'}
                     <KeyboardArrowRight />
                   </Button>
                 }
@@ -86,7 +99,7 @@ export const Survey = () => {
                   <Button
                     size="small"
                     onClick={handleBack}
-                    disabled={state.stepPosition === 0}
+                    disabled={isLastStep(0)} //disabled={state.stepPosition === 0}
                   >
                     <KeyboardArrowLeft />
                     Anterior

@@ -11,17 +11,17 @@ export const surveyReducer = (
         ...state,
         patient: action.payload.value,
       }
-    case SurveyActionType.TOGGLE_DELETE_MODAL_OPEN:
-      return {
-        ...state,
-        isDeleteModalOpen: !state.isDeleteModalOpen,
-      }
+    // case SurveyActionType.TOGGLE_DELETE_MODAL_OPEN:
+    //   return {
+    //     ...state,
+    //     isDeleteModalOpen: !state.isDeleteModalOpen,
+    //   }
 
-    case SurveyActionType.TOGGLE_PRINT_LABEL_MODAL_OPEN:
-      return {
-        ...state,
-        isPrintLabelModalOpen: !state.isPrintLabelModalOpen,
-      }
+    // case SurveyActionType.TOGGLE_PRINT_LABEL_MODAL_OPEN:
+    //   return {
+    //     ...state,
+    //     isPrintLabelModalOpen: !state.isPrintLabelModalOpen,
+    //   }
 
     case SurveyActionType.NEXT_STEP:
       return {
@@ -48,20 +48,17 @@ export const surveyReducer = (
         ...state,
         enablePreviousButton: !!action.payload.value,
       }
-    case SurveyActionType.STEP_VALID:
+    case SurveyActionType.ADD_ANSWER:
       return {
         ...state,
-        stepValid: action.payload.value,
+        surveyResults: [...state.surveyResults, action.payload.value],
       }
-    case SurveyActionType.STEP_READY:
+    case SurveyActionType.REMOVE_ANSWER:
       return {
         ...state,
-        stepReady: action.payload.value,
-      }
-    case SurveyActionType.SET_FORM_NAME:
-      return {
-        ...state,
-        formName: action.payload.value,
+        surveyResults: state.surveyResults.filter(
+          (p) => p.questionId != action.payload.value.questionId
+        ),
       }
     case SurveyActionType.SET_TOTAL_STEPS:
       return {

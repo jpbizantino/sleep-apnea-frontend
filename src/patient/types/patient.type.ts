@@ -2,11 +2,14 @@ import { CommonResponse } from '../../common/types'
 import { Gender } from '../../common/types/gender.type'
 
 export interface Patient {
+  _id: string
   firstName: string
   lastName: string
-  birthDate: Date | string | null
+  birthDate: string
   email: string
-  gender: Gender | null
+  gender: string
+  _birthDate: Date | null
+  _gender: Gender | null
 }
 
 export interface PatientResponse extends CommonResponse {

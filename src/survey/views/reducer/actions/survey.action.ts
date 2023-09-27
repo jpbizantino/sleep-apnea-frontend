@@ -1,4 +1,5 @@
 import { Patient } from '../../../../patient/types'
+import { Answer } from '../../../entities/answer.entity'
 
 export enum SurveyActionType {
   ADD_PATIENT_DATA = 'ADD_PATIENT_DATA',
@@ -14,6 +15,8 @@ export enum SurveyActionType {
   STEP_READY = 'STEP_READY',
   SET_FORM_NAME = 'SET_FORM_NAME',
   SET_TOTAL_STEPS = 'SET_TOTAL_STEPS',
+  ADD_ANSWER = 'ADD_ANSWER',
+  REMOVE_ANSWER = 'REMOVE_ANSWER',
 }
 
 export type SurveyAction =
@@ -48,6 +51,10 @@ export type SurveyAction =
         | SurveyActionType.RESET_WIZARD
         | SurveyActionType.TOGGLE_DELETE_MODAL_OPEN
         | SurveyActionType.TOGGLE_PRINT_LABEL_MODAL_OPEN
+    }
+  | {
+      type: SurveyActionType.ADD_ANSWER | SurveyActionType.REMOVE_ANSWER
+      payload: { value: Answer }
     }
 
 export const doAddPatient = (value: Patient): SurveyAction => ({
@@ -107,5 +114,15 @@ export const doSetFormName = (value: string): SurveyAction => ({
 
 export const doSetTotalSteps = (value: number): SurveyAction => ({
   type: SurveyActionType.SET_TOTAL_STEPS,
+  payload: { value },
+})
+
+export const doAddAnswer = (value: Answer): SurveyAction => ({
+  type: SurveyActionType.ADD_ANSWER,
+  payload: { value },
+})
+
+export const doRemoveAnswer = (value: Answer): SurveyAction => ({
+  type: SurveyActionType.REMOVE_ANSWER,
   payload: { value },
 })
