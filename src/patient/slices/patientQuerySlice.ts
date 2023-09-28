@@ -15,10 +15,10 @@ export const patientQuerySlice = createApi({
 
   endpoints: (builder) => ({
     createPatient: builder.mutation<Patient, Patient>({
-      query: (result) => ({
+      query: (item) => ({
         url: `/`,
         method: 'POST',
-        body: result,
+        body: item,
       }),
       invalidatesTags: ['Patients'],
     }),

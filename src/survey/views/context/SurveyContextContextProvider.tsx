@@ -12,7 +12,7 @@ interface Props {
 const initialPatient: Patient = {
   firstName: '',
   lastName: '',
-  birthDate: null,
+  dateOfBirth: null,
   email: '',
   _gender: null,
 }

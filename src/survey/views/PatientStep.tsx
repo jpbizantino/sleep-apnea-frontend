@@ -32,11 +32,13 @@ export const PatientStep = (props: {
     _id: '',
     firstName: '',
     lastName: '',
-    birthDate: '',
+    dateOfBirth: '',
     gender: '',
     email: '',
     _gender: null,
     _birthDate: null,
+    weight: 0,
+    height: 0,
   }
 
   const validationSchema = yup
@@ -60,6 +62,22 @@ export const PatientStep = (props: {
         .required()
         .min(addYears(new Date(), -100), 'La edad debe ser menor a 100 años.')
         .max(addYears(new Date(), -18), 'La edad debe ser mayor a 17 años.'),
+      weight: yup
+        .number()
+        .typeError('El campo debe ser numérico y sin decimales')
+        .required('El campo es requerido')
+        .positive()
+        .integer('No utilizar decimales')
+        .min(9, 'Valor no puede ser menor a 10')
+        .max(151, 'Valor no puede ser mayor a 150'),
+      height: yup
+        .number()
+        .typeError('El campo debe ser numérico y sin decimales')
+        .required('El campo es requerido')
+        .positive()
+        .integer('No utilizar decimales')
+        .min(99, 'Valor no puede ser menor a 100')
+        .max(251, 'Valor no puede ser mayor a 250'),
     })
     .shape({
       _gender: yup.object().nullable().required('Seleccione un valor'),
@@ -72,14 +90,14 @@ export const PatientStep = (props: {
       createPatient({
         ...values,
         gender: values._gender ? values._gender.genderCode : 'O',
-        birthDate: values._birthDate
+        dateOfBirth: values._birthDate
           ? convertDateToDbFormat(values._birthDate)
           : '',
       })
         .unwrap()
-        .then(() => {
+        .then((p: Patient) => {
           // Add a Patient to the context
-          dispatch(doAddPatient(values))
+          dispatch(doAddPatient({ ...values, _id: p._id }))
           // Enable Next Button
           dispatch(doNextStep())
         })
@@ -108,9 +126,9 @@ export const PatientStep = (props: {
           container
           direction={{ xs: 'column', md: 'row' }}
           spacing={1}
-          columns={6}
+          columns={12}
         >
-          <Grid item xs={3}>
+          <Grid item xs={6}>
             <TextField
               name="firstName"
               label="Nombre"
@@ -125,7 +143,7 @@ export const PatientStep = (props: {
             />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={6}>
             <TextField
               name="lastName"
               label="Apellido"
@@ -138,7 +156,7 @@ export const PatientStep = (props: {
             />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={6}>
             <GenderCombo
               //onChange={formik.handleChange}
               error={formik.touched._gender && Boolean(formik.errors._gender)}
@@ -147,12 +165,11 @@ export const PatientStep = (props: {
               onChange={(_event: unknown, value: Gender) => {
                 formik.setFieldValue('_gender', value)
               }}
-              // disabled={isFetching}
               disabled={false}
             />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={6}>
             <DatePicker
               label="F. Nacimiento"
               name="_birthDate"
@@ -167,6 +184,40 @@ export const PatientStep = (props: {
               value={formik.values._birthDate}
               // disabled={isFetching || formik.values.noBirthDate}
               disabled={false}
+            />
+          </Grid>
+
+          <Grid item xs={6}>
+            <TextField
+              name="weight"
+              label="Peso (Kg)"
+              variant="standard"
+              type="number"
+              fullWidth
+              onChange={formik.handleChange}
+              error={formik.touched.weight && Boolean(formik.errors.weight)}
+              helperText={formik.touched.weight && formik.errors.weight}
+              inputProps={{
+                inputMode: 'numeric',
+              }}
+              value={formik.values.weight}
+            />
+          </Grid>
+
+          <Grid item xs={6}>
+            <TextField
+              name="height"
+              label="Altura (cm)"
+              variant="standard"
+              type="number"
+              fullWidth
+              onChange={formik.handleChange}
+              error={formik.touched.height && Boolean(formik.errors.height)}
+              helperText={formik.touched.height && formik.errors.height}
+              inputProps={{
+                inputMode: 'numeric',
+              }}
+              value={formik.values.height}
             />
           </Grid>
 

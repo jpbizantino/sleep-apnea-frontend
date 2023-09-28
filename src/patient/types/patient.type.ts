@@ -5,9 +5,11 @@ export interface Patient {
   _id: string
   firstName: string
   lastName: string
-  birthDate: string
+  dateOfBirth: string
   email: string
   gender: string
+  weight: number
+  height: number
   _birthDate: Date | null
   _gender: Gender | null
 }

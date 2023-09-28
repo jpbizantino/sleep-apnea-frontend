@@ -5,7 +5,7 @@ export const resultQuerySlice = surveyQuerySlice.injectEndpoints({
   endpoints: (builder) => ({
     createSurvey: builder.mutation<null, Result>({
       query: (result) => ({
-        url: `/`,
+        url: `/result`,
         method: 'POST',
         body: result,
       }),

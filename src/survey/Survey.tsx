@@ -1,5 +1,7 @@
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material'
 import { Box, Button, MobileStepper, Paper } from '@mui/material'
 import { useContext, useEffect } from 'react'
+import { Loader } from '../common/components/Loader'
 import { useGetQuestionsQuery } from './slices'
 import { PatientStep } from './views/PatientStep'
 import { ResultStep } from './views/ResultStep'
@@ -10,8 +12,6 @@ import {
   doPreviousStep,
   doSetTotalSteps,
 } from './views/reducer/actions/survey.action'
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material'
-import { Loader } from '../common/components/Loader'
 
 export const Survey = () => {
   // const navigate = useNavigate()
