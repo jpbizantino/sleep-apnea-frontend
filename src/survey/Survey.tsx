@@ -8,33 +8,25 @@ import { ResultStep } from './views/ResultStep'
 import { SurveyStep } from './views/SurveyStep'
 import { SurveyContext } from './views/context/SurveyContext'
 import {
-  doNextStep,
   doPreviousStep,
   doSetTotalSteps,
 } from './views/reducer/actions/survey.action'
 
 export const Survey = () => {
-  // const navigate = useNavigate()
   const { state, dispatch } = useContext(SurveyContext)
-
   const { data, isSuccess, isFetching } = useGetQuestionsQuery(null)
-
-  const isLastStep = (lastStep = state.totalSteps + 1): boolean => {
-    return state.stepPosition == lastStep
-  }
 
   useEffect(() => {
     if (isSuccess && data) dispatch(doSetTotalSteps(data.length))
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess])
 
-  const handleNext = () => {
-    dispatch(doNextStep())
-  }
-
   const handleBack = () => {
     dispatch(doPreviousStep())
+  }
+
+  const isLastStep = (lastStep = state.totalSteps + 1): boolean => {
+    return state.stepPosition == lastStep
   }
 
   const showData = () => {
@@ -43,7 +35,6 @@ export const Survey = () => {
     return (
       <>
         <SurveyStep
-          handleNext={handleNext}
           question={data[state.stepPosition - 1]}
           key={data[state.stepPosition - 1]._id}
         />
@@ -51,10 +42,10 @@ export const Survey = () => {
     )
   }
 
-  function renderStepContent(step: number) {
+  const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return <PatientStep handleNext={handleNext} stepPosition="Step0" />
+        return <PatientStep stepPosition="Step0" />
 
       case state.totalSteps + 1:
         return <ResultStep />
@@ -89,17 +80,21 @@ export const Survey = () => {
                     size="small"
                     type="submit"
                     form={'Step' + state.stepPosition}
-                    disabled={isLastStep()}
+                    disabled={!state.enableNextButton}
                   >
-                    {isLastStep(state.totalSteps) ? 'Finalizar' : 'Siguiente'}
-                    <KeyboardArrowRight />
+                    {isLastStep()
+                      ? 'PROCESAR RESULTADOS'
+                      : isLastStep(state.totalSteps)
+                      ? 'Finalizar'
+                      : 'Siguiente'}
+                    {!isLastStep() && <KeyboardArrowRight />}
                   </Button>
                 }
                 backButton={
                   <Button
                     size="small"
                     onClick={handleBack}
-                    disabled={isLastStep(0)} //disabled={state.stepPosition === 0}
+                    disabled={isLastStep(0) || !state.enablePreviousButton}
                   >
                     <KeyboardArrowLeft />
                     Anterior

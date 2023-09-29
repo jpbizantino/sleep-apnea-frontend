@@ -15,11 +15,7 @@ import { AlertControl } from '../../common/components/AlertControl'
 import { Loader } from '../../common/components/Loader'
 import { convertDateToDbFormat } from '../../common/utilities'
 
-export const PatientStep = (props: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleNext: any
-  stepPosition: string
-}) => {
+export const PatientStep = (props: { stepPosition: string }) => {
   const { dispatch } = useContext(SurveyContext)
   const [createPatient, { isLoading }] = useCreatePatientMutation()
 

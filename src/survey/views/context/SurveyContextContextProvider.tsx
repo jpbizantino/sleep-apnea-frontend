@@ -12,16 +12,21 @@ interface Props {
 const initialPatient: Patient = {
   firstName: '',
   lastName: '',
-  dateOfBirth: null,
+  dateOfBirth: '',
   email: '',
   _gender: null,
+  _id: '',
+  gender: '',
+  weight: 0,
+  height: 0,
+  _birthDate: null,
 }
 
 const initialState: SurveyState = {
   stepPosition: 0,
   totalSteps: 0,
   enableNextButton: true,
-  enablePreviousButton: false,
+  enablePreviousButton: true,
   patient: initialPatient,
   surveyResults: [],
   answerExist: function (answer: Answer): boolean {

@@ -13,15 +13,12 @@ import { Answer } from '../entities/answer.entity'
 import * as yup from 'yup'
 import { QuestionType } from '../enums/question.enum'
 
-export const SurveyStep = (props: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleNext: any
-  question: Question
-}) => {
+export const SurveyStep = (props: { question: Question }) => {
   const { state, dispatch } = useContext(SurveyContext)
 
   const initialValue: Answer = {
     questionId: props.question._id,
+    question: props.question,
     selectedDescription: '',
     selectedValue: '',
   }
@@ -45,14 +42,12 @@ export const SurveyStep = (props: {
 
       dispatch(doAddAnswer(values))
 
-      // Enable Next Button
       dispatch(doNextStep())
     },
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handlSelection = (e: any) => {
-    console.log(e.target.value)
+  const handleSelection = (e: any) => {
     formik.setFieldValue('selectedValue', e.target.value, true)
   }
 
@@ -67,8 +62,7 @@ export const SurveyStep = (props: {
 
         <QuestionComponent
           question={props.question}
-          handleSelection={handlSelection}
-          key={props.question._id}
+          handleSelection={handleSelection}
         />
         {/* Signature error message */}
         {!formik.values.selectedValue && (

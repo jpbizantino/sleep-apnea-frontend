@@ -15,7 +15,7 @@ export const QuestionComponent = (props: {
   handleSelection: any
 }) => (
   <>
-    <Box sx={{ mt: 2, mb: 2 }}>
+    <Box key={props.question._id} sx={{ mt: 2, mb: 2 }}>
       <Typography variant="h4" gutterBottom>
         {props.question.question}
       </Typography>
