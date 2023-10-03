@@ -11,18 +11,6 @@ export const surveyReducer = (
         ...state,
         patient: action.payload.value,
       }
-    // case SurveyActionType.TOGGLE_DELETE_MODAL_OPEN:
-    //   return {
-    //     ...state,
-    //     isDeleteModalOpen: !state.isDeleteModalOpen,
-    //   }
-
-    // case SurveyActionType.TOGGLE_PRINT_LABEL_MODAL_OPEN:
-    //   return {
-    //     ...state,
-    //     isPrintLabelModalOpen: !state.isPrintLabelModalOpen,
-    //   }
-
     case SurveyActionType.NEXT_STEP:
       return {
         ...state,
@@ -64,6 +52,11 @@ export const surveyReducer = (
       return {
         ...state,
         totalSteps: action.payload.value,
+      }
+    case SurveyActionType.SET_INPUT_ID:
+      return {
+        ...state,
+        inputId: action.payload.value,
       }
     default:
       return state

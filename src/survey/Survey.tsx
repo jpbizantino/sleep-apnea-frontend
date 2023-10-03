@@ -4,13 +4,14 @@ import { useContext, useEffect } from 'react'
 import { Loader } from '../common/components/Loader'
 import { useGetQuestionsQuery } from './slices'
 import { PatientStep } from './views/PatientStep'
-import { ResultStep } from './views/ResultStep'
 import { SurveyStep } from './views/SurveyStep'
 import { SurveyContext } from './views/context/SurveyContext'
 import {
   doPreviousStep,
   doSetTotalSteps,
 } from './views/reducer/actions/survey.action'
+import { ResultStep } from './views/ResultStep'
+import { SummaryStep } from './views/SummaryStep'
 
 export const Survey = () => {
   const { state, dispatch } = useContext(SurveyContext)
@@ -48,6 +49,9 @@ export const Survey = () => {
         return <PatientStep stepPosition="Step0" />
 
       case state.totalSteps + 1:
+        return <SummaryStep />
+
+      case state.totalSteps + 2:
         return <ResultStep />
 
       default:

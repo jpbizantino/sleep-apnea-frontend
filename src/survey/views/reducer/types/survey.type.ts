@@ -8,5 +8,6 @@ export interface SurveyState {
   enableNextButton: boolean
   enablePreviousButton: boolean
   surveyResults: Answer[]
+  inputId: string
   answerExist: (answer: Answer) => boolean
 }

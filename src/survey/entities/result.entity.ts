@@ -1,6 +1,6 @@
-import { Answer } from './answer.entity'
-
 export interface Result {
-  patientId: string
-  answers: Answer[]
+  positive: boolean
+  message: string
+  recomendation: string
+  score: number
 }

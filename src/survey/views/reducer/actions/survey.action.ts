@@ -3,7 +3,7 @@ import { Answer } from '../../../entities/answer.entity'
 
 export enum SurveyActionType {
   ADD_PATIENT_DATA = 'ADD_PATIENT_DATA',
-  // ADD_STUDY_DATA = 'ADD_STUDY_DATA',
+  SET_INPUT_ID = 'SET_INPUT_ID',
   NEXT_STEP = 'NEXT_STEP',
   PREVIOUS_STEP = 'PREVIOUS_STEP',
   RESET_WIZARD = 'RESET_WIZARS',
@@ -29,7 +29,7 @@ export type SurveyAction =
   //     payload: { value: MwlItem }
   //   }
   | {
-      type: SurveyActionType.SET_FORM_NAME
+      type: SurveyActionType.SET_FORM_NAME | SurveyActionType.SET_INPUT_ID
       payload: { value: string }
     }
   | {
@@ -61,11 +61,6 @@ export const doAddPatient = (value: Patient): SurveyAction => ({
   type: SurveyActionType.ADD_PATIENT_DATA,
   payload: { value },
 })
-
-// export const doAddStudyData = (value: MwlItem): MwlAction => ({
-//   type: MwlActionType.ADD_STUDY_DATA,
-//   payload: { value },
-// })
 
 export const doNextStep = (): SurveyAction => ({
   type: SurveyActionType.NEXT_STEP,
@@ -109,6 +104,11 @@ export const doStepReady = (value: boolean): SurveyAction => ({
 
 export const doSetFormName = (value: string): SurveyAction => ({
   type: SurveyActionType.SET_FORM_NAME,
+  payload: { value },
+})
+
+export const doSetInputId = (value: string): SurveyAction => ({
+  type: SurveyActionType.SET_INPUT_ID,
   payload: { value },
 })
 
