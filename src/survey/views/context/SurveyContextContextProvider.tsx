@@ -32,6 +32,7 @@ const initialState: SurveyState = {
   answerExist: function (answer: Answer): boolean {
     return this.surveyResults.some((p) => p.questionId == answer.questionId)
   },
+  inputId: '',
 }
 
 export const SurveyContextProvider = ({ children }: Props) => {
