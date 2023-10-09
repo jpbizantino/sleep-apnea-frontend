@@ -1,6 +1,5 @@
 import './App.css'
-import { Survey } from './survey/Survey'
-import { SurveyHeader } from './survey/components/SurveyHeader'
+import { AppRouter } from './routes/AppRouter'
 import { SurveyContextProvider } from './survey/views/context/SurveyContextContextProvider'
 import { AppTheme } from './theme/AppTheme'
 
@@ -9,8 +8,7 @@ function App() {
     <>
       <SurveyContextProvider>
         <AppTheme>
-          <SurveyHeader />
-          <Survey />
+          <AppRouter />
         </AppTheme>
       </SurveyContextProvider>
     </>

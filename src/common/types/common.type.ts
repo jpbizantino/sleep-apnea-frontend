@@ -18,3 +18,9 @@ export interface SnackbarData {
   severity: AlertColor | undefined
   message: string
 }
+
+export interface GenericData {
+  id: string
+  name: string
+  value: string
+}

@@ -1,19 +1,19 @@
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material'
 import { Box, Button, MobileStepper, Paper } from '@mui/material'
 import { useContext, useEffect } from 'react'
-import { Loader } from '../common/components/Loader'
-import { useGetQuestionsQuery } from './slices'
-import { PatientStep } from './views/PatientStep'
-import { SurveyStep } from './views/SurveyStep'
-import { SurveyContext } from './views/context/SurveyContext'
+import { Loader } from '../../common/components/Loader'
+import { useGetQuestionsQuery } from '../slices'
+import { PatientStep } from './PatientStep'
+import { ResultStep } from './ResultStep'
+import { SummaryStep } from './SummaryStep'
+import { SurveyStep } from './SurveyStep'
+import { SurveyContext } from './context/SurveyContext'
 import {
   doPreviousStep,
   doSetTotalSteps,
-} from './views/reducer/actions/survey.action'
-import { ResultStep } from './views/ResultStep'
-import { SummaryStep } from './views/SummaryStep'
+} from './reducer/actions/survey.action'
 
-export const Survey = () => {
+export const SurveyStepper = () => {
   const { state, dispatch } = useContext(SurveyContext)
   const { data, isSuccess, isFetching } = useGetQuestionsQuery(null)
 

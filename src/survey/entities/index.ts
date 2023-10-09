@@ -1,2 +1,2 @@
 export * from './choice.entity'
-export * from './question.entity'
+export * from '../../common/types/question.entity'
