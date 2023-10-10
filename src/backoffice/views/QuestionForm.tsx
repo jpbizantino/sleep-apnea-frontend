@@ -18,12 +18,12 @@ import { useNavigate, useParams } from 'react-router-dom'
 import * as yup from 'yup'
 import { Loader } from '../../common/components/Loader'
 import { AlertOption } from '../../common/types'
-import { Question } from '../../survey/entities'
 import { QuestionType } from '../../survey/enums/question.enum'
+import { QuestionTypeCombo } from '../components/questions'
+import { ChoiceList } from '../components/questions/ChoiceList'
+import { useBackoffice } from '../hooks/userBackoffice'
 import { BackofficePage } from '../pages/BackofficePage'
 import { useGetQuestionQuery } from '../slices/questionQuerySlice'
-import { QuestionTypeCombo } from '../components/questions'
-import { QuestionOptions } from '../components/questions/QuuestionOptions'
 
 const validationSchema = yup.object({
   question: yup.string().trim().required('El campo es requerido'),
@@ -42,6 +42,7 @@ const validationSchema = yup.object({
 
 export const QuestionForm = () => {
   const navigate = useNavigate()
+  const { setSelectedQuestion } = useBackoffice()
 
   //Get de URL Param
   const { questionId } = useParams()
@@ -121,7 +122,9 @@ export const QuestionForm = () => {
   useEffect(() => {
     if (data) {
       formik.setValues(data)
+      setSelectedQuestion(data)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess])
 
   return (
@@ -188,7 +191,7 @@ export const QuestionForm = () => {
                   </Grid>
 
                   <Grid item xs={6}>
-                    <QuestionTypeCombo
+                    {/* <QuestionTypeCombo
                       name="questionType"
                       label="Tipo de Pregunta"
                       onChange={formik.handleChange}
@@ -202,7 +205,7 @@ export const QuestionForm = () => {
                       }
                       value={formik.values.questionType}
                       disabled={false}
-                    />
+                    /> */}
                   </Grid>
                   {/* <Grid item xs={2} sx={{ pr: 1, mt: 2 }}>
                     <FormControlLabel
@@ -218,8 +221,8 @@ export const QuestionForm = () => {
                     />
                   </Grid> */}
 
-                  <Grid item xs={12}>
-                    <QuestionOptions />
+                  <Grid item xs={12} sx={{ mt: 1 }}>
+                    <ChoiceList />
                   </Grid>
                 </Grid>
 

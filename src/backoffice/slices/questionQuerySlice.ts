@@ -15,6 +15,7 @@ export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
         url: `/question/${id}`,
         method: 'GET',
       }),
+
       providesTags: ['Backoffice'],
     }),
   }),

@@ -1,5 +1,5 @@
+import { Choice } from './choice.type'
 import { QuestionType } from '../../survey/enums/question.enum'
-import { Choice } from '../../survey/entities/choice.entity'
 
 export interface Question {
   _id: string

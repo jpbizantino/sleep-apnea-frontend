@@ -4,7 +4,7 @@ import List from '@mui/material/List'
 import { styled } from '@mui/material/styles'
 import { Box } from '@mui/system'
 import { useRef } from 'react'
-import { useApp } from '../hooks/userApp'
+import { useBackoffice } from '../hooks/userBackoffice'
 import { MainMenu } from './MainMenu '
 
 const drawerWidth = 240
@@ -39,7 +39,7 @@ const Drawer = styled(MuiDrawer, {
 export const SideBar = () => {
   const drawerRef = useRef<HTMLDivElement>(null)
 
-  const { isMainMenuOpen } = useApp()
+  const { isMainMenuOpen } = useBackoffice()
 
   // useEffect(() => {
   //   if (drawerRef.current) {

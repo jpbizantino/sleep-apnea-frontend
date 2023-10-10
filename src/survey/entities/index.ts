@@ -1,2 +1,3 @@
-export * from './choice.entity'
-export * from '../../common/types/question.entity'
+export * from './answer.entity'
+export * from './input.entity'
+export * from './result.entity'

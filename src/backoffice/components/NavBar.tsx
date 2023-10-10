@@ -11,10 +11,10 @@ import Typography from '@mui/material/Typography'
 import * as React from 'react'
 
 import { Logout, VpnKey } from '@mui/icons-material'
-import { useApp } from '../hooks/userApp'
+import { useBackoffice } from '../hooks/userBackoffice'
 
 export const NavBar = () => {
-  const { toggleMainMenu } = useApp()
+  const { toggleMainMenu } = useBackoffice()
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
