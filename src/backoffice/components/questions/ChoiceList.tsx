@@ -1,23 +1,16 @@
 import { Grid, Button } from '@mui/material'
 import { Choice } from '../../../common/types'
 import { useBackoffice } from '../../hooks/userBackoffice'
-import { ChoiceItem } from './ChoiceItem'
+import { ChoiceCard } from './ChoiceCard'
 import { Add } from '@mui/icons-material'
 
 export const ChoiceList = () => {
-  const { selectedQuestion, addNewChoice, removeChoice } = useBackoffice()
+  const { selectedQuestion, removeChoice, openNewChoice } = useBackoffice()
 
   const handleNewQuestion = () => {
     if (!selectedQuestion) return
 
-    const choice: Choice = {
-      _id: Date.now().toString(36) + Math.random().toString(36),
-      description: '',
-      choiceValue: 0,
-      order: 0,
-    }
-
-    addNewChoice(selectedQuestion, choice)
+    openNewChoice()
   }
 
   const handleRemoveChoice = (choice: Choice) => {
@@ -38,11 +31,13 @@ export const ChoiceList = () => {
         <Grid item xs={12}>
           {selectedQuestion?.choices.map((item: Choice) => {
             return (
-              <ChoiceItem
-                key={item._id}
-                choice={item}
-                handleDelete={handleRemoveChoice}
-              />
+              <div key={item._id}>
+                <ChoiceCard
+                  key={item._id}
+                  choice={item}
+                  handleDelete={handleRemoveChoice}
+                />
+              </div>
             )
           })}
         </Grid>

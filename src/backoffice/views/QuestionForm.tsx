@@ -130,7 +130,11 @@ export const QuestionForm = () => {
     <>
       <BackofficePage>
         <Loader open={isFetching} />
-        <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
+        <form
+          id="main"
+          onSubmit={formik.handleSubmit}
+          onReset={formik.handleReset}
+        >
           <Box sx={{ mt: 1 }}>
             <Accordion
               expanded={expanded}
@@ -144,53 +148,55 @@ export const QuestionForm = () => {
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Grid
-                  container
-                  direction={{ xs: 'column', md: 'row' }}
-                  spacing={1}
-                  rowSpacing={1}
-                  columns={12}
-                >
-                  <Grid item xs={6}>
-                    <TextField
-                      name="question"
-                      label="Pregunta"
-                      variant="standard"
-                      fullWidth
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.question &&
-                        Boolean(formik.errors.question)
-                      }
-                      helperText={
-                        formik.touched.question && formik.errors.question
-                      }
-                      value={formik.values.question}
-                    />
-                  </Grid>
+                <div>
+                  <Grid
+                    container
+                    direction={{ xs: 'column', md: 'row' }}
+                    spacing={1}
+                    rowSpacing={1}
+                    columns={12}
+                  >
+                    <Grid item xs={6}>
+                      <TextField
+                        name="question"
+                        label="Pregunta"
+                        variant="standard"
+                        fullWidth
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.question &&
+                          Boolean(formik.errors.question)
+                        }
+                        helperText={
+                          formik.touched.question && formik.errors.question
+                        }
+                        value={formik.values.question}
+                      />
+                    </Grid>
 
-                  <Grid item xs={12}>
-                    <TextField
-                      name="description"
-                      label="Descripción"
-                      variant="standard"
-                      fullWidth
-                      multiline
-                      minRows={1}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.description &&
-                        Boolean(formik.errors.description)
-                      }
-                      helperText={
-                        formik.touched.description && formik.errors.description
-                      }
-                      value={formik.values.description}
-                    />
-                  </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        name="description"
+                        label="Descripción"
+                        variant="standard"
+                        fullWidth
+                        multiline
+                        minRows={1}
+                        onChange={formik.handleChange}
+                        error={
+                          formik.touched.description &&
+                          Boolean(formik.errors.description)
+                        }
+                        helperText={
+                          formik.touched.description &&
+                          formik.errors.description
+                        }
+                        value={formik.values.description}
+                      />
+                    </Grid>
 
-                  <Grid item xs={6}>
-                    {/* <QuestionTypeCombo
+                    <Grid item xs={6}>
+                      {/* <QuestionTypeCombo
                       name="questionType"
                       label="Tipo de Pregunta"
                       onChange={formik.handleChange}
@@ -205,8 +211,8 @@ export const QuestionForm = () => {
                       value={formik.values.questionType}
                       disabled={false}
                     /> */}
-                  </Grid>
-                  {/* <Grid item xs={2} sx={{ pr: 1, mt: 2 }}>
+                    </Grid>
+                    {/* <Grid item xs={2} sx={{ pr: 1, mt: 2 }}>
                     <FormControlLabel
                       label="Estado"
                       control={
@@ -219,12 +225,11 @@ export const QuestionForm = () => {
                       }
                     />
                   </Grid> */}
-
-                  <Grid item xs={12} sx={{ mt: 1 }}>
-                    <ChoiceList />
                   </Grid>
-                </Grid>
-
+                </div>
+                <>
+                  <ChoiceList />
+                </>
                 <Grid
                   container
                   direction={{ xs: 'column', md: 'row' }}
@@ -249,6 +254,7 @@ export const QuestionForm = () => {
                       fullWidth
                       variant="contained"
                       type="submit"
+                      form="main"
                     >
                       Guardar
                     </Button>
