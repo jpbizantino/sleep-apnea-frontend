@@ -1,4 +1,4 @@
-import { Question } from '../entities'
+import { Question } from '../../common/types'
 import { surveyQuerySlice } from './surveyQuerySlice'
 
 export const questionQuerySlice = surveyQuerySlice.injectEndpoints({

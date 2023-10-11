@@ -28,7 +28,7 @@ export const ChoiceList = () => {
 
   return (
     <>
-      <Grid container xs={12}>
+      <Grid container columns={12}>
         <Grid item xs={12}>
           <Button onClick={handleNewQuestion}>
             <Add />

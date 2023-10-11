@@ -22,8 +22,8 @@ import { useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
-import { Question, QuestionFilter } from '../../../survey/entities'
 import { useGetQuestionsQuery } from '../../slices/questionQuerySlice'
+import { Question, QuestionFilter } from '../../../common/types'
 
 const validationSchema = yup.object({
   question: yup.number().optional(),
@@ -40,6 +40,7 @@ export const QuestionGrid = () => {
     description: '',
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filter, setFilter] = useState<QuestionFilter | SkipToken>(skipToken)
 
   const columns: GridColDef[] = [
@@ -101,7 +102,7 @@ export const QuestionGrid = () => {
     },
   })
 
-  const { isFetching, data } = useGetQuestionsQuery(filter)
+  const { isFetching, data } = useGetQuestionsQuery(null)
 
   return (
     <>

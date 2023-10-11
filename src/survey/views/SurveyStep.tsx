@@ -2,7 +2,6 @@ import { Box, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import { useContext } from 'react'
 import { QuestionComponent } from '../components/QuestionComponent'
-import { Question } from '../entities'
 import { SurveyContext } from './context/SurveyContext'
 import {
   doAddAnswer,
@@ -12,6 +11,7 @@ import {
 import { Answer } from '../entities/answer.entity'
 import * as yup from 'yup'
 import { QuestionType } from '../enums/question.enum'
+import { Question } from '../../common/types'
 
 export const SurveyStep = (props: { question: Question }) => {
   const { state, dispatch } = useContext(SurveyContext)

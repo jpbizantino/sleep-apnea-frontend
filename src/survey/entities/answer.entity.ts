@@ -1,4 +1,4 @@
-import { Question } from '.'
+import { Question } from '../../common/types'
 
 export interface Answer {
   questionId: string

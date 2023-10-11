@@ -6,8 +6,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { Choice, Question } from '../entities'
 import { QuestionType } from '../enums/question.enum'
+import { Question, Choice } from '../../common/types'
 
 export const QuestionComponent = (props: {
   question: Question
