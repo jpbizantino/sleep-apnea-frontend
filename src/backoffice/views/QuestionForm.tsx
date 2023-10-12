@@ -5,7 +5,7 @@ import {
   AccordionSummary,
   Box,
   Button,
-  Card,
+  Paper,
   Grid,
   TextField,
   Typography,
@@ -180,50 +180,97 @@ export const QuestionForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess])
 
+  const handleChoice = (choice: Choice) => {
+    const index = formik.values.choices.findIndex((a) => a._id === choice._id)
+
+    if (index < 0)
+      formik.setFieldValue('choices', [...formik.values.choices, choice])
+    else {
+      const tempChoices = [...formik.values.choices]
+      tempChoices[index] = choice
+      formik.setFieldValue('choices', tempChoices)
+    }
+  }
+
+  const handleDeleteChoice = (choice: Choice) => {
+    const index = formik.values.choices.findIndex((a) => a._id === choice._id)
+
+    setAlert({
+      isAlertOpen: false,
+      message: '',
+      color: 'info',
+    })
+
+    if (index < 0) {
+      setAlert({
+        isAlertOpen: true,
+        message: 'Error al eliminar item',
+        color: 'error',
+      })
+    } else {
+      formik.setFieldValue(
+        'choices',
+        formik.values.choices.filter((p) => p._id !== choice._id)
+      )
+    }
+  }
+
   const InternalChoiceCard = (props: { choice: Choice }) => {
     return (
       <>
-        <Card elevation={1} sx={{ mt: 1, p: 2 }}>
-          <Grid container columns={12} spacing={1} rowSpacing={1}>
-            <Grid item xs={12} md={6} lg={8}>
-              Opción
-              <br />
-              <Typography sx={{ fontWeight: 'bold' }}>
-                {props.choice.description}
-              </Typography>
+        <Paper elevation={1} sx={{ mt: 1, p: 1 }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: 'flex',
+              verticalAlign: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Grid
+              container
+              columns={12}
+              spacing={1}
+              rowSpacing={1}
+              sx={{
+                justify: 'center',
+                alignItems: 'center',
+                minHeight: '100%',
+              }}
+            >
+              <Grid item xs={12} md={6} lg={8}>
+                <Typography sx={{ fontWeight: 'bold' }}>
+                  {props.choice.description}
+                </Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography sx={{ fontWeight: 'bold' }}>
+                  {props.choice.choiceValue}
+                </Typography>
+              </Grid>
+              <Grid item xs={1}>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={() => {
+                    setSelectedChoice(props.choice)
+                    toggleChoiceModal()
+                  }}
+                >
+                  Editar
+                </Button>
+              </Grid>
+              <Grid item xs={1}>
+                <Button
+                  fullWidth
+                  onClick={() => handleDeleteChoice(props.choice)}
+                >
+                  Eliminar
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={2}>
-              Score
-              <br />
-              <Typography sx={{ fontWeight: 'bold' }}>
-                {props.choice.choiceValue}
-              </Typography>
-            </Grid>
-            <Grid item xs={1}>
-              <Button
-                variant="outlined"
-                fullWidth
-                onClick={() => {
-                  setSelectedChoice(props.choice)
-                  toggleChoiceModal()
-                }}
-              >
-                Editar
-              </Button>
-            </Grid>
-            <Grid item xs={1}>
-              <Button
-                fullWidth
-                // onClick={
-                //    () => handleDelete(choice)
-                // }
-              >
-                Eliminar
-              </Button>
-            </Grid>
-          </Grid>
-        </Card>
-        <ChoiceModal />
+          </Box>
+        </Paper>
       </>
     )
   }
@@ -253,6 +300,7 @@ export const QuestionForm = () => {
             })}
           </Grid>
         </Grid>
+        <ChoiceModal handleChoice={handleChoice} />
       </>
     )
   }
@@ -337,6 +385,15 @@ export const QuestionForm = () => {
                       }}
                     />
                   </Grid>
+                  <Grid item xs={12}>
+                    <>
+                      {formik.values.questionType == QuestionType.CHOICE && (
+                        <Box sx={{ pt: 1, pb: 4 }}>
+                          <InternalChoiceList />
+                        </Box>
+                      )}
+                    </>
+                  </Grid>
 
                   <Grid item xs={3}>
                     <RuleTypeCombo
@@ -401,7 +458,7 @@ export const QuestionForm = () => {
                     />
                   </Grid>
                 </Grid>
-                <>{/* <InternalChoiceList /> */}</>
+
                 <Grid
                   container
                   direction={{ xs: 'column', md: 'row' }}
