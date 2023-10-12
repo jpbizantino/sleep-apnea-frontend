@@ -15,5 +15,5 @@ export interface Question {
 
 export type QuestionFilter = Omit<
   Question,
-  '_id' | 'choices' | 'questionType' | 'order' | 'images'
+  '_id' | 'choices' | 'questionType' | 'order' | 'images' | 'rule'
 >

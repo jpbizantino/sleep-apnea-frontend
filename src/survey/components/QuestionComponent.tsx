@@ -28,6 +28,7 @@ export const QuestionComponent = (props: {
           name="answer"
           label="Respuesta"
           variant="standard"
+          type="number"
           fullWidth
           onChange={props.handleSelection}
         />

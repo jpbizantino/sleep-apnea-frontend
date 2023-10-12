@@ -19,9 +19,11 @@ export const RuleTypeCombo = (props: {
   return (
     <Autocomplete
       disabled={props.disabled}
-      disablePortal
+      // disablePortal
+      disableClearable={true}
       options={ruleTypeDictionary}
-      getOptionLabel={(option) => option.value}
+      onChange={props.onChange}
+      getOptionLabel={(option) => option.translation}
       value={ruleTypeDictionary.find(
         (ruleTypeDictionary) => ruleTypeDictionary.name === props.value
       )}
@@ -34,7 +36,8 @@ export const RuleTypeCombo = (props: {
           fullWidth
           error={props.error}
           helperText={props.helperText}
-          value={props.value}
+          //value={props.value}
+          //onChange={props.onChange}
         />
       )}
     />

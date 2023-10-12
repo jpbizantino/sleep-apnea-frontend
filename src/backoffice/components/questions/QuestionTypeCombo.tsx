@@ -19,9 +19,11 @@ export const QuestionTypeCombo = (props: {
   return (
     <Autocomplete
       disabled={props.disabled}
-      disablePortal
+      // disablePortal
+      disableClearable={true}
       options={questionTypeDictionary}
-      getOptionLabel={(option) => option.value}
+      onChange={props.onChange}
+      getOptionLabel={(option) => option.translation}
       value={questionTypeDictionary.find(
         (questionTypeDictionary) => questionTypeDictionary.name === props.value
       )}
@@ -34,7 +36,8 @@ export const QuestionTypeCombo = (props: {
           fullWidth
           error={props.error}
           helperText={props.helperText}
-          value={props.value}
+          //value={props.value}
+          //onChange={props.onChange}
         />
       )}
     />

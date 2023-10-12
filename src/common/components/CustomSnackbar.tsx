@@ -1,7 +1,6 @@
 import { Alert, Box, Snackbar } from '@mui/material'
 import { AlertOption } from '../types'
 import { useEffect, useState } from 'react'
-import { string } from 'yup'
 
 export const CustomSnackbar = (props: { alert: AlertOption }) => {
   const [open, setOpen] = useState(false)
@@ -16,6 +15,7 @@ export const CustomSnackbar = (props: { alert: AlertOption }) => {
         <Snackbar
           open={open}
           autoHideDuration={6000}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           onClose={() => setOpen(false)}
         >
           <Alert severity={props.alert.color}>

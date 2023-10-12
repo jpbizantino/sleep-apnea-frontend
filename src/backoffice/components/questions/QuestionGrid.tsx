@@ -25,6 +25,11 @@ import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
 import { useGetQuestionsQuery } from '../../slices/questionQuerySlice'
 import { Question, QuestionFilter } from '../../../common/types'
 import { translateQuestionType } from '../../../common/enum/question.enum'
+import {
+  ProcessingRule,
+  translateProcessingRule,
+} from '../../../common/enum/processingRule.enum'
+import { Rule } from '../../../common/types/rule.type'
 
 const validationSchema = yup.object({
   question: yup.number().optional(),
@@ -86,6 +91,23 @@ export const QuestionGrid = () => {
       width: 150,
       renderCell: (cellValues) => {
         return translateQuestionType(cellValues.value)
+      },
+    },
+    {
+      field: 'rule',
+      headerName: 'Regla Procesamiento',
+      width: 150,
+      renderCell: (cellValues) => {
+        const ruleType = cellValues.value.processingRule
+
+        if (ruleType == ProcessingRule.BETWEEN)
+          return `${translateProcessingRule(ruleType)} ${
+            cellValues.value.valueA
+          } y ${cellValues.value.valueB}`
+        else
+          return `${translateProcessingRule(ruleType)} ${
+            cellValues.value.valueA
+          }`
       },
     },
   ]

@@ -20,7 +20,7 @@ export interface SnackbarData {
   message: string
 }
 
-export interface GenericData {
-  id: string
+export interface GenericDictionary {
   name: string
+  translation: string
 }

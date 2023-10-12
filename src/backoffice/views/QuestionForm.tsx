@@ -16,7 +16,12 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import * as yup from 'yup'
 import { Loader } from '../../common/components/Loader'
-import { AlertOption, Choice, Question } from '../../common/types'
+import {
+  AlertOption,
+  Choice,
+  GenericDictionary,
+  Question,
+} from '../../common/types'
 import { QuestionType } from '../../common/enum/question.enum'
 import { ChoiceModal } from '../components/questions/ChoiceModal'
 import { useBackoffice } from '../hooks/userBackoffice'
@@ -33,15 +38,17 @@ import { QuestionTypeCombo } from '../components/questions'
 import { RuleTypeCombo } from '../components/questions/RuleTypeCombo'
 
 const ruleSchema = yup.object().shape({
-  processingRule: yup.string().required('Processing Rule is required'),
+  processingRule: yup.string().required('Seleccione una regla'),
   valueA: yup
     .number()
-    .min(2, 'Value A must be at least 0')
-    .required('Value A is required'),
+    .required('Ingrese un valor')
+    .min(0, 'El valor debe ser entre 0 y 10')
+    .max(10, 'El valor debe ser entre 0 y 10'),
   valueB: yup
     .number()
-    .min(3, 'Value B must be at least 0')
-    .required('Value B is required'),
+    .required('Ingrese un valor')
+    .min(0, 'El valor debe ser entre 0 y 10')
+    .max(10, 'El valor debe ser entre 0 y 10'),
 })
 
 const validationSchema = yup.object({
@@ -325,8 +332,8 @@ export const QuestionForm = () => {
                         formik.touched.questionType &&
                         formik.errors.questionType
                       }
-                      onChange={(value: QuestionType) => {
-                        formik.setFieldValue('questionType', value)
+                      onChange={(_: unknown, value: GenericDictionary) => {
+                        formik.setFieldValue('questionType', value.name)
                       }}
                     />
                   </Grid>
@@ -334,18 +341,18 @@ export const QuestionForm = () => {
                   <Grid item xs={3}>
                     <RuleTypeCombo
                       label="Regla de procesamiento"
-                      name="rule"
+                      name="rule.processingRule"
                       disabled={false}
                       value={formik.values.rule.processingRule}
                       error={formik.errors.rule?.processingRule}
                       helperText={
-                        formik.touched.rule &&
+                        formik.touched.rule?.processingRule &&
                         formik.errors.rule?.processingRule
                       }
-                      onChange={(value: ProcessingRule) => {
+                      onChange={(_: unknown, value: GenericDictionary) => {
                         formik.setFieldValue('rule', {
                           ...rule,
-                          ProcessingRule: value,
+                          processingRule: value.name,
                         })
                       }}
                     />
@@ -378,6 +385,9 @@ export const QuestionForm = () => {
                       variant="standard"
                       type="number"
                       fullWidth
+                      disabled={[ProcessingRule.BETWEEN].some(
+                        (p) => p !== formik.values.rule.processingRule
+                      )}
                       value={formik.values.rule.valueB}
                       onChange={formik.handleChange}
                       error={
