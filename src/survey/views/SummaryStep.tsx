@@ -22,7 +22,8 @@ export const SummaryStep = () => {
 
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
-    msgError: '',
+    message: '',
+    color: 'info',
   })
 
   const initialValue: Input = {
@@ -45,7 +46,8 @@ export const SummaryStep = () => {
         .catch((error) => {
           setAlert({
             isAlertOpen: true,
-            msgError: error.data.message,
+            message: error.data.message,
+            color: 'error',
           })
         })
     },

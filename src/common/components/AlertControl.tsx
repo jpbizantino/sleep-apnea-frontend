@@ -7,7 +7,7 @@ export const AlertControl = (props: { alert: AlertOption }) => {
       <Box hidden={!props.alert.isAlertOpen} sx={{ mt: 2 }}>
         <Alert severity="error">
           <AlertTitle>Error:</AlertTitle>
-          {props.alert.msgError}
+          {props.alert.message}
         </Alert>
       </Box>
     </>

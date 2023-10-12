@@ -11,7 +11,8 @@ export enum ModalReason {
 
 export interface AlertOption {
   isAlertOpen: boolean
-  msgError: string
+  message: string | string[]
+  color: AlertColor
 }
 
 export interface SnackbarData {
@@ -22,5 +23,4 @@ export interface SnackbarData {
 export interface GenericData {
   id: string
   name: string
-  value: string
 }

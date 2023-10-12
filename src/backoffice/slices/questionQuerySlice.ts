@@ -18,6 +18,34 @@ export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
 
       providesTags: ['Backoffice'],
     }),
+    createQuestion: builder.mutation<Question, Question>({
+      query: (item) => ({
+        url: `/question`,
+        method: 'POST',
+        body: item,
+      }),
+
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Backoffice', physicianId: arg._id },
+      ],
+    }),
+
+    updateQuestion: builder.mutation<Question, Question>({
+      query: (item) => ({
+        url: `/question/${item._id}`,
+        method: 'PUT',
+        body: item,
+      }),
+
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Backoffice', physicianId: arg._id },
+      ],
+    }),
   }),
 })
-export const { useGetQuestionsQuery, useGetQuestionQuery } = questionQuerySlice
+export const {
+  useGetQuestionsQuery,
+  useGetQuestionQuery,
+  useCreateQuestionMutation,
+  useUpdateQuestionMutation,
+} = questionQuerySlice

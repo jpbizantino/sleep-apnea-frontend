@@ -83,7 +83,7 @@ export const SideBar = () => {
             </Typography>
 
             <Box>
-              <img src="/assets/logoMedexware.png" width={100} loading="lazy" />
+              <img src="/logoMedexware.png" width={100} loading="lazy" />
             </Box>
           </Box>
         </List>

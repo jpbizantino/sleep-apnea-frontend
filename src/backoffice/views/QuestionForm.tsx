@@ -1,12 +1,11 @@
-import { Close, ExpandMore, Save } from '@mui/icons-material'
+import { Add, Close, ExpandMore, Save } from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Alert,
-  AlertTitle,
   Box,
   Button,
+  Card,
   Grid,
   TextField,
   Typography,
@@ -17,16 +16,38 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import * as yup from 'yup'
 import { Loader } from '../../common/components/Loader'
-import { AlertOption, Question } from '../../common/types'
-import { QuestionType } from '../../survey/enums/question.enum'
-import { ChoiceList } from '../components/questions/ChoiceList'
+import { AlertOption, Choice, Question } from '../../common/types'
+import { QuestionType } from '../../common/enum/question.enum'
+import { ChoiceModal } from '../components/questions/ChoiceModal'
 import { useBackoffice } from '../hooks/userBackoffice'
 import { BackofficePage } from '../pages/BackofficePage'
-import { useGetQuestionQuery } from '../slices/questionQuerySlice'
+import {
+  useGetQuestionQuery,
+  useCreateQuestionMutation,
+  useUpdateQuestionMutation,
+} from '../slices/questionQuerySlice'
+import { CustomSnackbar } from '../../common/components/CustomSnackbar'
+import { Rule } from '../../common/types/rule.type'
+import { ProcessingRule } from '../../common/enum/processingRule.enum'
+import { QuestionTypeCombo } from '../components/questions'
+import { RuleTypeCombo } from '../components/questions/RuleTypeCombo'
+
+const ruleSchema = yup.object().shape({
+  processingRule: yup.string().required('Processing Rule is required'),
+  valueA: yup
+    .number()
+    .min(2, 'Value A must be at least 0')
+    .required('Value A is required'),
+  valueB: yup
+    .number()
+    .min(3, 'Value B must be at least 0')
+    .required('Value B is required'),
+})
 
 const validationSchema = yup.object({
   question: yup.string().trim().required('El campo es requerido'),
   description: yup.string().trim().required('El campo es requerido'),
+  rule: ruleSchema,
 })
 
 // .shape({
@@ -41,15 +62,20 @@ const validationSchema = yup.object({
 
 export const QuestionForm = () => {
   const navigate = useNavigate()
-  const { setSelectedQuestion } = useBackoffice()
+  const {
+    setSelectedQuestion,
+    openNewChoice,
+    toggleChoiceModal,
+    setSelectedChoice,
+  } = useBackoffice()
 
   //Get de URL Param
   const { questionId } = useParams()
 
-  // const [createQuestion, { isLoading: isLoadingCreate }] =
-  //   useCreateQuestionMutation()
-  // const [updateQuestion, { isLoading: isLoadingUpdate }] =
-  //   useUpdateQuestionMutation()
+  const [createQuestion, { isLoading: isLoadingCreate }] =
+    useCreateQuestionMutation()
+  const [updateQuestion, { isLoading: isLoadingUpdate }] =
+    useUpdateQuestionMutation()
   const { data, isFetching, isSuccess } = useGetQuestionQuery(
     questionId ?? skipToken
   )
@@ -57,8 +83,15 @@ export const QuestionForm = () => {
 
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
-    msgError: '',
+    message: '',
+    color: 'error',
   })
+
+  const rule: Rule = {
+    processingRule: ProcessingRule.DATA_AS_RECEIVED,
+    valueA: 0,
+    valueB: 0,
+  }
 
   let initialValue: Question = {
     _id: '',
@@ -68,6 +101,15 @@ export const QuestionForm = () => {
     questionType: QuestionType.FIX_NUMBER,
     images: [],
     choices: [],
+    rule: rule,
+  }
+
+  const processValues = (values: Question): Question => {
+    return {
+      ...values,
+      question: values.question.trim().toUpperCase(),
+      description: values.description.trim().toUpperCase(),
+    }
   }
 
   const formik = useFormik({
@@ -76,41 +118,45 @@ export const QuestionForm = () => {
     onSubmit: (values: Question) => {
       setAlert({
         isAlertOpen: false,
-        msgError: '',
+        message: '',
+        color: 'info',
       })
 
-      console.log(values)
-
-      // values = {
-      //   ...values,
-      // question: values.question.trim().toLocaleLowerCase(),
-      // description: values.description.trim().toUpperCase(),
-      // nameOne: values.nameOne.trim().toUpperCase(),
-      // email: values.email.trim().toLocaleLowerCase(),
-      // inactive: !values.inactive,
-      //  }
-
-      // if (!formik.values._id) {
-      //   createQuestion(values)
-      //     .unwrap()
-      //     .then(() => {})
-      //     .catch((error) => {
-      //       setAlert({
-      //         isAlertOpen: true,
-      //         msgError: error.data.message,
-      //       })
-      //     })
-      // } else {
-      //   updateQuestion(values)
-      //     .unwrap()
-      //     .then(() => {})
-      //     .catch((error) => {
-      //       setAlert({
-      //         isAlertOpen: true,
-      //         msgError: error.data.message,
-      //       })
-      //     })
-      // }
+      if (values._id == '') {
+        createQuestion(processValues(values))
+          .unwrap()
+          .then(() => {
+            setAlert({
+              isAlertOpen: true,
+              message: 'Datos guardados exitosamente',
+              color: 'success',
+            })
+          })
+          .catch((error) => {
+            setAlert({
+              isAlertOpen: true,
+              message: error.data.message,
+              color: 'error',
+            })
+          })
+      } else {
+        updateQuestion(processValues(values))
+          .unwrap()
+          .then(() => {
+            setAlert({
+              isAlertOpen: true,
+              message: 'Datos modificados exitosamente',
+              color: 'success',
+            })
+          })
+          .catch((error) => {
+            setAlert({
+              isAlertOpen: true,
+              message: error.data.message,
+              color: 'error',
+            })
+          })
+      }
     },
 
     onReset: (values: Question) => {
@@ -123,18 +169,93 @@ export const QuestionForm = () => {
       formik.setValues(data)
       setSelectedQuestion(data)
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess])
+
+  const InternalChoiceCard = (props: { choice: Choice }) => {
+    return (
+      <>
+        <Card elevation={1} sx={{ mt: 1, p: 2 }}>
+          <Grid container columns={12} spacing={1} rowSpacing={1}>
+            <Grid item xs={12} md={6} lg={8}>
+              Opción
+              <br />
+              <Typography sx={{ fontWeight: 'bold' }}>
+                {props.choice.description}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              Score
+              <br />
+              <Typography sx={{ fontWeight: 'bold' }}>
+                {props.choice.choiceValue}
+              </Typography>
+            </Grid>
+            <Grid item xs={1}>
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={() => {
+                  setSelectedChoice(props.choice)
+                  toggleChoiceModal()
+                }}
+              >
+                Editar
+              </Button>
+            </Grid>
+            <Grid item xs={1}>
+              <Button
+                fullWidth
+                // onClick={
+                //    () => handleDelete(choice)
+                // }
+              >
+                Eliminar
+              </Button>
+            </Grid>
+          </Grid>
+        </Card>
+        <ChoiceModal />
+      </>
+    )
+  }
+
+  const InternalChoiceList = () => {
+    return (
+      <>
+        <Grid container columns={12}>
+          <Grid item xs={12}>
+            <Button onClick={() => openNewChoice()}>
+              <Add />
+              Nueva opción
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            {formik.values.choices.map((item: Choice) => {
+              return (
+                <div key={item._id}>
+                  <InternalChoiceCard choice={item} />
+                  {/* <ChoiceCard
+                    key={item._id}
+                    choice={item}
+                    handleDelete={handleRemoveChoice}
+                  /> */}
+                </div>
+              )
+            })}
+          </Grid>
+        </Grid>
+      </>
+    )
+  }
 
   return (
     <>
       <BackofficePage>
-        <Loader open={isFetching} />
-        <form
-          id="main"
-          onSubmit={formik.handleSubmit}
-          onReset={formik.handleReset}
-        >
+        <Loader open={isFetching || isLoadingCreate || isLoadingUpdate} />
+        <CustomSnackbar alert={alert} />
+        <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
           <Box sx={{ mt: 1 }}>
             <Accordion
               expanded={expanded}
@@ -148,88 +269,129 @@ export const QuestionForm = () => {
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <div>
-                  <Grid
-                    container
-                    direction={{ xs: 'column', md: 'row' }}
-                    spacing={1}
-                    rowSpacing={1}
-                    columns={12}
-                  >
-                    <Grid item xs={6}>
-                      <TextField
-                        name="question"
-                        label="Pregunta"
-                        variant="standard"
-                        fullWidth
-                        onChange={formik.handleChange}
-                        error={
-                          formik.touched.question &&
-                          Boolean(formik.errors.question)
-                        }
-                        helperText={
-                          formik.touched.question && formik.errors.question
-                        }
-                        value={formik.values.question}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <TextField
-                        name="description"
-                        label="Descripción"
-                        variant="standard"
-                        fullWidth
-                        multiline
-                        minRows={1}
-                        onChange={formik.handleChange}
-                        error={
-                          formik.touched.description &&
-                          Boolean(formik.errors.description)
-                        }
-                        helperText={
-                          formik.touched.description &&
-                          formik.errors.description
-                        }
-                        value={formik.values.description}
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      {/* <QuestionTypeCombo
-                      name="questionType"
-                      label="Tipo de Pregunta"
+                <Grid
+                  container
+                  direction={{ xs: 'column', md: 'row' }}
+                  spacing={1}
+                  rowSpacing={1}
+                  columns={12}
+                >
+                  <Grid item xs={12}>
+                    <TextField
+                      name="question"
+                      label="Pregunta"
+                      variant="standard"
+                      fullWidth
                       onChange={formik.handleChange}
                       error={
-                        formik.touched.questionType &&
-                        Boolean(formik.errors.questionType)
+                        formik.touched.question &&
+                        Boolean(formik.errors.question)
                       }
+                      helperText={
+                        formik.touched.question && formik.errors.question
+                      }
+                      value={formik.values.question}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <TextField
+                      name="description"
+                      label="Descripción"
+                      variant="standard"
+                      fullWidth
+                      multiline
+                      minRows={1}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.description &&
+                        Boolean(formik.errors.description)
+                      }
+                      helperText={
+                        formik.touched.description && formik.errors.description
+                      }
+                      value={formik.values.description}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <QuestionTypeCombo
+                      label="Tipo de Pregunta"
+                      name="questionType"
+                      disabled={false}
+                      value={formik.values.questionType}
+                      error={formik.errors.questionType}
                       helperText={
                         formik.touched.questionType &&
                         formik.errors.questionType
                       }
-                      value={formik.values.questionType}
+                      onChange={(value: QuestionType) => {
+                        formik.setFieldValue('questionType', value)
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid item xs={3}>
+                    <RuleTypeCombo
+                      label="Regla de procesamiento"
+                      name="rule"
                       disabled={false}
-                    /> */}
-                    </Grid>
-                    {/* <Grid item xs={2} sx={{ pr: 1, mt: 2 }}>
-                    <FormControlLabel
-                      label="Estado"
-                      control={
-                        <Switch
-                          checked={formik.values.inactive}
-                          name="inactive"
-                          value={formik.values.inactive}
-                          onChange={formik.handleChange}
-                        />
+                      value={formik.values.rule.processingRule}
+                      error={formik.errors.rule?.processingRule}
+                      helperText={
+                        formik.touched.rule &&
+                        formik.errors.rule?.processingRule
+                      }
+                      onChange={(value: ProcessingRule) => {
+                        formik.setFieldValue('rule', {
+                          ...rule,
+                          ProcessingRule: value,
+                        })
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid item xs={2}>
+                    <TextField
+                      name="rule.valueA"
+                      label="Valor A"
+                      variant="standard"
+                      type="number"
+                      fullWidth
+                      value={formik.values.rule.valueA}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.rule?.valueA &&
+                        Boolean(formik.errors.rule?.valueA)
+                      }
+                      helperText={
+                        formik.touched.rule?.valueA &&
+                        formik.errors.rule?.valueA
                       }
                     />
-                  </Grid> */}
                   </Grid>
-                </div>
-                <>
-                  <ChoiceList />
-                </>
+
+                  <Grid item xs={2}>
+                    <TextField
+                      name="rule.valueB"
+                      label="Valor B"
+                      variant="standard"
+                      type="number"
+                      fullWidth
+                      value={formik.values.rule.valueB}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.rule?.valueB &&
+                        Boolean(formik.errors.rule?.valueB)
+                      }
+                      helperText={
+                        formik.touched.rule?.valueB &&
+                        formik.errors.rule?.valueB
+                      }
+                    />
+                  </Grid>
+                </Grid>
+                <>{/* <InternalChoiceList /> */}</>
                 <Grid
                   container
                   direction={{ xs: 'column', md: 'row' }}
@@ -254,7 +416,6 @@ export const QuestionForm = () => {
                       fullWidth
                       variant="contained"
                       type="submit"
-                      form="main"
                     >
                       Guardar
                     </Button>
@@ -264,19 +425,6 @@ export const QuestionForm = () => {
             </Accordion>
           </Box>
         </form>
-        <Box hidden={!alert.isAlertOpen} sx={{ mt: 2 }}>
-          <Alert severity="error">
-            <AlertTitle>Error:</AlertTitle>
-            {alert.msgError}
-          </Alert>
-        </Box>
-
-        {/* {selectedQuestion?.QuestionId &&
-        formik.values.role?.roleCode == ROLES.Patient ? (
-          <QuestionPatient />
-        ) : (
-          ''
-        )} */}
       </BackofficePage>
     </>
   )

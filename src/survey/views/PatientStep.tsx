@@ -21,7 +21,8 @@ export const PatientStep = (props: { stepPosition: string }) => {
 
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
-    msgError: '',
+    message: '',
+    color: 'info',
   })
 
   const initialValues: Patient = {
@@ -100,7 +101,8 @@ export const PatientStep = (props: { stepPosition: string }) => {
         .catch((error) => {
           setAlert({
             isAlertOpen: true,
-            msgError: error.data.message,
+            message: error.data.message,
+            color: 'error',
           })
         })
     },

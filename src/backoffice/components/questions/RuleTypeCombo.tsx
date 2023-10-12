@@ -1,7 +1,7 @@
 import { Autocomplete, TextField } from '@mui/material'
-import { questionTypeDictionary } from '../../../common/enum/question.enum'
+import { ruleTypeDictionary } from '../../../common/enum/processingRule.enum'
 
-export const QuestionTypeCombo = (props: {
+export const RuleTypeCombo = (props: {
   disabled: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any
@@ -20,10 +20,10 @@ export const QuestionTypeCombo = (props: {
     <Autocomplete
       disabled={props.disabled}
       disablePortal
-      options={questionTypeDictionary}
+      options={ruleTypeDictionary}
       getOptionLabel={(option) => option.value}
-      value={questionTypeDictionary.find(
-        (questionTypeDictionary) => questionTypeDictionary.name === props.value
+      value={ruleTypeDictionary.find(
+        (ruleTypeDictionary) => ruleTypeDictionary.name === props.value
       )}
       renderInput={(params) => (
         <TextField

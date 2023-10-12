@@ -1,5 +1,6 @@
 import { Choice } from './choice.type'
-import { QuestionType } from '../../survey/enums/question.enum'
+import { QuestionType } from '../enum/question.enum'
+import { Rule } from './rule.type'
 
 export interface Question {
   _id: string
@@ -9,6 +10,7 @@ export interface Question {
   questionType: QuestionType
   images: string[]
   choices: Choice[]
+  rule: Rule
 }
 
 export type QuestionFilter = Omit<

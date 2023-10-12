@@ -16,7 +16,8 @@ export const ResultStep = () => {
 
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
-    msgError: '',
+    message: '',
+    color: 'info',
   })
 
   useEffect(() => {
@@ -25,7 +26,12 @@ export const ResultStep = () => {
   }, [isSuccess])
 
   useEffect(() => {
-    error && setAlert({ isAlertOpen: true, msgError: 'Error al guardar' })
+    error &&
+      setAlert({
+        isAlertOpen: true,
+        message: 'Error al guardar',
+        color: 'error',
+      })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isError])
 

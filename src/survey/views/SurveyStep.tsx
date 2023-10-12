@@ -10,7 +10,7 @@ import {
 } from './reducer/actions/survey.action'
 import { Answer } from '../entities/answer.entity'
 import * as yup from 'yup'
-import { QuestionType } from '../enums/question.enum'
+import { QuestionType } from '../../common/enum/question.enum'
 import { Question } from '../../common/types'
 
 export const SurveyStep = (props: { question: Question }) => {

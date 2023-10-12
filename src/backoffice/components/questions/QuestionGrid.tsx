@@ -24,6 +24,7 @@ import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
 import { useGetQuestionsQuery } from '../../slices/questionQuerySlice'
 import { Question, QuestionFilter } from '../../../common/types'
+import { translateQuestionType } from '../../../common/enum/question.enum'
 
 const validationSchema = yup.object({
   question: yup.number().optional(),
@@ -78,6 +79,14 @@ export const QuestionGrid = () => {
       field: 'description',
       headerName: 'Descripción',
       width: 500,
+    },
+    {
+      field: 'questionType',
+      headerName: 'Tipo de Pregunta',
+      width: 150,
+      renderCell: (cellValues) => {
+        return translateQuestionType(cellValues.value)
+      },
     },
   ]
 
