@@ -119,9 +119,10 @@ export const QuestionGrid = () => {
   }
 
   const formik = useFormik({
-    validationSchema: validationSchema,
+    // validationSchema: validationSchema,
     initialValues: patientLocalFilter,
     onSubmit: async (values: QuestionFilter) => {
+      console.log(values)
       setFilter(values)
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
