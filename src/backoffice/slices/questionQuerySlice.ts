@@ -1,12 +1,13 @@
-import { Question } from '../../common/types'
+import { Question, QuestionFilter } from '../../common/types'
 import { backofficeQuerySlice } from './backofficeQuerySlice'
 
 export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
   endpoints: (builder) => ({
-    getQuestions: builder.query<Question[], null>({
-      query: () => ({
+    getQuestions: builder.query<Question[], QuestionFilter>({
+      query: (filter) => ({
         url: `/question`,
         method: 'GET',
+        body: filter,
       }),
       providesTags: ['Backoffice'],
     }),

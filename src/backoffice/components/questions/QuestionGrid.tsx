@@ -22,14 +22,13 @@ import { useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
-import { useGetQuestionsQuery } from '../../slices/questionQuerySlice'
-import { Question, QuestionFilter } from '../../../common/types'
-import { translateQuestionType } from '../../../common/enum/question.enum'
 import {
   ProcessingRule,
   translateProcessingRule,
 } from '../../../common/enum/processingRule.enum'
-import { Rule } from '../../../common/types/rule.type'
+import { translateQuestionType } from '../../../common/enum/question.enum'
+import { Question, QuestionFilter } from '../../../common/types'
+import { useGetQuestionsQuery } from '../../slices/questionQuerySlice'
 
 const validationSchema = yup.object({
   question: yup.number().optional(),
@@ -66,7 +65,7 @@ export const QuestionGrid = () => {
             variant="contained"
             color="colorLevel4White"
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            onClick={(event) => {
+            onClick={() => {
               navigate(`/backoffice/questions/${cellValues.id}`)
             }}
           >
@@ -133,7 +132,7 @@ export const QuestionGrid = () => {
     },
   })
 
-  const { isFetching, data } = useGetQuestionsQuery(null)
+  const { isFetching, data } = useGetQuestionsQuery(filter)
 
   return (
     <>

@@ -1,3 +1,5 @@
+export * from './ChoiceModal'
 export * from './QuestionGrid'
 export * from './QuestionSpeedDial'
 export * from './QuestionTypeCombo'
+export * from './RuleTypeCombo'

@@ -290,11 +290,6 @@ export const QuestionForm = () => {
               return (
                 <div key={item._id}>
                   <InternalChoiceCard choice={item} />
-                  {/* <ChoiceCard
-                    key={item._id}
-                    choice={item}
-                    handleDelete={handleRemoveChoice}
-                  /> */}
                 </div>
               )
             })}
