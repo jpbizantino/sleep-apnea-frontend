@@ -19,7 +19,6 @@ import { SkipToken, skipToken } from '@reduxjs/toolkit/dist/query'
 import { useFormik } from 'formik'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import * as yup from 'yup'
 import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
 import {
@@ -30,11 +29,11 @@ import { translateQuestionType } from '../../../common/enum/question.enum'
 import { Question, QuestionFilter } from '../../../common/types'
 import { useGetQuestionsQuery } from '../../slices/questionQuerySlice'
 
-const validationSchema = yup.object({
-  question: yup.number().optional(),
-  nameTwo: yup.string(),
-  nameOne: yup.string(),
-})
+// const validationSchema = yup.object({
+//   question: yup.number().optional(),
+//   nameTwo: yup.string(),
+//   nameOne: yup.string(),
+// })
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const QuestionGrid = () => {
