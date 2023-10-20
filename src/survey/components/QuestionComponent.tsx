@@ -33,14 +33,13 @@ export const QuestionComponent = (props: {
           onChange={props.handleSelection}
         />
       ) : (
-        <RadioGroup key={props.question._id} onChange={props.handleSelection}>
+        <RadioGroup name="radio-buttons-group" onChange={props.handleSelection}>
           {props.question.choices.map((item: Choice) => {
             return (
               <>
                 <FormControlLabel
-                  key={props.question._id + item.choiceValue}
-                  id={props.question._id + item.choiceValue}
-                  value={item.choiceValue}
+                  key={item._id}
+                  value={item._id}
                   control={<Radio />}
                   label={item.description}
                 />

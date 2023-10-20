@@ -18,11 +18,18 @@ export const ResultCard = () => {
           {surveyResults.map((survey) => {
             return (
               <>
-                <Grid item xs={12} md={6} lg={6}>
+                <Grid
+                  key={survey.questionId}
+                  item
+                  xs={12}
+                  md={12}
+                  lg={12}
+                  sx={{ pb: 2 }}
+                >
                   <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
                     {survey.question.question}
                   </Typography>
-                  <br /> {survey.selectedValue}
+                  <br /> {survey.selectedDescription}
                 </Grid>
               </>
             )

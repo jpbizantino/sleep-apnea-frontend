@@ -74,13 +74,14 @@ export const SurveyStepper = () => {
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <>
               <MobileStepper
-                variant="dots"
+                variant="progress"
                 steps={state.totalSteps + 2}
                 position="static"
                 activeStep={state.stepPosition}
                 sx={{ flexGrow: 1 }}
                 nextButton={
                   <Button
+                    sx={{ ml: 2 }}
                     size="small"
                     type="submit"
                     form={'Step' + state.stepPosition}
@@ -96,6 +97,7 @@ export const SurveyStepper = () => {
                 }
                 backButton={
                   <Button
+                    sx={{ mr: 2 }}
                     size="small"
                     onClick={handleBack}
                     disabled={isLastStep(0) || !state.enablePreviousButton}

@@ -1,4 +1,4 @@
-import { Add, Close, ExpandMore, Save } from '@mui/icons-material'
+import { Add, Close, Save } from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
@@ -57,16 +57,6 @@ const validationSchema = yup.object({
   rule: ruleSchema,
 })
 
-// .shape({
-//   role: yup.object().nullable().required('Seleccione un valor'),
-//   //patient: yup.object().nullable().required('Ingrese un valor'),
-// })
-
-// interface AlertOption {
-//   isAlertOpen: boolean
-//   msgError: string
-// }
-
 export const QuestionForm = () => {
   const navigate = useNavigate()
   const {
@@ -86,7 +76,7 @@ export const QuestionForm = () => {
   const { data, isFetching, isSuccess } = useGetQuestionQuery(
     questionId ?? skipToken
   )
-  const [expanded, setExpanded] = useState(true)
+  const [buttonClicked, setButtonClicked] = useState<string | null>(null)
 
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
@@ -181,12 +171,16 @@ export const QuestionForm = () => {
   }, [isSuccess])
 
   const handleChoice = (choice: Choice) => {
+    console.log(choice)
+
     const index = formik.values.choices.findIndex((a) => a._id === choice._id)
 
-    if (index < 0)
-      formik.setFieldValue('choices', [...formik.values.choices, choice])
-    else {
-      const tempChoices = [...formik.values.choices]
+    const tempChoices = [...formik.values.choices]
+
+    if (index < 0) {
+      tempChoices.push(choice)
+      formik.setFieldValue('choices', tempChoices)
+    } else {
       tempChoices[index] = choice
       formik.setFieldValue('choices', tempChoices)
     }
@@ -238,7 +232,7 @@ export const QuestionForm = () => {
                 minHeight: '100%',
               }}
             >
-              <Grid item xs={12} md={6} lg={8}>
+              <Grid item xs={6}>
                 <Typography sx={{ fontWeight: 'bold' }}>
                   {props.choice.description}
                 </Typography>
@@ -248,9 +242,9 @@ export const QuestionForm = () => {
                   {props.choice.choiceValue}
                 </Typography>
               </Grid>
-              <Grid item xs={1}>
+              <Grid item xs={2}>
                 <Button
-                  variant="outlined"
+                  // variant="outlined"
                   fullWidth
                   onClick={() => {
                     setSelectedChoice(props.choice)
@@ -260,10 +254,13 @@ export const QuestionForm = () => {
                   Editar
                 </Button>
               </Grid>
-              <Grid item xs={1}>
+              <Grid item xs={2}>
                 <Button
                   fullWidth
-                  onClick={() => handleDeleteChoice(props.choice)}
+                  onClick={() => {
+                    setSelectedChoice(null)
+                    handleDeleteChoice(props.choice)
+                  }}
                 >
                   Eliminar
                 </Button>
@@ -308,12 +305,12 @@ export const QuestionForm = () => {
         <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
           <Box sx={{ mt: 1 }}>
             <Accordion
-              expanded={expanded}
+              expanded={true}
               sx={{ m: 1, p: 1 }}
               disableGutters={true}
-              onChange={() => setExpanded(!expanded)}
+              //onChange={() => setExpanded(!expanded)}
             >
-              <AccordionSummary expandIcon={<ExpandMore />}>
+              <AccordionSummary>
                 <Typography variant="h6">
                   {formik.values._id ? 'Editar Pregunta' : 'Nueva Pregunta'}
                 </Typography>
@@ -472,8 +469,20 @@ export const QuestionForm = () => {
                       Cerrar
                     </Button>
                   </Grid>
+                  {/* <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
+                    <Button
+                      onClick={() => setButtonClicked('saveAndNew')}
+                      startIcon={<Save />}
+                      fullWidth
+                      variant="contained"
+                      type="submit"
+                    >
+                      Guardar y Nuevo
+                    </Button>
+                  </Grid> */}
                   <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
                     <Button
+                      onClick={() => setButtonClicked('save')}
                       startIcon={<Save />}
                       fullWidth
                       variant="contained"

@@ -40,7 +40,7 @@ export const useBackoffice = () => {
     dispatch(onToggleChoiceModal())
   }
 
-  const setSelectedChoice = (choice: Choice) => {
+  const setSelectedChoice = (choice: Choice | null) => {
     dispatch(onSetSelectedChoice(choice))
   }
 

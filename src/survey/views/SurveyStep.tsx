@@ -48,7 +48,20 @@ export const SurveyStep = (props: { question: Question }) => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelection = (e: any) => {
-    formik.setFieldValue('selectedValue', e.target.value, true)
+    console.log(e.target.value)
+
+    if (!e.target.value) return
+
+    if (props.question.questionType == QuestionType.FIX_NUMBER) {
+      formik.setFieldValue('selectedValue', e.target.value, true)
+      formik.setFieldValue('selectedDescription', e.target.value, true)
+    } else {
+      const selected = props.question.choices.find(
+        (p) => p._id == e.target.value
+      )
+      formik.setFieldValue('selectedValue', selected?.choiceValue)
+      formik.setFieldValue('selectedDescription', selected?.description)
+    }
   }
 
   return (

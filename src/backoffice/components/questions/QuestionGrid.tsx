@@ -76,12 +76,12 @@ export const QuestionGrid = () => {
     {
       field: 'question',
       headerName: 'Pregunta',
-      width: 300,
+      width: 500,
     },
     {
       field: 'description',
       headerName: 'Descripción',
-      width: 500,
+      width: 300,
     },
     {
       field: 'questionType',

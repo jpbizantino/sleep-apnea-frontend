@@ -20,9 +20,7 @@ export const ChoiceModal = (props: { handleChoice: any }) => {
     useBackoffice()
 
   const initialValue: Choice = {
-    _id: Math.random()
-      .toString(36)
-      .substring(2, length + 2),
+    _id: crypto.randomUUID().toString(),
     description: '',
     choiceValue: 0,
     order: 0,
