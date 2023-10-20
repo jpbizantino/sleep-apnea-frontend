@@ -48,8 +48,6 @@ export const SurveyStep = (props: { question: Question }) => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelection = (e: any) => {
-    console.log(e.target.value)
-
     if (!e.target.value) return
 
     if (props.question.questionType == QuestionType.FIX_NUMBER) {

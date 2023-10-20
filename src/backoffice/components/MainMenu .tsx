@@ -1,5 +1,5 @@
+import { QuestionAnswer } from '@mui/icons-material'
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { Dashboard } from '@mui/icons-material'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 export const MainMenu = () => {
@@ -15,9 +15,9 @@ export const MainMenu = () => {
         }}
       >
         <ListItemIcon>
-          <Dashboard />
+          <QuestionAnswer />
         </ListItemIcon>
-        <ListItemText primary="Questions" />
+        <ListItemText primary="Preguntas" />
       </ListItemButton>
     </>
   )

@@ -16,7 +16,7 @@ export const QuestionComponent = (props: {
 }) => (
   <>
     <Box key={props.question._id} sx={{ mt: 2, mb: 2 }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h5" gutterBottom>
         {props.question.question}
       </Typography>
       <Typography variant="body1" fontStyle="italic" gutterBottom>

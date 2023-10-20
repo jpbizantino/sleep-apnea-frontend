@@ -42,19 +42,20 @@ const ruleSchema = yup.object().shape({
   valueA: yup
     .number()
     .required('Ingrese un valor')
-    .min(0, 'El valor debe ser entre 0 y 10')
-    .max(10, 'El valor debe ser entre 0 y 10'),
+    .min(0, 'El valor debe ser entre 0 y 100')
+    .max(100, 'El valor debe ser entre 0 y 100'),
   valueB: yup
     .number()
     .required('Ingrese un valor')
-    .min(0, 'El valor debe ser entre 0 y 10')
-    .max(10, 'El valor debe ser entre 0 y 10'),
+    .min(0, 'El valor debe ser entre 0 y 100')
+    .max(100, 'El valor debe ser entre 0 y 100'),
 })
 
 const validationSchema = yup.object({
   question: yup.string().trim().required('El campo es requerido'),
   description: yup.string().trim().required('El campo es requerido'),
   rule: ruleSchema,
+  // choices: yup.array().min(2, 'Ingrese al menos 2 opciones'),
 })
 
 export const QuestionForm = () => {
@@ -122,7 +123,8 @@ export const QuestionForm = () => {
       if (values._id == '') {
         createQuestion(processValues(values))
           .unwrap()
-          .then(() => {
+          .then((result: Question) => {
+            formik.setFieldValue('_id', result._id)
             setAlert({
               isAlertOpen: true,
               message: 'Datos guardados exitosamente',
@@ -171,8 +173,6 @@ export const QuestionForm = () => {
   }, [isSuccess])
 
   const handleChoice = (choice: Choice) => {
-    console.log(choice)
-
     const index = formik.values.choices.findIndex((a) => a._id === choice._id)
 
     const tempChoices = [...formik.values.choices]
@@ -359,6 +359,17 @@ export const QuestionForm = () => {
                       }
                       value={formik.values.description}
                     />
+
+                    {
+                      <Typography
+                        color="error"
+                        variant="caption"
+                        //fontWeight="bold"
+                        display="block"
+                      >
+                        {formik.errors.choices as string}
+                      </Typography>
+                    }
                   </Grid>
 
                   <Grid item xs={12}>
@@ -382,6 +393,16 @@ export const QuestionForm = () => {
                       {formik.values.questionType == QuestionType.CHOICE && (
                         <Box sx={{ pt: 1, pb: 4 }}>
                           <InternalChoiceList />
+                          {formik.errors.choices && formik.touched.choices && (
+                            <Typography
+                              color="error"
+                              variant="caption"
+                              //fontWeight="bold"
+                              display="block"
+                            >
+                              {formik.errors.choices as string}
+                            </Typography>
+                          )}
                         </Box>
                       )}
                     </>
