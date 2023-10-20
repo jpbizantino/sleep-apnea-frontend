@@ -76,7 +76,7 @@ export const QuestionForm = () => {
   const { data, isFetching, isSuccess } = useGetQuestionQuery(
     questionId ?? skipToken
   )
-  const [buttonClicked, setButtonClicked] = useState<string | null>(null)
+  // const [buttonClicked, setButtonClicked] = useState<string | null>(null)
 
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
@@ -482,7 +482,7 @@ export const QuestionForm = () => {
                   </Grid> */}
                   <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
                     <Button
-                      onClick={() => setButtonClicked('save')}
+                      // onClick={() => setButtonClicked('save')}
                       startIcon={<Save />}
                       fullWidth
                       variant="contained"
