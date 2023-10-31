@@ -5,10 +5,10 @@ export const backofficeQuerySlice = createApi({
   reducerPath: 'backofficeQuerySlice',
   baseQuery: fetchBaseQuery({
     baseUrl: `${API_URL}`,
-    // prepareHeaders: (headers, {}) => {
-    //   headers.set('authorization', `Bearer ${localStorage.getItem('token')}`)
-    //   return headers
-    // },
+    prepareHeaders: (headers, {}) => {
+      headers.set('authorization', `Bearer ${localStorage.getItem('token')}`)
+      return headers
+    },
   }),
   tagTypes: ['Backoffice'],
 

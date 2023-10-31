@@ -1,6 +1,6 @@
 import { LazyExoticComponent } from 'react'
-import { BackofficeRoutes } from '../backoffice/routes/BackofficeRoutes'
-import { SurveyRoutes } from '../survey/routes/SurveyRoutes'
+import { BackofficeRoutes } from '../../backoffice/routes/BackofficeRoutes'
+import { SurveyRoutes } from '../../survey/routes/SurveyRoutes'
 
 type JSXComponent = () => JSX.Element
 
@@ -11,13 +11,22 @@ interface Route {
   name: string
 }
 
-export const routes: Route[] = [
+export const publicRoutes: Route[] = [
   {
     path: '/*',
     to: '/',
     Component: SurveyRoutes,
     name: 'Survey',
   },
+  // {
+  //   path: '/backoffice/*',
+  //   to: '/backoffice',
+  //   Component: BackofficeRoutes,
+  //   name: 'Backoffice',
+  // },
+]
+
+export const privateRoutes: Route[] = [
   {
     path: '/backoffice/*',
     to: '/backoffice',

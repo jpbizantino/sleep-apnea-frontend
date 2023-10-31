@@ -11,10 +11,10 @@ export const Copyright = (props: any) => {
       {'Copyright © '}
       <Link
         color="inherit"
-        href="https://clinicasanmiguelweb.com"
+        href="https://www.totalsleep.com.ar/"
         target="_blank"
       >
-        Sofimed SRL
+        Total Sleep SRL
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}

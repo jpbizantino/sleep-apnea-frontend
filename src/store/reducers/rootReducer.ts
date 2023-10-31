@@ -3,6 +3,7 @@ import storage from 'redux-persist/lib/storage'
 import { questionQuerySlice } from '../../survey/slices'
 import { patientQuerySlice } from '../../patient/slices'
 import { backofficeSlice, backofficeQuerySlice } from '../../backoffice/slices'
+import { authSlice } from '../../auth/slices'
 
 //Redux-Persist config
 //Must place RTK Query reducer in the blacklist
@@ -19,6 +20,7 @@ export const persistConfig = {
 
 export const rootReducer = combineReducers({
   backoffice: backofficeSlice.reducer,
+  auth: authSlice.reducer,
 
   /** RTK Query Reducers*/
   [questionQuerySlice.reducerPath]: questionQuerySlice.reducer,

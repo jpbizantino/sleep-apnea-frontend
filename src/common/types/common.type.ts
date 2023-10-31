@@ -2,7 +2,7 @@ import { AlertColor } from '@mui/material'
 
 export interface CommonResponse {
   message: string
-  status: boolean
+  error: boolean
 }
 
 export enum ModalReason {
