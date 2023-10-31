@@ -1,14 +1,11 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { routes } from './routes'
+import { SurveyView } from '../views/SurveyView'
 
 export const SurveyRoutes = () => {
   return (
     <Routes>
-      {routes.map(({ path, Component }) => (
-        <Route key={path} path={path} element={<Component />} />
-      ))}
-
-      <Route path="/*" element={<Navigate to={routes[0].to} replace />} />
+      <Route key="/" path="/*" element={<SurveyView />} />
+      {/* <Route path="/*" element={<Navigate to="/" replace />} /> */}
     </Routes>
   )
 }

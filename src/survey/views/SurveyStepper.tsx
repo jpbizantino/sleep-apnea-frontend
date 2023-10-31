@@ -37,7 +37,7 @@ export const SurveyStepper = () => {
       <>
         <SurveyStep
           question={data[state.stepPosition - 1]}
-          key={data[state.stepPosition - 1]._id}
+          key={data[state.stepPosition - 1].questionId}
         />
       </>
     )

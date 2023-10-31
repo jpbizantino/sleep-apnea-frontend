@@ -5,7 +5,6 @@ import {
   CardMedia,
   Grid,
   IconButton,
-  Link,
   Paper,
   Snackbar,
   TextField,
@@ -136,11 +135,6 @@ export const SignInSide = () => {
                   helperText={formik.touched.password && formik.errors.password}
                 ></TextField>
 
-                {/* <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Recordarme"
-                /> */}
-
                 <Button
                   type="submit"
                   fullWidth
@@ -151,27 +145,7 @@ export const SignInSide = () => {
                 >
                   INGRESAR
                 </Button>
-                {/* <Grid container>
-                  <Grid item xs>
-                    <Link
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => navigate('/auth/reset')}
-                      variant="body2"
-                    >
-                      ¿Olvidó su contraseña?
-                    </Link>
-                  </Grid>
 
-                  <Grid item>
-                    <Link
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => navigate('/auth/register')}
-                      variant="body2"
-                    >
-                      Crear Cuenta
-                    </Link>
-                  </Grid>
-                </Grid> */}
                 <Copyright sx={{ mt: 5 }} />
               </Box>
             </Box>

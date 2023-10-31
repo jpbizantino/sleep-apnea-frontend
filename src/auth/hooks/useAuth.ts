@@ -81,8 +81,5 @@ export const useAuth = () => {
     checkAuthToken,
     startLogin,
     startLogout,
-    // setRegistrationStep,
-    // nextRegistrationStep,
-    // setUserRegistration,
   }
 }

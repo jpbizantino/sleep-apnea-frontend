@@ -98,7 +98,7 @@ export const mdxTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 30,
+          // borderRadius: 30,
           // backgroundColor: '#5983FC',
         },
       },

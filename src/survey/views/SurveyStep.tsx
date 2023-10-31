@@ -17,7 +17,7 @@ export const SurveyStep = (props: { question: Question }) => {
   const { state, dispatch } = useContext(SurveyContext)
 
   const initialValue: Answer = {
-    questionId: props.question._id,
+    questionId: props.question.questionId,
     question: props.question,
     selectedDescription: '',
     selectedValue: '',

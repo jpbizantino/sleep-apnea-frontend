@@ -12,9 +12,11 @@ import * as React from 'react'
 
 import { Logout, VpnKey } from '@mui/icons-material'
 import { useBackoffice } from '../hooks/userBackoffice'
+import { useAuth } from '../../auth/hooks'
 
 export const NavBar = () => {
   const { toggleMainMenu } = useBackoffice()
+  const { startLogout } = useAuth()
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -73,7 +75,7 @@ export const NavBar = () => {
 
       <MenuItem
         onClick={() => {
-          // startLogout()
+          startLogout()
         }}
       >
         <Logout sx={{ mr: 1 }} />
@@ -110,7 +112,7 @@ export const NavBar = () => {
 
       <MenuItem
         onClick={() => {
-          // startLogout()
+          startLogout()
         }}
       >
         <Logout sx={{ mr: 1 }} />

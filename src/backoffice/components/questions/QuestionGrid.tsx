@@ -42,6 +42,7 @@ export const QuestionGrid = () => {
   const patientLocalFilter: QuestionFilter = {
     question: '',
     description: '',
+    questionId: '',
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,8 +50,9 @@ export const QuestionGrid = () => {
 
   const columns: GridColDef[] = [
     {
-      field: '_id',
+      field: 'questionId',
       headerName: 'id',
+      width: 0,
     },
     {
       field: 'actions',
@@ -241,7 +243,7 @@ export const QuestionGrid = () => {
           backgroundColor: 'white',
           mt: 1,
         }}
-        getRowId={(row: Question) => row._id}
+        getRowId={(row: Question) => row.questionId}
         rows={data ?? []}
         columns={columns}
         // pageSize={50}

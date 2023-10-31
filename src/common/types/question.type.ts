@@ -3,7 +3,7 @@ import { QuestionType } from '../enum/question.enum'
 import { Rule } from './rule.type'
 
 export interface Question {
-  _id: string
+  questionId: string
   question: string
   description: string
   order: number

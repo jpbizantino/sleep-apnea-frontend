@@ -5,7 +5,7 @@ export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
   endpoints: (builder) => ({
     getQuestions: builder.query<Question[], QuestionFilter>({
       query: () => ({
-        url: `/question`,
+        url: `/questions`,
         method: 'GET',
         //body: filter,
       }),
@@ -13,7 +13,7 @@ export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
     }),
     getQuestion: builder.query<Question, string>({
       query: (id: string) => ({
-        url: `/question/${id}`,
+        url: `/questions/${id}`,
         method: 'GET',
       }),
 
@@ -21,25 +21,25 @@ export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
     }),
     createQuestion: builder.mutation<Question, Question>({
       query: (item) => ({
-        url: `/question`,
+        url: `/questions`,
         method: 'POST',
         body: item,
       }),
 
       invalidatesTags: (_result, _error, arg) => [
-        { type: 'Backoffice', physicianId: arg._id },
+        { type: 'Backoffice', physicianId: arg.questionId },
       ],
     }),
 
     updateQuestion: builder.mutation<Question, Question>({
       query: (item) => ({
-        url: `/question/${item._id}`,
-        method: 'PUT',
+        url: `/questions/${item.questionId}`,
+        method: 'PATCH',
         body: item,
       }),
 
       invalidatesTags: (_result, _error, arg) => [
-        { type: 'Backoffice', physicianId: arg._id },
+        { type: 'Backoffice', physicianId: arg.questionId },
       ],
     }),
   }),

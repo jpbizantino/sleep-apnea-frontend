@@ -92,7 +92,7 @@ export const QuestionForm = () => {
   }
 
   let initialValue: Question = {
-    _id: '',
+    questionId: '',
     question: '',
     description: '',
     order: 0,
@@ -120,11 +120,11 @@ export const QuestionForm = () => {
         color: 'info',
       })
 
-      if (values._id == '') {
+      if (values.questionId == '') {
         createQuestion(processValues(values))
           .unwrap()
           .then((result: Question) => {
-            formik.setFieldValue('_id', result._id)
+            formik.setFieldValue('_id', result.questionId)
             setAlert({
               isAlertOpen: true,
               message: 'Datos guardados exitosamente',
@@ -312,7 +312,9 @@ export const QuestionForm = () => {
             >
               <AccordionSummary>
                 <Typography variant="h6">
-                  {formik.values._id ? 'Editar Pregunta' : 'Nueva Pregunta'}
+                  {formik.values.questionId
+                    ? 'Editar Pregunta'
+                    : 'Nueva Pregunta'}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>

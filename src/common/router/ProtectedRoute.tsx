@@ -8,21 +8,20 @@ interface Props {
 }
 
 export const ProtectedRoute = ({ children }: Props) => {
-  const { checkAuthToken } = useAuth()
+  const { error, checkAuthToken } = useAuth()
 
   useEffect(() => {
     checkAuthToken()
   }, [])
 
-  return (
-    <Routes>
-      <Route
-        path="/backoffice/*"
-        element={<Navigate to="/backoffice/auth/login" />}
-      />
-      <Route path="/backoffice/auth/*" element={<AuthRoutes />} />
-    </Routes>
-  )
+  if (error !== 'authenticated') {
+    return (
+      <Routes>
+        <Route path="/*" element={<Navigate to="/backoffice/auth/login" />} />
+        <Route path="/backoffice/auth/*" element={<AuthRoutes />} />
+      </Routes>
+    )
+  }
 
   return children ? <> children</> : <Outlet />
 }
