@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { SurveyView } from '../views/SurveyView'
 
 export const SurveyRoutes = () => {

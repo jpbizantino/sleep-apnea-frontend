@@ -2,8 +2,11 @@ import { combineReducers } from '@reduxjs/toolkit'
 import storage from 'redux-persist/lib/storage'
 import { questionQuerySlice } from '../../survey/slices'
 import { patientQuerySlice } from '../../patient/slices'
-import { backofficeSlice, backofficeQuerySlice } from '../../backoffice/slices'
-import { authSlice } from '../../auth/slices'
+import {
+  backofficeSlice,
+  backofficeQuerySlice,
+} from '../../backoffice/common/slices'
+import { authSlice } from '../../backoffice/auth/slices'
 
 //Redux-Persist config
 //Must place RTK Query reducer in the blacklist

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom'
-import { useAuth } from '../../auth/hooks'
-import { AuthRoutes } from '../../auth/routes/AuthRoutes'
+import { useAuth } from '../../backoffice/auth/hooks'
+import { AuthRoutes } from '../../backoffice/auth/routes/AuthRoutes'
 
 interface Props {
   children?: React.ReactNode

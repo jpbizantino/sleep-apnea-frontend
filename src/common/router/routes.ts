@@ -1,5 +1,5 @@
 import { LazyExoticComponent } from 'react'
-import { BackofficeRoutes } from '../../backoffice/routes/BackofficeRoutes'
+import { BackofficeRoutes } from '../../backoffice/common/routes/BackofficeRoutes'
 import { SurveyRoutes } from '../../survey/routes/SurveyRoutes'
 
 type JSXComponent = () => JSX.Element

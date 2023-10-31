@@ -14,7 +14,7 @@ import {
 } from 'redux-persist'
 import { questionQuerySlice } from '../survey/slices'
 import { patientQuerySlice } from '../patient/slices'
-import { backofficeQuerySlice } from '../backoffice/slices'
+import { backofficeQuerySlice } from '../backoffice/common/slices'
 
 // import { calendarSlice2 } from '../appointment/services/calendarSlice2'
 

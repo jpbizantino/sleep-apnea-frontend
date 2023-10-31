@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { ReactNode } from 'react'
-import { NavBar, SideBar } from '../../backoffice/components'
+import { NavBar, SideBar } from '../../backoffice/common/components'
 
 interface Props {
   children?: ReactNode
