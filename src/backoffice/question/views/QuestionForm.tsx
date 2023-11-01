@@ -5,8 +5,8 @@ import {
   AccordionSummary,
   Box,
   Button,
-  Paper,
   Grid,
+  Paper,
   TextField,
   Typography,
 } from '@mui/material'
@@ -15,27 +15,27 @@ import { useFormik } from 'formik'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import * as yup from 'yup'
+import { CustomSnackbar } from '../../../common/components/CustomSnackbar'
 import { Loader } from '../../../common/components/Loader'
+import { ProcessingRule } from '../../../common/enum/processingRule.enum'
+import { QuestionType } from '../../../common/enum/question.enum'
 import {
   AlertOption,
   Choice,
   GenericDictionary,
   Question,
 } from '../../../common/types'
-import { QuestionType } from '../../../common/enum/question.enum'
-import { ChoiceModal } from '../components/ChoiceModal'
+import { Rule } from '../../../common/types/rule.type'
 import { useBackoffice } from '../../common/hooks/userBackoffice'
 import { BackofficePage } from '../../common/pages/BackofficePage'
+import { QuestionTypeCombo } from '../components'
+import { ChoiceModal } from '../components/ChoiceModal'
+import { RuleTypeCombo } from '../components/RuleTypeCombo'
 import {
-  useGetQuestionQuery,
   useCreateQuestionMutation,
+  useGetQuestionQuery,
   useUpdateQuestionMutation,
 } from '../slices/questionQuerySlice'
-import { CustomSnackbar } from '../../../common/components/CustomSnackbar'
-import { Rule } from '../../../common/types/rule.type'
-import { ProcessingRule } from '../../../common/enum/processingRule.enum'
-import { QuestionTypeCombo } from '../components'
-import { RuleTypeCombo } from '../components/RuleTypeCombo'
 
 const ruleSchema = yup.object().shape({
   processingRule: yup.string().required('Seleccione una regla'),
@@ -97,7 +97,8 @@ export const QuestionForm = () => {
     description: '',
     order: 0,
     questionType: QuestionType.FIX_NUMBER,
-    images: [],
+    image:
+      'https://lh6.googleusercontent.com/aYx29k7SB9GFO5T6z4sGyz8hSEgO1V2phkUaTFhIsU0EpLKBj1TODTtpzBUGfkFe6nGSWGYmy1XB5wrF3M1fE-hc-bOP3CXrcaA1MFQvJFfcO0guq-aOEmhawhSs2Lq_Og=w740',
     choices: [],
     rule: rule,
   }
@@ -173,7 +174,9 @@ export const QuestionForm = () => {
   }, [isSuccess])
 
   const handleChoice = (choice: Choice) => {
-    const index = formik.values.choices.findIndex((a) => a._id === choice._id)
+    const index = formik.values.choices.findIndex(
+      (a) => a.choiceId === choice.choiceId
+    )
 
     const tempChoices = [...formik.values.choices]
 
@@ -187,7 +190,9 @@ export const QuestionForm = () => {
   }
 
   const handleDeleteChoice = (choice: Choice) => {
-    const index = formik.values.choices.findIndex((a) => a._id === choice._id)
+    const index = formik.values.choices.findIndex(
+      (a) => a.choiceId === choice.choiceId
+    )
 
     setAlert({
       isAlertOpen: false,
@@ -204,7 +209,7 @@ export const QuestionForm = () => {
     } else {
       formik.setFieldValue(
         'choices',
-        formik.values.choices.filter((p) => p._id !== choice._id)
+        formik.values.choices.filter((p) => p.choiceId !== choice.choiceId)
       )
     }
   }
@@ -285,7 +290,7 @@ export const QuestionForm = () => {
           <Grid item xs={12}>
             {formik.values.choices.map((item: Choice) => {
               return (
-                <div key={item._id}>
+                <div key={item.choiceId}>
                   <InternalChoiceCard choice={item} />
                 </div>
               )
@@ -389,6 +394,50 @@ export const QuestionForm = () => {
                         formik.setFieldValue('questionType', value.name)
                       }}
                     />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      name="images"
+                      label="Imágenes"
+                      variant="standard"
+                      fullWidth
+                      multiline
+                      minRows={2}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.image && Boolean(formik.errors.image)
+                      }
+                      helperText={formik.touched.image && formik.errors.image}
+                      value={formik.values.image}
+                    />
+
+                    <Box
+                      sx={{
+                        overflow: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        pt: 2,
+                      }}
+                    >
+                      {/* Signature error message */}
+                      {formik.values.image && (
+                        <Typography
+                          color="error"
+                          variant="caption"
+                          display="block"
+                        >
+                          {formik.touched.image && formik.errors.image}
+                        </Typography>
+                      )}
+
+                      {formik.values.image && (
+                        <img
+                          src={formik.values.image}
+                          style={{ height: 150, width: 250 }}
+                        />
+                      )}
+                    </Box>
                   </Grid>
                   <Grid item xs={12}>
                     <>

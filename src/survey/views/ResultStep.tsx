@@ -3,8 +3,8 @@ import { useContext, useEffect, useState } from 'react'
 import { AlertControl } from '../../common/components/AlertControl'
 import { Loader } from '../../common/components/Loader'
 import { AlertOption } from '../../common/types'
-import { Result } from '../entities/result.entity'
-import { useRunAlgorithmQuery } from '../slices/resultQuerySlice'
+import { Result } from '../types/result.types'
+import { useRunAlgorithmQuery } from '../slices/surveyQuerySlice'
 import { SurveyContext } from './context/SurveyContext'
 
 export const ResultStep = () => {

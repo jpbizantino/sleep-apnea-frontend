@@ -1,16 +1,27 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { API_URL } from '../../config'
+import { Survey, Result } from '../types'
+import { baseQuerySlice } from './baseQuerySlice'
 
-export const surveyQuerySlice = createApi({
-  reducerPath: 'surveyQuerySlice',
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${API_URL}`,
-    // prepareHeaders: (headers, {}) => {
-    //   headers.set('authorization', `Bearer ${localStorage.getItem('token')}`)
-    //   return headers
-    // },
+const base = 'surveys'
+
+export const surveyQuerySlice = baseQuerySlice.injectEndpoints({
+  endpoints: (builder) => ({
+    createSurvey: builder.mutation<Survey, Survey>({
+      query: (result) => ({
+        url: `/${base}`,
+        method: 'POST',
+        body: result,
+      }),
+      invalidatesTags: ['Survey'],
+    }),
+
+    runAlgorithm: builder.query<Result, string>({
+      query: (inputId) => ({
+        url: `/${base}/runAlgorithm/${inputId}`,
+        method: 'GET',
+      }),
+    }),
   }),
-  tagTypes: ['Questions'],
-
-  endpoints: () => ({}),
 })
+
+export const { useCreateSurveyMutation, useRunAlgorithmQuery } =
+  surveyQuerySlice

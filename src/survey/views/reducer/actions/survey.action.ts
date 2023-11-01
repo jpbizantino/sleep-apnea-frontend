@@ -1,5 +1,5 @@
 import { Patient } from '../../../../patient/types'
-import { Answer } from '../../../entities/answer.entity'
+import { Answer } from '../../../types/answer.types'
 
 export enum SurveyActionType {
   ADD_PATIENT_DATA = 'ADD_PATIENT_DATA',

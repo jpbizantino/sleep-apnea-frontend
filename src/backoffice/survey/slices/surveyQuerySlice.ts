@@ -11,7 +11,7 @@ export const surveyQuerySlice = backofficeQuerySlice.injectEndpoints({
       }),
       providesTags: ['Survey'],
     }),
-    getSurvey: builder.query<Survey, string>({
+    getSurvey: builder.query<Survey[], string>({
       query: (id: string) => ({
         url: `/surveys/${id}`,
         method: 'GET',

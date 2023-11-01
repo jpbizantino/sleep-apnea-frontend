@@ -20,7 +20,7 @@ export const ChoiceModal = (props: { handleChoice: any }) => {
     useBackoffice()
 
   const initialValue: Choice = {
-    _id: crypto.randomUUID().toString(),
+    choiceId: crypto.randomUUID().toString(),
     description: '',
     choiceValue: 0,
     order: 0,
@@ -68,7 +68,7 @@ export const ChoiceModal = (props: { handleChoice: any }) => {
       <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
         <DialogTitle>
           <Typography variant="h6" color="primary" gutterBottom>
-            {formik.values._id ? 'Editar Opción' : 'Nueva Opción'}
+            {formik.values.choiceId ? 'Editar Opción' : 'Nueva Opción'}
           </Typography>
         </DialogTitle>
         <DialogContent>

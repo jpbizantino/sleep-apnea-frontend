@@ -13,7 +13,7 @@ import { useCreatePatientMutation } from '../../patient/slices'
 import { AlertOption } from '../../common/types'
 import { AlertControl } from '../../common/components/AlertControl'
 import { Loader } from '../../common/components/Loader'
-import { convertDateToDbFormat } from '../../common/utilities'
+// import { convertDateToDbFormat } from '../../common/utilities'
 
 export const PatientStep = (props: { stepPosition: string }) => {
   const { dispatch } = useContext(SurveyContext)
@@ -26,10 +26,10 @@ export const PatientStep = (props: { stepPosition: string }) => {
   })
 
   const initialValues: Patient = {
-    _id: '',
+    patientId: '',
     firstName: '',
     lastName: '',
-    dateOfBirth: '',
+    dateOfBirth: null,
     gender: '',
     email: '',
     _gender: null,
@@ -87,14 +87,16 @@ export const PatientStep = (props: { stepPosition: string }) => {
       createPatient({
         ...values,
         gender: values._gender ? values._gender.genderCode : 'O',
-        dateOfBirth: values._birthDate
-          ? convertDateToDbFormat(values._birthDate)
-          : '',
+        dateOfBirth: values._birthDate,
+
+        // dateOfBirth: values._birthDate
+        //   ? convertDateToDbFormat(values._birthDate)
+        //   : '',
       })
         .unwrap()
         .then((p: Patient) => {
           // Add a Patient to the context
-          dispatch(doAddPatient({ ...values, _id: p._id }))
+          dispatch(doAddPatient({ ...values, patientId: p.patientId }))
           // Enable Next Button
           dispatch(doNextStep())
         })

@@ -1,12 +1,12 @@
 import { combineReducers } from '@reduxjs/toolkit'
 import storage from 'redux-persist/lib/storage'
-import { questionQuerySlice } from '../../survey/slices'
 import { patientQuerySlice } from '../../patient/slices'
 import {
   backofficeSlice,
   backofficeQuerySlice,
 } from '../../backoffice/common/slices'
 import { authSlice } from '../../backoffice/auth/slices'
+import { baseQuerySlice } from '../../survey/slices/baseQuerySlice'
 
 //Redux-Persist config
 //Must place RTK Query reducer in the blacklist
@@ -15,7 +15,7 @@ export const persistConfig = {
   storage: storage,
   whitelist: [''],
   blacklist: [
-    questionQuerySlice.reducerPath,
+    baseQuerySlice.reducerPath,
     patientQuerySlice.reducerPath,
     backofficeQuerySlice.reducerPath,
   ],
@@ -26,7 +26,7 @@ export const rootReducer = combineReducers({
   auth: authSlice.reducer,
 
   /** RTK Query Reducers*/
-  [questionQuerySlice.reducerPath]: questionQuerySlice.reducer,
+  [baseQuerySlice.reducerPath]: baseQuerySlice.reducer,
   [patientQuerySlice.reducerPath]: patientQuerySlice.reducer,
   [backofficeQuerySlice.reducerPath]: backofficeQuerySlice.reducer,
 })

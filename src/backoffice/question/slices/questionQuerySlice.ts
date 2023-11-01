@@ -9,7 +9,7 @@ export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
         method: 'GET',
         //body: filter,
       }),
-      providesTags: ['Backoffice'],
+      providesTags: ['Question'],
     }),
     getQuestion: builder.query<Question, string>({
       query: (id: string) => ({
@@ -17,7 +17,7 @@ export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
         method: 'GET',
       }),
 
-      providesTags: ['Backoffice'],
+      providesTags: ['Question'],
     }),
     createQuestion: builder.mutation<Question, Question>({
       query: (item) => ({

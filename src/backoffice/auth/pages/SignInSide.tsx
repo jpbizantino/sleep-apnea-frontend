@@ -1,8 +1,7 @@
-import { Close, Copyright } from '@mui/icons-material'
+import { Close } from '@mui/icons-material'
 import {
   Box,
   Button,
-  CardMedia,
   Grid,
   IconButton,
   Paper,
@@ -14,11 +13,11 @@ import { useFormik } from 'formik'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
-// import { Copyright } from '../../common/components/Copyright'
+import { Copyright } from '../../../common/components/Copyright'
+import { UserLoginData } from '../../common/types/user.type'
 import { useAuth } from '../hooks'
 import { AuthLayout } from '../layout/AuthLayout'
-import { UserLoginData } from '../../common/types/user.type'
-// import { UserLoginData } from '../../common/types/user.type'
+import { LOGIN_URL, LOGO } from '../../../config'
 
 const validationSchema = yup.object({
   username: yup.string().required('El campo es requerido'),
@@ -58,8 +57,8 @@ export const SignInSide = () => {
     <AuthLayout title="Login">
       <form onSubmit={formik.handleSubmit}>
         <Grid container component="main" sx={{ height: '100vh' }}>
-          <Grid item xs={false} sm={false} md={7}>
-            <CardMedia
+          <Grid item xs={false} sm={false} md={8}>
+            <Box
               sx={{
                 height: '100%',
                 display: {
@@ -69,14 +68,20 @@ export const SignInSide = () => {
                   xl: 'block',
                 },
               }}
-              image="/assets/background.jpg"
-            ></CardMedia>
+            >
+              <iframe
+                src={LOGIN_URL}
+                allowFullScreen
+                width="100%"
+                height="100%"
+              />
+            </Box>
           </Grid>
           <Grid
             item
             xs={12}
             sm={12}
-            md={5}
+            md={4}
             component={Paper}
             elevation={6}
             square
@@ -91,8 +96,7 @@ export const SignInSide = () => {
               }}
             >
               <img
-                //src="https://clinicasanmiguelweb.com/wp-content/uploads/2022/10/logo-csm1.png"
-                src="https://acdn.mitiendanube.com/stores/002/530/264/themes/common/logo-1089671112-1667238889-5f8cd55eb9de7f933aa60122e63d31131667238889-480-0.png?0"
+                src={LOGO} //"../../../../public/logo.png"
                 loading="lazy"
                 height="100"
               />
@@ -113,6 +117,7 @@ export const SignInSide = () => {
                   value={formik.values.username}
                   onChange={formik.handleChange}
                   fullWidth
+                  autoComplete="disable-autofill"
                   error={
                     formik.touched.username && Boolean(formik.errors.username)
                   }
@@ -123,7 +128,7 @@ export const SignInSide = () => {
                   InputLabelProps={{ shrink: false, sx: { ml: 2 } }}
                   label={formik.values.username === '' ? 'Contraseña' : ' '}
                   name="password"
-                  autoComplete="on"
+                  autoComplete="disable-autofill"
                   margin="normal"
                   type="password"
                   placeholder="Contraseña"

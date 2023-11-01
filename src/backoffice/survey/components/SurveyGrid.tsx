@@ -11,40 +11,36 @@ import {
   AccordionSummary,
   Button,
   Grid,
-  TextField,
   Typography,
 } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { SkipToken, skipToken } from '@reduxjs/toolkit/dist/query'
 import { useFormik } from 'formik'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
-import {
-  ProcessingRule,
-  translateProcessingRule,
-} from '../../../common/enum/processingRule.enum'
-import { useGetSurveysQuery } from '../slices/surveyQuerySlice'
-import { SurveyFilter } from '../../common/types/survey.type'
 import { Patient } from '../../../patient/types'
+import { Survey, SurveyFilter } from '../../common/types/survey.type'
+import { useGetSurveysQuery } from '../slices/surveyQuerySlice'
+import { convertDateToStringDate } from '../../../common/utilities'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const SurveyGrid = () => {
   const navigate = useNavigate()
 
-const initialPatient: Patient = {
-  _id: '',
-  firstName: '',
-  lastName: '',
-  dateOfBirth: new Date(),
-  email: '',
-  gender: '',
-  weight: 0,
-  height: 0,
-  _birthDate: new Date(),
-  _gender: null
-}
+  const initialPatient: Patient = {
+    patientId: '',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: null,
+    email: '',
+    gender: '',
+    weight: 0,
+    height: 0,
+    _birthDate: new Date(),
+    _gender: null,
+  }
 
   const surveyLocalFilter: SurveyFilter = {
     surveyId: '',
@@ -52,6 +48,7 @@ const initialPatient: Patient = {
     answer: [],
     createdAt: '',
     updatedAt: '',
+    calculatedScore: 0,
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -86,16 +83,26 @@ const initialPatient: Patient = {
 
     {
       field: 'patient',
-      headerName: 'Patient',
+      headerName: 'Paciente',
       width: 300,
       renderCell: (cellValues) => {
-        return cellValues.row.patient.firstName
+        return `${cellValues.row.patient.lastName}, ${cellValues.row.patient.firstName} `
       },
     },
-
     {
-      field: 'createAt',
+      field: 'createdAt',
       headerName: 'Fecha',
+      width: 200,
+      renderCell: (cellValues) => {
+        return convertDateToStringDate(
+          new Date(cellValues.row.createdAt),
+          'dd/MM/yyyy HH:mm'
+        )
+      },
+    },
+    {
+      field: 'calculatedScore',
+      headerName: 'Score',
       width: 200,
     },
   ]
@@ -122,14 +129,18 @@ const initialPatient: Patient = {
     },
   })
 
-  const { isFetching, data } = useGetSurveysQuery(filter)
+  const { isFetching, data, isSuccess } = useGetSurveysQuery(filter)
+
+  useEffect(() => {
+    console.log(data)
+  }, [isSuccess])
 
   return (
     <>
       <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
         <Accordion sx={{ mb: 1 }} disableGutters={true} defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMore />}>
-            <Typography variant="h6">Filtros - Preguntas</Typography>
+            <Typography variant="h6">Filtros - Encuestas</Typography>
           </AccordionSummary>
 
           <AccordionDetails>
@@ -145,11 +156,11 @@ const initialPatient: Patient = {
                   helperText={formik.touched.survey && formik.errors.survey}
                   value={formik.values.survey}
                   disabled={isFetching}
-                /> */}
-              </Grid>
+                /> 
+              </Grid>*/}
               <Grid item sm={4}>
-               <label>Hola</label>
-               
+                <label>Hola</label>
+
                 {/* <TextField
                   name="description"
                   label="Descripcion"
@@ -205,7 +216,7 @@ const initialPatient: Patient = {
                   variant="contained"
                   disabled={isFetching}
                   onClick={() => {
-                    navigate('/backoffice/surveys/new')
+                    navigate('/')
                   }}
                 >
                   Nuevo
@@ -232,7 +243,7 @@ const initialPatient: Patient = {
           mt: 1,
         }}
         getRowId={(row: Survey) => row.surveyId}
-        rows={data ?? []}
+        rows={filter === skipToken ? [] : data ?? []}
         columns={columns}
         // pageSize={50}
         slots={{

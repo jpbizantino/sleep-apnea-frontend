@@ -1,5 +1,5 @@
 export interface Choice {
-  _id: string
+  choiceId: string
   description: string
   choiceValue: number
   order: number

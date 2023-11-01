@@ -43,6 +43,7 @@ export const QuestionGrid = () => {
     question: '',
     description: '',
     questionId: '',
+    image: '',
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -243,7 +244,7 @@ export const QuestionGrid = () => {
           mt: 1,
         }}
         getRowId={(row: Question) => row.questionId}
-        rows={data ?? []}
+        rows={filter === skipToken ? [] : data ?? []}
         columns={columns}
         // pageSize={50}
         slots={{

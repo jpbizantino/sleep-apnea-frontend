@@ -1,11 +1,11 @@
 import { Question } from '../../common/types'
-import { surveyQuerySlice } from './surveyQuerySlice'
+import { baseQuerySlice } from './baseQuerySlice'
 
-export const questionQuerySlice = surveyQuerySlice.injectEndpoints({
+export const questionQuerySlice = baseQuerySlice.injectEndpoints({
   endpoints: (builder) => ({
     getQuestions: builder.query<Question[], null>({
       query: () => ({
-        url: `/question`,
+        url: `/questions`,
         method: 'GET',
       }),
       providesTags: ['Questions'],

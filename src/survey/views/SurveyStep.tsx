@@ -8,7 +8,7 @@ import {
   doNextStep,
   doRemoveAnswer,
 } from './reducer/actions/survey.action'
-import { Answer } from '../entities/answer.entity'
+import { Answer } from '../types/answer.types'
 import * as yup from 'yup'
 import { QuestionType } from '../../common/enum/question.enum'
 import { Question } from '../../common/types'
@@ -18,8 +18,7 @@ export const SurveyStep = (props: { question: Question }) => {
 
   const initialValue: Answer = {
     questionId: props.question.questionId,
-    question: props.question,
-    selectedDescription: '',
+    jsonQuestion: JSON.stringify(props.question),
     selectedValue: '',
   }
   const validationSchema = yup.object({
@@ -52,13 +51,11 @@ export const SurveyStep = (props: { question: Question }) => {
 
     if (props.question.questionType == QuestionType.FIX_NUMBER) {
       formik.setFieldValue('selectedValue', e.target.value, true)
-      formik.setFieldValue('selectedDescription', e.target.value, true)
     } else {
       const selected = props.question.choices.find(
-        (p) => p._id == e.target.value
+        (p) => p.choiceId == e.target.value
       )
       formik.setFieldValue('selectedValue', selected?.choiceValue)
-      formik.setFieldValue('selectedDescription', selected?.description)
     }
   }
 

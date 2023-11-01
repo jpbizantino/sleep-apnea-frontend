@@ -3,7 +3,7 @@ import { Patient } from '../../../patient/types'
 import { surveyReducer } from '../reducer/state/survey.state'
 import { SurveyState } from '../reducer/types/survey.type'
 import { SurveyContext } from './SurveyContext'
-import { Answer } from '../../entities/answer.entity'
+import { Answer } from '../../types/answer.types'
 
 interface Props {
   children?: ReactNode
@@ -12,10 +12,10 @@ interface Props {
 const initialPatient: Patient = {
   firstName: '',
   lastName: '',
-  dateOfBirth: '',
+  dateOfBirth: null,
   email: '',
   _gender: null,
-  _id: '',
+  patientId: '',
   gender: '',
   weight: 0,
   height: 0,

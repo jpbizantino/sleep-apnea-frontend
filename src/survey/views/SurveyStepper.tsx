@@ -75,7 +75,7 @@ export const SurveyStepper = () => {
             <>
               <MobileStepper
                 variant="progress"
-                steps={state.totalSteps + 2}
+                steps={state.totalSteps + 3}
                 position="static"
                 activeStep={state.stepPosition}
                 sx={{ flexGrow: 1 }}

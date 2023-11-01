@@ -5,11 +5,11 @@ import { Patient } from '../types'
 export const patientQuerySlice = createApi({
   reducerPath: 'patientQuerySlice',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_URL}/patient`,
-    // prepareHeaders: (headers, {}) => {
-    //   headers.set('authorization', `Bearer ${localStorage.getItem('token')}`)
-    //   return headers
-    // },
+    baseUrl: `${API_URL}/patients`,
+    prepareHeaders: (headers, {}) => {
+      headers.set('authorization', `Bearer ${localStorage.getItem('token')}`)
+      return headers
+    },
   }),
   tagTypes: ['Patients'],
 

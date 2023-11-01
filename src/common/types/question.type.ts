@@ -8,7 +8,7 @@ export interface Question {
   description: string
   order: number
   questionType: QuestionType
-  images: string[]
+  image: string
   choices: Choice[]
   rule: Rule
 }

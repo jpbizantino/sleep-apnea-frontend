@@ -38,8 +38,8 @@ export const QuestionComponent = (props: {
             return (
               <>
                 <FormControlLabel
-                  key={item._id}
-                  value={item._id}
+                  key={item.choiceId}
+                  value={item.choiceId}
                   control={<Radio />}
                   label={item.description}
                 />

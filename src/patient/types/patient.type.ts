@@ -2,10 +2,10 @@ import { CommonResponse } from '../../common/types'
 import { Gender } from '../../common/types/gender.type'
 
 export interface Patient {
-  _id: string
+  patientId: string
   firstName: string
   lastName: string
-  dateOfBirth: string
+  dateOfBirth: Date | null // string
   email: string
   gender: string
   weight: number

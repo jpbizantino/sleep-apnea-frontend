@@ -1,5 +1,7 @@
-import { LazyExoticComponent, lazy } from 'react'
+import { LazyExoticComponent } from 'react'
 import { QuestionForm } from '../../question/views/QuestionForm'
+import { SurveyList } from '../../survey/views/SurveyList'
+import BackofficeView from '../views/BackofficeView'
 
 type JSXComponent = () => JSX.Element
 
@@ -10,20 +12,19 @@ interface Route {
   name: string
 }
 
-const backOfficeViewLazy = lazy(() => import('../views/BackofficeView'))
-
 export const routes: Route[] = [
   {
     path: '/*',
-    Component: backOfficeViewLazy,
+    Component: BackofficeView,
     to: '/',
-    name: 'Admisión',
+    name: 'Principal',
   },
+  // Questions
   {
     path: '/questions/*',
-    Component: backOfficeViewLazy,
+    Component: BackofficeView,
     to: '/',
-    name: 'Admisión',
+    name: 'Pregutas',
   },
   {
     path: '/questions/:questionId',
@@ -33,6 +34,26 @@ export const routes: Route[] = [
   },
   {
     path: '/questions/new',
+    Component: QuestionForm,
+    to: '/questions/new',
+    name: 'Pregunta',
+  },
+
+  // Survey
+  {
+    path: '/surveys/*',
+    Component: SurveyList,
+    to: '/',
+    name: 'Pregutas',
+  },
+  {
+    path: '/surveys/:questionId',
+    Component: QuestionForm,
+    to: '/:questionId',
+    name: 'Pregunta',
+  },
+  {
+    path: '/surveys/new',
     Component: QuestionForm,
     to: '/questions/new',
     name: 'Pregunta',

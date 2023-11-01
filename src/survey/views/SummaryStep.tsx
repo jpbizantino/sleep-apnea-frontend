@@ -6,8 +6,8 @@ import { Loader } from '../../common/components/Loader'
 import { AlertOption } from '../../common/types'
 import { PatientCard } from '../components/PatientCard'
 import { ResultCard } from '../components/ResultCard'
-import { Input } from '../entities/input.entity'
-import { useCreateSurveyMutation } from '../slices/resultQuerySlice'
+import { Survey } from '../types/survey.types'
+import { useCreateSurveyMutation } from '../slices/surveyQuerySlice'
 import { SurveyContext } from './context/SurveyContext'
 import {
   doEnableNextButton,
@@ -26,19 +26,19 @@ export const SummaryStep = () => {
     color: 'info',
   })
 
-  const initialValue: Input = {
-    patientId: state.patient._id,
+  const initialValue: Survey = {
+    patientId: state.patient.patientId,
     answers: state.surveyResults,
-    _id: '',
+    surveyId: '',
   }
 
   const formik = useFormik({
     initialValues: initialValue,
-    onSubmit: (values: Input) => {
+    onSubmit: (values: Survey) => {
       createSurvey(values)
         .unwrap()
         .then((input) => {
-          dispatch(doSetInputId(input._id))
+          dispatch(doSetInputId(input.surveyId))
           dispatch(doEnablePreviousButton(false))
           dispatch(doEnableNextButton(false))
           dispatch(doNextStep())

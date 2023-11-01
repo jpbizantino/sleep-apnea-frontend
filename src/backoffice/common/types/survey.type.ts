@@ -5,6 +5,7 @@ export interface Survey {
   surveyId: string
   patient: Patient
   answer: Answer[]
+  calculatedScore?: number
   createdAt: string
   updatedAt: string
 }
