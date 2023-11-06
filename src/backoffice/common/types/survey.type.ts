@@ -4,7 +4,7 @@ import { Answer } from './answer.type'
 export interface Survey {
   surveyId: string
   patient: Patient
-  answer: Answer[]
+  answers: Answer[]
   calculatedScore?: number
   createdAt: string
   updatedAt: string

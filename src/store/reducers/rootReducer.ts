@@ -6,7 +6,8 @@ import {
   backofficeQuerySlice,
 } from '../../backoffice/common/slices'
 import { authSlice } from '../../backoffice/auth/slices'
-import { baseQuerySlice } from '../../survey/slices/baseQuerySlice'
+import { baseQuerySlice } from '../../publicSurvey/slices/baseQuerySlice'
+// import { baseQuerySlice } from '../../survey/slices/baseQuerySlice'
 
 //Redux-Persist config
 //Must place RTK Query reducer in the blacklist

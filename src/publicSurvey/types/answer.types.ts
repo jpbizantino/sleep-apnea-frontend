@@ -1,5 +1,5 @@
 export interface Answer {
   questionId: string
-  selectedValue: string
+  selectedValue: number
   jsonQuestion: string
 }

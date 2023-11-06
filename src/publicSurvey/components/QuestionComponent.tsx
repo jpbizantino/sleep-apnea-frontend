@@ -48,6 +48,14 @@ export const QuestionComponent = (props: {
           })}
         </RadioGroup>
       )}
+
+      <Box sx={{ m: 2, p: 2 }}>
+        {props.question.imageLink && (
+          <>
+            <img src={props.question.imageLink} />
+          </>
+        )}
+      </Box>
     </Box>
   </>
 )

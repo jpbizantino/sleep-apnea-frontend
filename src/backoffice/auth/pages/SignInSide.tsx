@@ -14,10 +14,10 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 import { Copyright } from '../../../common/components/Copyright'
+import { LOGIN_URL, LOGO } from '../../../config'
 import { UserLoginData } from '../../common/types/user.type'
 import { useAuth } from '../hooks'
 import { AuthLayout } from '../layout/AuthLayout'
-import { LOGIN_URL, LOGO } from '../../../config'
 
 const validationSchema = yup.object({
   username: yup.string().required('El campo es requerido'),
@@ -32,7 +32,7 @@ export const SignInSide = () => {
 
   useEffect(() => {
     if (error == 'authenticated') {
-      navigate('/')
+      navigate('/', { replace: true })
     }
   }, [error])
 
@@ -95,11 +95,7 @@ export const SignInSide = () => {
                 alignItems: 'center',
               }}
             >
-              <img
-                src={LOGO} //"../../../../public/logo.png"
-                loading="lazy"
-                height="100"
-              />
+              <img src={LOGO} loading="lazy" height="100" />
 
               <Typography component="h1" variant="h5" sx={{ mt: 4 }}>
                 Bienvenido

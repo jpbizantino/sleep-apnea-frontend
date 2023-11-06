@@ -12,11 +12,9 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist'
-import { questionQuerySlice } from '../survey/slices'
 import { patientQuerySlice } from '../patient/slices'
 import { backofficeQuerySlice } from '../backoffice/common/slices'
-
-// import { calendarSlice2 } from '../appointment/services/calendarSlice2'
+import { questionQuerySlice } from '../publicSurvey/slices'
 
 export type AppDispatch = typeof store.dispatch
 export const useAppDispatch: () => AppDispatch = useDispatch

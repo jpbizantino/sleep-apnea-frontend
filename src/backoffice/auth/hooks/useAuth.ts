@@ -53,7 +53,7 @@ export const useAuth = () => {
 
   //Hay que mejorar esto
   const checkAuthToken = async () => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token') ?? ''
     if (!token) return dispatch(onLogout(undefined))
 
     //Logout if token expired

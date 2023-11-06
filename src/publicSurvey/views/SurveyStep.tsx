@@ -19,7 +19,7 @@ export const SurveyStep = (props: { question: Question }) => {
   const initialValue: Answer = {
     questionId: props.question.questionId,
     jsonQuestion: JSON.stringify(props.question),
-    selectedValue: '',
+    selectedValue: 0,
   }
   const validationSchema = yup.object({
     questionId: yup.string().required('El campo es requerido'),
@@ -50,7 +50,7 @@ export const SurveyStep = (props: { question: Question }) => {
     if (!e.target.value) return
 
     if (props.question.questionType == QuestionType.FIX_NUMBER) {
-      formik.setFieldValue('selectedValue', e.target.value, true)
+      formik.setFieldValue('selectedValue', parseInt(e.target.value), true)
     } else {
       const selected = props.question.choices.find(
         (p) => p.choiceId == e.target.value

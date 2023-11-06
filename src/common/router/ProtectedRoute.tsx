@@ -17,7 +17,10 @@ export const ProtectedRoute = ({ children }: Props) => {
   if (error !== 'authenticated') {
     return (
       <Routes>
-        <Route path="/*" element={<Navigate to="/backoffice/auth/login" />} />
+        <Route
+          path="/*"
+          element={<Navigate to="/backoffice/auth/login" replace />}
+        />
         <Route path="/backoffice/auth/*" element={<AuthRoutes />} />
       </Routes>
     )

@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import { routes } from './routes'
 
-export const BackofficeRoutes = () => {
+export const QuestionRoutes = () => {
   return (
     <Routes>
       {routes.map(({ path, Component, to }) => (
@@ -17,4 +17,4 @@ export const BackofficeRoutes = () => {
   )
 }
 
-export default BackofficeRoutes
+export default QuestionRoutes

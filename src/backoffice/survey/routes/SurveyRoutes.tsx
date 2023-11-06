@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import { routes } from './routes'
 
-export const BackofficeRoutes = () => {
+export const SurveyRoutes = () => {
   return (
     <Routes>
       {routes.map(({ path, Component, to }) => (
@@ -12,9 +12,9 @@ export const BackofficeRoutes = () => {
         key={routes[0].to}
         path="/*"
         element={<Navigate to={routes[0].to} replace />}
-      /> */}
+      />  */}
     </Routes>
   )
 }
 
-export default BackofficeRoutes
+export default SurveyRoutes

@@ -97,8 +97,7 @@ export const QuestionForm = () => {
     description: '',
     order: 0,
     questionType: QuestionType.FIX_NUMBER,
-    image:
-      'https://lh6.googleusercontent.com/aYx29k7SB9GFO5T6z4sGyz8hSEgO1V2phkUaTFhIsU0EpLKBj1TODTtpzBUGfkFe6nGSWGYmy1XB5wrF3M1fE-hc-bOP3CXrcaA1MFQvJFfcO0guq-aOEmhawhSs2Lq_Og=w740',
+    imageLink: '',
     choices: [],
     rule: rule,
   }
@@ -397,18 +396,21 @@ export const QuestionForm = () => {
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
-                      name="images"
-                      label="Imágenes"
+                      name="imageLink"
+                      label="Link a Imagen"
                       variant="standard"
                       fullWidth
                       multiline
-                      minRows={2}
+                      maxRows={1}
                       onChange={formik.handleChange}
                       error={
-                        formik.touched.image && Boolean(formik.errors.image)
+                        formik.touched.imageLink &&
+                        Boolean(formik.errors.imageLink)
                       }
-                      helperText={formik.touched.image && formik.errors.image}
-                      value={formik.values.image}
+                      helperText={
+                        formik.touched.imageLink && formik.errors.imageLink
+                      }
+                      value={formik.values.imageLink}
                     />
 
                     <Box
@@ -421,19 +423,19 @@ export const QuestionForm = () => {
                       }}
                     >
                       {/* Signature error message */}
-                      {formik.values.image && (
+                      {formik.values.imageLink && (
                         <Typography
                           color="error"
                           variant="caption"
                           display="block"
                         >
-                          {formik.touched.image && formik.errors.image}
+                          {formik.touched.imageLink && formik.errors.imageLink}
                         </Typography>
                       )}
 
-                      {formik.values.image && (
+                      {formik.values.imageLink && (
                         <img
-                          src={formik.values.image}
+                          src={formik.values.imageLink}
                           style={{ height: 150, width: 250 }}
                         />
                       )}

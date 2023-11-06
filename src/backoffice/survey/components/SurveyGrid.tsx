@@ -1,6 +1,7 @@
 import {
   Add,
   CleaningServices,
+  Download,
   Edit,
   ExpandMore,
   Search,
@@ -20,14 +21,16 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
+import { convertDateToStringDate } from '../../../common/utilities'
 import { Patient } from '../../../patient/types'
 import { Survey, SurveyFilter } from '../../common/types/survey.type'
+import { donwloadExcel } from '../api/surveyApi'
 import { useGetSurveysQuery } from '../slices/surveyQuerySlice'
-import { convertDateToStringDate } from '../../../common/utilities'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const SurveyGrid = () => {
   const navigate = useNavigate()
+  const [getPDF, setPDF] = useState('')
 
   const initialPatient: Patient = {
     patientId: '',
@@ -45,7 +48,7 @@ export const SurveyGrid = () => {
   const surveyLocalFilter: SurveyFilter = {
     surveyId: '',
     patient: initialPatient,
-    answer: [],
+    answers: [],
     createdAt: '',
     updatedAt: '',
     calculatedScore: 0,
@@ -118,7 +121,6 @@ export const SurveyGrid = () => {
     // validationSchema: validationSchema,
     initialValues: surveyLocalFilter,
     onSubmit: async (values: SurveyFilter) => {
-      console.log(values)
       setFilter(values)
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -129,11 +131,19 @@ export const SurveyGrid = () => {
     },
   })
 
-  const { isFetching, data, isSuccess } = useGetSurveysQuery(filter)
+  const { isFetching, data } = useGetSurveysQuery(filter)
 
   useEffect(() => {
-    console.log(data)
-  }, [isSuccess])
+    donwloadExcel().then((data) => {
+      if (data) {
+        const blobURL = URL.createObjectURL(data!)
+        setPDF(blobURL)
+      }
+    })
+    return () => {
+      URL.revokeObjectURL(getPDF)
+    }
+  }, [])
 
   return (
     <>
@@ -159,7 +169,7 @@ export const SurveyGrid = () => {
                 /> 
               </Grid>*/}
               <Grid item sm={4}>
-                <label>Hola</label>
+                <label></label>
 
                 {/* <TextField
                   name="description"
@@ -226,6 +236,30 @@ export const SurveyGrid = () => {
           </AccordionDetails>
         </Accordion>
       </form>
+
+      <Grid container direction={{ xs: 'column', md: 'row' }} spacing={1}>
+        <Grid item xs={2} sx={{ mt: 2, ml: { md: 1, xl: 1, xs: 0 } }}>
+          <Button
+            fullWidth
+            startIcon={<Download />}
+            variant="outlined"
+            disabled={isFetching}
+            onClick={async () => {
+              await donwloadExcel().then((data) => {
+                if (data) {
+                  const blobURL = URL.createObjectURL(data!)
+                  setPDF(blobURL)
+                }
+              })
+              return () => {
+                URL.revokeObjectURL(getPDF)
+              }
+            }}
+          >
+            Excel
+          </Button>
+        </Grid>
+      </Grid>
 
       <DataGrid
         columnVisibilityModel={{

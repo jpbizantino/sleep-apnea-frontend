@@ -43,7 +43,7 @@ export const QuestionGrid = () => {
     question: '',
     description: '',
     questionId: '',
-    image: '',
+    imageLink: '',
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

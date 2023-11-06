@@ -1,12 +1,9 @@
 import { Card, Grid, Typography } from '@mui/material'
-import { useContext } from 'react'
-import { SurveyContext } from '../views/context/SurveyContext'
-import { Question } from '../../common/types'
+import { Question } from '../../../common/types'
+import { Answer } from '../../common/types/answer.type'
 
-export const ResultCard = () => {
-  const surveyContext = useContext(SurveyContext)
-
-  const { surveyResults } = surveyContext.state
+export const SurveyAnswers = (props: { answers: Answer[] }) => {
+  if (props.answers == undefined) return <>dd</>
 
   return (
     <>
@@ -16,7 +13,7 @@ export const ResultCard = () => {
         sx={{ mt: 2, p: 2 }}
       >
         <Grid container>
-          {surveyResults.map((survey) => {
+          {props.answers.map((survey) => {
             const question: Question = JSON.parse(survey.jsonQuestion)
 
             return (
@@ -32,7 +29,7 @@ export const ResultCard = () => {
                   <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
                     {question.question}
                   </Typography>
-                  <br /> {question.description}
+                  <br /> {survey.selectedValue}
                 </Grid>
               </>
             )
