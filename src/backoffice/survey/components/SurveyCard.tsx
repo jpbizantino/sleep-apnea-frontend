@@ -1,7 +1,7 @@
 import { Card, Grid, Typography } from '@mui/material'
 import { differenceInYears, format } from 'date-fns'
 import { convertDateToStringDate } from '../../../common/utilities'
-import { Survey } from '../../../publicSurvey/types'
+import { Survey } from '../../common/types/survey.type'
 
 export const SurveyCard = (props: { survey: Survey }) => {
   const { patient } = props.survey

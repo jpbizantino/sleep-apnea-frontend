@@ -1,4 +1,5 @@
-import { Survey, Result } from '../types'
+import { Survey } from '../../backoffice/common/types/survey.type'
+import { Result } from '../types'
 import { baseQuerySlice } from './baseQuerySlice'
 
 const base = 'surveys'

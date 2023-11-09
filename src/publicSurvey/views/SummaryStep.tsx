@@ -6,7 +6,6 @@ import { Loader } from '../../common/components/Loader'
 import { AlertOption } from '../../common/types'
 import { PatientCard } from '../components/PatientCard'
 import { ResultCard } from '../components/ResultCard'
-import { Survey } from '../types/survey.types'
 import { useCreateSurveyMutation } from '../slices/surveyQuerySlice'
 import { SurveyContext } from './context/SurveyContext'
 import {
@@ -15,6 +14,7 @@ import {
   doNextStep,
   doSetInputId,
 } from './reducer/actions/survey.action'
+import { Survey } from '../../backoffice/common/types/survey.type'
 
 export const SummaryStep = () => {
   const { state, dispatch } = useContext(SurveyContext)

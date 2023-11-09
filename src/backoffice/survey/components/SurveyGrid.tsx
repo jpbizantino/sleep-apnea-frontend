@@ -17,7 +17,7 @@ import {
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { SkipToken, skipToken } from '@reduxjs/toolkit/dist/query'
 import { useFormik } from 'formik'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
@@ -30,7 +30,6 @@ import { useGetSurveysQuery } from '../slices/surveyQuerySlice'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const SurveyGrid = () => {
   const navigate = useNavigate()
-  const [getPDF, setPDF] = useState('')
 
   const initialPatient: Patient = {
     patientId: '',
@@ -52,6 +51,7 @@ export const SurveyGrid = () => {
     createdAt: '',
     updatedAt: '',
     calculatedScore: 0,
+    patientId: '',
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -132,18 +132,6 @@ export const SurveyGrid = () => {
   })
 
   const { isFetching, data } = useGetSurveysQuery(filter)
-
-  useEffect(() => {
-    donwloadExcel().then((data) => {
-      if (data) {
-        const blobURL = URL.createObjectURL(data!)
-        setPDF(blobURL)
-      }
-    })
-    return () => {
-      URL.revokeObjectURL(getPDF)
-    }
-  }, [])
 
   return (
     <>
@@ -245,18 +233,12 @@ export const SurveyGrid = () => {
             variant="outlined"
             disabled={isFetching}
             onClick={async () => {
-              await donwloadExcel().then((data) => {
-                if (data) {
-                  const blobURL = URL.createObjectURL(data!)
-                  setPDF(blobURL)
-                }
+              await donwloadExcel().then((result) => {
+                console.log(result)
               })
-              return () => {
-                URL.revokeObjectURL(getPDF)
-              }
             }}
           >
-            Excel
+            Exportar
           </Button>
         </Grid>
       </Grid>

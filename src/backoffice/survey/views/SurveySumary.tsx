@@ -46,8 +46,7 @@ export const SurveySumary = () => {
               Resúmen de respuestas
             </Typography>
             <Typography variant="body1" gutterBottom>
-              Las preguntas y respuestas se basan en las preguntas activas al
-              momento de la encuesta
+              Encuesta basada en la configuración existente en ese momento.
             </Typography>
             <br />
 

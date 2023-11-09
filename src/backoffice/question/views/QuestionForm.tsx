@@ -124,7 +124,7 @@ export const QuestionForm = () => {
         createQuestion(processValues(values))
           .unwrap()
           .then((result: Question) => {
-            formik.setFieldValue('_id', result.questionId)
+            formik.setFieldValue('questionId', result.questionId)
             setAlert({
               isAlertOpen: true,
               message: 'Datos guardados exitosamente',

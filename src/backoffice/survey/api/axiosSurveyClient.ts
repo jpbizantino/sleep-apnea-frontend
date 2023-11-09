@@ -10,10 +10,6 @@ export const axiosSurveyClient = axios.create({
 })
 
 axiosSurveyClient.interceptors.request.use((config) => {
-  config.headers = {
-    ...config.headers,
-    Authorization: 'Bearer ' + localStorage.getItem('token'),
-  }
-
+  config.headers.setAuthorization('Bearer ' + localStorage.getItem('token'))
   return config
 })
