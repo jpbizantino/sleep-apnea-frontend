@@ -38,7 +38,7 @@ export const SurveyCard = (props: { survey: Survey }) => {
               Score
             </Typography>
             <br />
-            {props.survey.calculatedStore ?? 0}
+            {props.survey.calculatedScore ?? 0}
           </Grid>
 
           <Grid item xs={12} md={6} lg={6}>

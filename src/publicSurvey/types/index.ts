@@ -1,3 +1,2 @@
-export * from './answer.types'
+export * from './index'
 export * from './result.types'
-export * from './survey.types'

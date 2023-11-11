@@ -32,7 +32,7 @@ export const ResultCard = () => {
                   <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
                     {question.question}
                   </Typography>
-                  <br /> {survey.selectedValue}
+                  <br /> {survey.selectedText}
                 </Grid>
               </>
             )

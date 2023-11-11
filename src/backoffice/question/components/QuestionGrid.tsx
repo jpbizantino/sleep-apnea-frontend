@@ -1,9 +1,11 @@
 import {
   Add,
+  CheckCircle,
   CleaningServices,
   Edit,
   ExpandMore,
   Search,
+  Unpublished,
 } from '@mui/icons-material'
 import {
   Accordion,
@@ -12,6 +14,7 @@ import {
   Button,
   Grid,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
@@ -108,6 +111,30 @@ export const QuestionGrid = () => {
           return `${translateProcessingRule(ruleType)} ${
             cellValues.value.valueA
           }`
+      },
+    },
+    {
+      field: 'active',
+      headerName: 'Estado',
+      align: 'center',
+      width: 110,
+      //valueGetter: (params: GridValueGetterParams) => params.row.inactive ? 'INACTIVO' : 'ACTIVO'
+      renderCell: (cellValues) => {
+        const user: Question = cellValues.row
+
+        return (
+          <>
+            {user.active ? (
+              <Tooltip title="Pregunta Activa" followCursor>
+                <CheckCircle color="success" />
+              </Tooltip>
+            ) : (
+              <Tooltip title="Pregunta Inactiva" followCursor>
+                <Unpublished color="disabled" />
+              </Tooltip>
+            )}
+          </>
+        )
       },
     },
   ]
@@ -246,36 +273,11 @@ export const QuestionGrid = () => {
         getRowId={(row: Question) => row.questionId}
         rows={filter === skipToken ? [] : data ?? []}
         columns={columns}
-        // pageSize={50}
         slots={{
           noRowsOverlay: NoRowsOverlay,
           noResultsOverlay: NoResultsOverlay,
-          //toolbar: GridToolbar,
         }}
-        // rowsPerPageOptions={[50]}
         loading={isFetching}
-        // error={error}
-        // onRowClick={(
-        //   params: GridRowParams,
-        //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        //   event: MuiEvent<React.MouseEvent>,
-        //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        //   details: GridCallbackDetails
-        // ) => {
-        //   // setSelectedPatient(params.row)
-        // }}
-        // components={{
-        //   NoRowsOverlay: () => (
-        //     <Stack height="100%" alignItems="center" justifyContent="center">
-        //       Sin Datos
-        //     </Stack>
-        //   ),
-        //   NoResultsOverlay: () => (
-        //     <Stack height="100%" alignItems="center" justifyContent="center">
-        //       Sin Resultados
-        //     </Stack>
-        //   ),
-        // }}
       />
     </>
   )

@@ -1,6 +1,7 @@
 import { LazyExoticComponent } from 'react'
 import QuestionRoutes from '../../question/routes/QuestionRoutes'
 import SurveyRoutes from '../../survey/routes/SurveyRoutes'
+import { UserRoutes } from '../../user/routes/UserRoutes'
 
 type JSXComponent = () => JSX.Element
 
@@ -31,5 +32,12 @@ export const routes: Route[] = [
     Component: SurveyRoutes,
     to: '/',
     name: 'Encuestas',
+  },
+  // Usersd
+  {
+    path: '/users/*',
+    Component: UserRoutes,
+    to: '/',
+    name: 'Usuarios',
   },
 ]

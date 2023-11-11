@@ -8,10 +8,10 @@ import {
   doNextStep,
   doRemoveAnswer,
 } from './reducer/actions/survey.action'
-import { Answer } from '../types/answer.types'
 import * as yup from 'yup'
 import { QuestionType } from '../../common/enum/question.enum'
 import { Question } from '../../common/types'
+import { Answer } from '../../backoffice/common/types/answer.type'
 
 export const SurveyStep = (props: { question: Question }) => {
   const { state, dispatch } = useContext(SurveyContext)
@@ -20,6 +20,7 @@ export const SurveyStep = (props: { question: Question }) => {
     questionId: props.question.questionId,
     jsonQuestion: JSON.stringify(props.question),
     selectedValue: 0,
+    selectedText: '',
   }
   const validationSchema = yup.object({
     questionId: yup.string().required('El campo es requerido'),
@@ -51,11 +52,13 @@ export const SurveyStep = (props: { question: Question }) => {
 
     if (props.question.questionType == QuestionType.FIX_NUMBER) {
       formik.setFieldValue('selectedValue', parseInt(e.target.value), true)
+      formik.setFieldValue('selectedText', e.target.value)
     } else {
       const selected = props.question.choices.find(
         (p) => p.choiceId == e.target.value
       )
       formik.setFieldValue('selectedValue', selected?.choiceValue)
+      formik.setFieldValue('selectedText', selected?.description)
     }
   }
 
@@ -69,6 +72,7 @@ export const SurveyStep = (props: { question: Question }) => {
         </Box>
 
         <QuestionComponent
+          key={props.question.questionId}
           question={props.question}
           handleSelection={handleSelection}
         />

@@ -3,7 +3,7 @@ import { Patient } from '../../../patient/types'
 import { surveyReducer } from '../reducer/state/survey.state'
 import { SurveyState } from '../reducer/types/survey.type'
 import { SurveyContext } from './SurveyContext'
-import { Answer } from '../../types/answer.types'
+import { Answer } from '../../../backoffice/common/types/answer.type'
 
 interface Props {
   children?: ReactNode

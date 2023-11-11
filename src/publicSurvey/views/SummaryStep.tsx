@@ -30,6 +30,8 @@ export const SummaryStep = () => {
     patientId: state.patient.patientId,
     answers: state.surveyResults,
     surveyId: '',
+    createdAt: '',
+    updatedAt: '',
   }
 
   const formik = useFormik({

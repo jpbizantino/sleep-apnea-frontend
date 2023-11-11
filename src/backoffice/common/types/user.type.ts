@@ -1,14 +1,19 @@
 import { CommonResponse } from '../../../common/types'
+import { Role } from './role.type'
 
 export interface User {
   userId: string
   email: string
   name: string
+  password: string
   roleId: string
   active: boolean
-  creaAt: Date
-  updateAt: Date
+  creaAt?: Date | undefined
+  updateAt?: Date | undefined
+  role: Role | undefined
 }
+
+export interface UserLocalFilter extends User {}
 
 export interface UserLoginResponse extends CommonResponse {
   user: User | null

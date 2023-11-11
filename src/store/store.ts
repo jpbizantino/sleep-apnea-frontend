@@ -15,6 +15,7 @@ import {
 import { patientQuerySlice } from '../patient/slices'
 import { backofficeQuerySlice } from '../backoffice/common/slices'
 import { questionQuerySlice } from '../publicSurvey/slices'
+import { userQuerySlice } from '../backoffice/user/slices'
 
 export type AppDispatch = typeof store.dispatch
 export const useAppDispatch: () => AppDispatch = useDispatch
@@ -35,6 +36,7 @@ export const store = configureStore({
       questionQuerySlice.middleware,
       patientQuerySlice.middleware,
       backofficeQuerySlice.middleware,
+      userQuerySlice.middleware,
     ]),
 })
 

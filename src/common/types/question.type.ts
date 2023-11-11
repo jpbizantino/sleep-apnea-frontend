@@ -11,6 +11,7 @@ export interface Question {
   imageLink: string
   choices: Choice[]
   rule: Rule
+  active: boolean
 }
 
 export type QuestionFilter = Omit<

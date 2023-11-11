@@ -29,7 +29,7 @@ export const SurveyAnswers = (props: { answers: Answer[] }) => {
                   <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
                     {question.question}
                   </Typography>
-                  <br /> {survey.selectedValue}
+                  <br /> {survey.selectedText} - ({survey.selectedValue})
                 </Grid>
               </>
             )

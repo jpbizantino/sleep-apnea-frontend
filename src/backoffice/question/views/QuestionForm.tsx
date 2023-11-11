@@ -5,8 +5,10 @@ import {
   AccordionSummary,
   Box,
   Button,
+  FormControlLabel,
   Grid,
   Paper,
+  Switch,
   TextField,
   Typography,
 } from '@mui/material'
@@ -77,7 +79,6 @@ export const QuestionForm = () => {
   const { data, isFetching, isSuccess } = useGetQuestionQuery(
     questionId ?? skipToken
   )
-  // const [buttonClicked, setButtonClicked] = useState<string | null>(null)
 
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
@@ -100,6 +101,7 @@ export const QuestionForm = () => {
     imageLink: '',
     choices: [],
     rule: rule,
+    active: true,
   }
 
   const processValues = (values: Question): Question => {
@@ -378,6 +380,20 @@ export const QuestionForm = () => {
                     }
                   </Grid>
 
+                  <Grid item xs={2} sx={{ mt: 1, mb: 1 }}>
+                    <FormControlLabel
+                      label="Activo"
+                      control={
+                        <Switch
+                          checked={formik.values.active}
+                          name="active"
+                          value={formik.values.active}
+                          onChange={formik.handleChange}
+                        />
+                      }
+                    />
+                  </Grid>
+
                   <Grid item xs={12}>
                     <QuestionTypeCombo
                       label="Tipo de Pregunta"
@@ -543,20 +559,8 @@ export const QuestionForm = () => {
                       Cerrar
                     </Button>
                   </Grid>
-                  {/* <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
-                    <Button
-                      onClick={() => setButtonClicked('saveAndNew')}
-                      startIcon={<Save />}
-                      fullWidth
-                      variant="contained"
-                      type="submit"
-                    >
-                      Guardar y Nuevo
-                    </Button>
-                  </Grid> */}
                   <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
                     <Button
-                      // onClick={() => setButtonClicked('save')}
                       startIcon={<Save />}
                       fullWidth
                       variant="contained"

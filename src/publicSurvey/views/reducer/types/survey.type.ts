@@ -1,5 +1,5 @@
+import { Answer } from '../../../../backoffice/common/types/answer.type'
 import { Patient } from '../../../../patient/types'
-import { Answer } from '../../../types/answer.types'
 
 export interface SurveyState {
   patient: Patient
