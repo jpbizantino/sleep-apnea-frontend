@@ -51,6 +51,11 @@ const ruleSchema = yup.object().shape({
     .required('Ingrese un valor')
     .min(0, 'El valor debe ser entre 0 y 100')
     .max(100, 'El valor debe ser entre 0 y 100'),
+  scoreToAdd: yup
+    .number()
+    .required('Ingrese un valor')
+    .min(0, 'El valor debe ser entre 0 y 10')
+    .max(10, 'El valor debe ser entre 0 y 10'),
 })
 
 const validationSchema = yup.object({
@@ -87,9 +92,10 @@ export const QuestionForm = () => {
   })
 
   const rule: Rule = {
-    processingRule: ProcessingRule.DATA_AS_RECEIVED,
+    processingRule: ProcessingRule.EQUAL,
     valueA: 0,
     valueB: 0,
+    scoreToAdd: 0,
   }
 
   let initialValue: Question = {
@@ -536,6 +542,26 @@ export const QuestionForm = () => {
                       helperText={
                         formik.touched.rule?.valueB &&
                         formik.errors.rule?.valueB
+                      }
+                    />
+                  </Grid>
+
+                  <Grid item xs={2}>
+                    <TextField
+                      name="rule.scoreToAdd"
+                      label="Score a sumar"
+                      variant="standard"
+                      type="number"
+                      fullWidth
+                      value={formik.values.rule.scoreToAdd}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.rule?.scoreToAdd &&
+                        Boolean(formik.errors.rule?.scoreToAdd)
+                      }
+                      helperText={
+                        formik.touched.rule?.scoreToAdd &&
+                        formik.errors.rule?.scoreToAdd
                       }
                     />
                   </Grid>

@@ -47,10 +47,13 @@ export const QuestionGrid = () => {
     description: '',
     questionId: '',
     imageLink: '',
+    active: false,
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [filter, setFilter] = useState<QuestionFilter | SkipToken>(skipToken)
+  const [filter, setFilter] = useState<QuestionFilter | SkipToken>(
+    patientLocalFilter
+  )
 
   const columns: GridColDef[] = [
     {
@@ -106,11 +109,11 @@ export const QuestionGrid = () => {
         if (ruleType == ProcessingRule.BETWEEN)
           return `${translateProcessingRule(ruleType)} ${
             cellValues.value.valueA
-          } y ${cellValues.value.valueB}`
+          } y ${cellValues.value.valueB} ::: ${cellValues.value.scoreToAdd}`
         else
           return `${translateProcessingRule(ruleType)} ${
             cellValues.value.valueA
-          }`
+          } :::  ${cellValues.value.scoreToAdd}`
       },
     },
     {
@@ -150,7 +153,6 @@ export const QuestionGrid = () => {
     // validationSchema: validationSchema,
     initialValues: patientLocalFilter,
     onSubmit: async (values: QuestionFilter) => {
-      console.log(values)
       setFilter(values)
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

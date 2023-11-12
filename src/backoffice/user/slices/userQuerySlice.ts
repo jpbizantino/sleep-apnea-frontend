@@ -14,8 +14,8 @@ export const userQuerySlice = createApi({
   }),
   tagTypes: ['User'],
   endpoints: (builder) => ({
-    getUsers: builder.query<User[], User>({
-      query: (item) => ({
+    getUsers: builder.query<User[], null>({
+      query: () => ({
         url: '/',
         method: 'GET',
       }),

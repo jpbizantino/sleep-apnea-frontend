@@ -36,7 +36,7 @@ export const UserGrid = () => {
 
   const [filter, setFilter] = useState<UserLocalFilter | SkipToken>(skipToken)
 
-  const { data, isFetching } = useGetUsersQuery(filter)
+  const { data, isFetching } = useGetUsersQuery(null)
 
   const columns: GridColDef[] = [
     {

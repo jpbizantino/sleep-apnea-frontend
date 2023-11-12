@@ -4,4 +4,5 @@ export interface Rule {
   processingRule: ProcessingRule
   valueA: number
   valueB: number
+  scoreToAdd: number
 }
