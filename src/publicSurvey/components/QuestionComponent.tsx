@@ -1,6 +1,7 @@
 import {
   Box,
   FormControlLabel,
+  Grid,
   Radio,
   RadioGroup,
   TextField,
@@ -8,6 +9,7 @@ import {
 } from '@mui/material'
 import { QuestionType } from '../../common/enum/question.enum'
 import { Question, Choice } from '../../common/types'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 export const QuestionComponent = (props: {
   question: Question
@@ -49,11 +51,17 @@ export const QuestionComponent = (props: {
         </RadioGroup>
       )}
 
-      <Box sx={{ m: 2, p: 2 }}>
+      <Box
+        sx={{
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          pt: 2,
+        }}
+      >
         {props.question.imageLink && (
-          <>
-            <img src={props.question.imageLink} />
-          </>
+          <img style={{ width: 300 }} src={props.question.imageLink} />
         )}
       </Box>
     </Box>

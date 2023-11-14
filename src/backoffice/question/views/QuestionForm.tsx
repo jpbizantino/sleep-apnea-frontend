@@ -458,7 +458,7 @@ export const QuestionForm = () => {
                       {formik.values.imageLink && (
                         <img
                           src={formik.values.imageLink}
-                          style={{ height: 150, width: 250 }}
+                          style={{ width: 300 }}
                         />
                       )}
                     </Box>

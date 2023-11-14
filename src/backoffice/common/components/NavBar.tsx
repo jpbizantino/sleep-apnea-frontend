@@ -16,7 +16,7 @@ import { useAuth } from '../../auth/hooks'
 
 export const NavBar = () => {
   const { toggleMainMenu } = useBackoffice()
-  const { startLogout } = useAuth()
+  const { startLogout, user } = useAuth()
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -62,7 +62,7 @@ export const NavBar = () => {
       {/* <MenuItem onClick={handleMenuClose}>Perfil</MenuItem> */}
       {/* <MenuItem onClick={handleMenuClose}>Mi Cuenta</MenuItem> */}
 
-      <MenuItem
+      {/* <MenuItem
         disableRipple
         onClick={() => {
           setAnchorEl(null)
@@ -71,7 +71,7 @@ export const NavBar = () => {
       >
         <VpnKey sx={{ mr: 1 }} />
         Cambiar Contraseña
-      </MenuItem>
+      </MenuItem> */}
 
       <MenuItem
         onClick={() => {
@@ -157,7 +157,7 @@ export const NavBar = () => {
                   display: { xs: 'none', sm: 'block' },
                 }}
               >
-                {/* {user?.nameOne} {user?.nameTwo} */}
+                {user?.name}
               </Typography>
             </Box>
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>

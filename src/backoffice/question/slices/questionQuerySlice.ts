@@ -42,6 +42,28 @@ export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
         { type: 'Question', physicianId: arg.questionId },
       ],
     }),
+    moveUpQuestion: builder.mutation<null, Question>({
+      query: (item) => ({
+        url: `/questions/moveUp/${item.questionId}`,
+        method: 'PATCH',
+        body: item,
+      }),
+
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Question', physicianId: arg.questionId },
+      ],
+    }),
+    moveDownQuestion: builder.mutation<null, Question>({
+      query: (item) => ({
+        url: `/questions/moveDown/${item.questionId}`,
+        method: 'PATCH',
+        body: item,
+      }),
+
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Question', physicianId: arg.questionId },
+      ],
+    }),
   }),
 })
 export const {
@@ -49,4 +71,6 @@ export const {
   useGetQuestionQuery,
   useCreateQuestionMutation,
   useUpdateQuestionMutation,
+  useMoveUpQuestionMutation,
+  useMoveDownQuestionMutation,
 } = questionQuerySlice

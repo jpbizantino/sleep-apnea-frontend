@@ -51,6 +51,7 @@ export const ResultStep = () => {
         <br />
         <br />
         Score de referencia: {result?.score}
+        <br />
       </Box>
       <AlertControl alert={alert} />
     </>

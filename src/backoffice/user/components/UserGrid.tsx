@@ -80,18 +80,18 @@ export const UserGrid = () => {
       },
     },
     {
-      field: 'id',
+      field: 'userId',
       headerName: 'id',
     },
     {
       field: 'name',
-      headerName: 'Usuario',
+      headerName: 'Nombre',
       width: 250,
     },
     {
       field: 'email',
       headerName: 'Email',
-      width: 200,
+      width: 300,
     },
     {
       field: 'active',

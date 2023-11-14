@@ -1,5 +1,7 @@
 import {
   Add,
+  ArrowDownward,
+  ArrowUpward,
   CheckCircle,
   CleaningServices,
   Edit,
@@ -13,6 +15,7 @@ import {
   AccordionSummary,
   Button,
   Grid,
+  IconButton,
   TextField,
   Tooltip,
   Typography,
@@ -30,13 +33,12 @@ import {
 } from '../../../common/enum/processingRule.enum'
 import { translateQuestionType } from '../../../common/enum/question.enum'
 import { Question, QuestionFilter } from '../../../common/types'
-import { useGetQuestionsQuery } from '../slices/questionQuerySlice'
-
-// const validationSchema = yup.object({
-//   question: yup.number().optional(),
-//   nameTwo: yup.string(),
-//   nameOne: yup.string(),
-// })
+import {
+  useGetQuestionsQuery,
+  useMoveDownQuestionMutation,
+  useMoveUpQuestionMutation,
+} from '../slices/questionQuerySlice'
+import { Loader } from '../../../common/components/Loader'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const QuestionGrid = () => {
@@ -54,6 +56,12 @@ export const QuestionGrid = () => {
   const [filter, setFilter] = useState<QuestionFilter | SkipToken>(
     patientLocalFilter
   )
+
+  const [moveUpQuestion, { isLoading: isLoadingUp }] =
+    useMoveUpQuestionMutation()
+
+  const [moveDownQuestion, { isLoading: isLoadingDown }] =
+    useMoveDownQuestionMutation()
 
   const columns: GridColDef[] = [
     {
@@ -84,12 +92,12 @@ export const QuestionGrid = () => {
     {
       field: 'question',
       headerName: 'Pregunta',
-      width: 500,
+      width: 400,
     },
     {
       field: 'description',
       headerName: 'Descripción',
-      width: 300,
+      width: 250,
     },
     {
       field: 'questionType',
@@ -140,6 +148,32 @@ export const QuestionGrid = () => {
         )
       },
     },
+    {
+      field: 'order',
+      headerName: 'Orden',
+      width: 100,
+      renderCell: (cellValues) => {
+        return (
+          <>
+            <IconButton
+              onClick={async () => {
+                await moveUpQuestion(cellValues.row)
+              }}
+            >
+              <ArrowUpward />
+            </IconButton>
+
+            <IconButton
+              onClick={async () => {
+                await moveDownQuestion(cellValues.row)
+              }}
+            >
+              <ArrowDownward />
+            </IconButton>
+          </>
+        )
+      },
+    },
   ]
 
   const getTogglableColumns = (columns: GridColDef[]) => {
@@ -167,6 +201,7 @@ export const QuestionGrid = () => {
 
   return (
     <>
+      <Loader open={isLoadingDown || isLoadingUp} />
       <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
         <Accordion sx={{ mb: 1 }} disableGutters={true} defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMore />}>
