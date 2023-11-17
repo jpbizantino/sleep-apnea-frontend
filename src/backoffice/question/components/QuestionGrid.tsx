@@ -151,10 +151,12 @@ export const QuestionGrid = () => {
     {
       field: 'order',
       headerName: 'Orden',
-      width: 100,
+      width: 120,
       renderCell: (cellValues) => {
         return (
           <>
+            <Typography sx={{ mr: 1 }}> {cellValues.row.order}</Typography>
+
             <IconButton
               onClick={async () => {
                 await moveUpQuestion(cellValues.row)

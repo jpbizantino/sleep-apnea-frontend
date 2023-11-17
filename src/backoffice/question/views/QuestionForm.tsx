@@ -1,4 +1,4 @@
-import { Add, Close, Save } from '@mui/icons-material'
+import { Add, Close, Delete, Edit, Save } from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
@@ -173,7 +173,12 @@ export const QuestionForm = () => {
 
   useEffect(() => {
     if (data) {
-      formik.setValues(data)
+      const choice = [...data.choices].sort((a, b) => a.order - b.order)
+
+      formik.setValues({
+        ...data,
+        choices: choice,
+      })
       setSelectedQuestion(data)
     }
 
@@ -244,18 +249,30 @@ export const QuestionForm = () => {
                 minHeight: '100%',
               }}
             >
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={4} md={4}>
+                <Typography variant="caption">Descripción</Typography>
+                <br />
                 <Typography sx={{ fontWeight: 'bold' }}>
                   {props.choice.description}
                 </Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={12} sm={2} md={2}>
+                <Typography variant="caption">Valor</Typography>
+                <br />
                 <Typography sx={{ fontWeight: 'bold' }}>
                   {props.choice.choiceValue}
                 </Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={12} sm={2} md={2}>
+                <Typography variant="caption">Orden</Typography>
+                <br />
+                <Typography sx={{ fontWeight: 'bold' }}>
+                  {props.choice.order}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={2} md={2}>
                 <Button
+                  startIcon={<Edit />}
                   // variant="outlined"
                   fullWidth
                   onClick={() => {
@@ -266,8 +283,9 @@ export const QuestionForm = () => {
                   Editar
                 </Button>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={12} sm={2} md={2}>
                 <Button
+                  startIcon={<Delete />}
                   fullWidth
                   onClick={() => {
                     setSelectedChoice(null)

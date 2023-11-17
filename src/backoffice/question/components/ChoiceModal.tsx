@@ -10,10 +10,10 @@ import {
   Typography,
 } from '@mui/material'
 import { useFormik } from 'formik'
+import { useEffect } from 'react'
 import * as yup from 'yup'
 import { Choice, ModalReason } from '../../../common/types'
 import { useBackoffice } from '../../common/hooks/userBackoffice'
-import { useEffect } from 'react'
 
 export const ChoiceModal = (props: { handleChoice: any }) => {
   const { toggleChoiceModal, isChoiceModalOpen, selectedChoice } =
@@ -33,6 +33,11 @@ export const ChoiceModal = (props: { handleChoice: any }) => {
       .integer('El valor debe ser entero')
       .min(0, 'El valor debe ser 0 o 5')
       .max(5, 'El valor debe ser 0 o 5'),
+    order: yup
+      .number()
+      .required('Ingrese un valor')
+      .integer('El valor debe ser entero')
+      .min(0, 'El valor debe ser igual o mayor a 0'),
   })
 
   const formik = useFormik({
@@ -73,7 +78,20 @@ export const ChoiceModal = (props: { handleChoice: any }) => {
         </DialogTitle>
         <DialogContent>
           <Grid container columns={12} spacing={1} rowSpacing={1}>
-            <Grid item xs={10}>
+            <Grid item xs={2}>
+              <TextField
+                name="order"
+                variant="standard"
+                label="Orden"
+                fullWidth
+                type="number"
+                value={formik.values.order}
+                onChange={formik.handleChange}
+                error={formik.touched.order && Boolean(formik.errors.order)}
+                helperText={formik.touched.order && formik.errors.order}
+              />
+            </Grid>
+            <Grid item xs={8}>
               <TextField
                 name="description"
                 variant="standard"

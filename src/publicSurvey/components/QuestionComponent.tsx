@@ -1,15 +1,13 @@
 import {
   Box,
   FormControlLabel,
-  Grid,
   Radio,
   RadioGroup,
   TextField,
   Typography,
 } from '@mui/material'
 import { QuestionType } from '../../common/enum/question.enum'
-import { Question, Choice } from '../../common/types'
-import useMediaQuery from '@mui/material/useMediaQuery'
+import { Choice, Question } from '../../common/types'
 
 export const QuestionComponent = (props: {
   question: Question

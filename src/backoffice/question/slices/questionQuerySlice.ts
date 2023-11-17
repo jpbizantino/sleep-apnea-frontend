@@ -46,7 +46,6 @@ export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
       query: (item) => ({
         url: `/questions/moveUp/${item.questionId}`,
         method: 'PATCH',
-        body: item,
       }),
 
       invalidatesTags: (_result, _error, arg) => [
