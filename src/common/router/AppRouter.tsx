@@ -10,21 +10,18 @@ export const AppRouter = () => {
 
   useEffect(() => {
     checkAuthToken()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<ProtectedRoute />}>
-          <Route key="/" path="/backoffice/*" element={<BackofficeRoutes />} />
-
-          <Route
-            path="/backoffice/*"
-            element={<Navigate to="/backoffice" replace />}
-          />
+          <Route path="/backoffice/*" element={<BackofficeRoutes />} />
         </Route>
 
-        <Route key="/" path="/*" element={<PublicSurveyRoutes />} />
+        {/* Public Routes */}
+        <Route path="/*" element={<PublicSurveyRoutes />} />
       </Routes>
     </BrowserRouter>
   )

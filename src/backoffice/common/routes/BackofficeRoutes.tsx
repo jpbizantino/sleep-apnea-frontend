@@ -1,18 +1,17 @@
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { routes } from './routes'
 
 export const BackofficeRoutes = () => {
   return (
     <Routes>
-      {routes.map(({ path, Component, to }) => (
-        <Route key={to} path={path} element={<Component />} />
-      ))}
+      <Route path="/*" element={<Navigate to="/backoffice/questions" />} />
 
-      {/* <Route
-        key={routes[0].to}
-        path="/*"
-        element={<Navigate to={routes[0].to} replace />}
-      /> */}
+      {routes.map(({ path, Component, to }) => (
+        <>
+          {/* <Route path={path} element={<Navigate to={to} />} /> */}
+          <Route key={to} path={path} element={<Component />} />
+        </>
+      ))}
     </Routes>
   )
 }

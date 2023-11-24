@@ -12,15 +12,13 @@ export const ProtectedRoute = ({ children }: Props) => {
 
   useEffect(() => {
     checkAuthToken()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error])
 
   if (error !== 'authenticated') {
     return (
       <Routes>
-        <Route
-          path="/*"
-          element={<Navigate to="/backoffice/auth/login" replace />}
-        />
+        <Route path="/*" element={<Navigate to="/backoffice/auth/login" />} />
         <Route path="/backoffice/auth/*" element={<AuthRoutes />} />
       </Routes>
     )
