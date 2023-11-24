@@ -8,6 +8,8 @@ import {
   ExpandMore,
   Search,
   Unpublished,
+  Straight,
+  Merge,
 } from '@mui/icons-material'
 import {
   Accordion,
@@ -108,9 +110,29 @@ export const QuestionGrid = () => {
       },
     },
     {
+      field: 'singleResult',
+      headerName: 'Resultado',
+      width: 100,
+      renderCell: (cellValues) => {
+        return (
+          <>
+            {cellValues.row.rule.singleResult ? (
+              <Tooltip title="Resultado Simple" followCursor>
+                <Straight color="success" />
+              </Tooltip>
+            ) : (
+              <Tooltip title="Resultado Combinado" followCursor>
+                <Merge color="warning" />
+              </Tooltip>
+            )}
+          </>
+        )
+      },
+    },
+    {
       field: 'rule',
-      headerName: 'Regla Procesamiento',
-      width: 150,
+      headerName: 'Regla',
+      width: 100,
       renderCell: (cellValues) => {
         const ruleType = cellValues.value.processingRule
 
@@ -128,7 +150,7 @@ export const QuestionGrid = () => {
       field: 'active',
       headerName: 'Estado',
       align: 'center',
-      width: 110,
+      width: 100,
       //valueGetter: (params: GridValueGetterParams) => params.row.inactive ? 'INACTIVO' : 'ACTIVO'
       renderCell: (cellValues) => {
         const user: Question = cellValues.row

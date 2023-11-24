@@ -96,6 +96,7 @@ export const QuestionForm = () => {
     valueA: 0,
     valueB: 0,
     scoreToAdd: 0,
+    singleResult: true,
   }
 
   let initialValue: Question = {
@@ -501,6 +502,20 @@ export const QuestionForm = () => {
                     </>
                   </Grid>
 
+                  <Grid item xs={2} sx={{ mt: 1, mb: 1 }}>
+                    <FormControlLabel
+                      label="Resultado simple"
+                      control={
+                        <Switch
+                          checked={formik.values.rule.singleResult}
+                          name="rule.singleResult"
+                          value={formik.values.rule.singleResult}
+                          onChange={formik.handleChange}
+                        />
+                      }
+                    />
+                  </Grid>
+
                   <Grid item xs={3}>
                     <RuleTypeCombo
                       label="Regla de procesamiento"
@@ -581,6 +596,7 @@ export const QuestionForm = () => {
                         formik.touched.rule?.scoreToAdd &&
                         formik.errors.rule?.scoreToAdd
                       }
+                      disabled={!formik.values.rule.singleResult}
                     />
                   </Grid>
                 </Grid>

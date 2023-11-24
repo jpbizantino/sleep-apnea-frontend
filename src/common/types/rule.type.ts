@@ -5,4 +5,5 @@ export interface Rule {
   valueA: number
   valueB: number
   scoreToAdd: number
+  singleResult: boolean
 }
