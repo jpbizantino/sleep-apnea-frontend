@@ -1,1 +1,1 @@
-export * from './questionQuerySlice'
+export * from './combinedAnsweQuerySlice'

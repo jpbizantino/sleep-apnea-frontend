@@ -8,6 +8,7 @@ import {
 import { authSlice } from '../../backoffice/auth/slices'
 import { baseQuerySlice } from '../../publicSurvey/slices/baseQuerySlice'
 import { userQuerySlice, userSlice } from '../../backoffice/user/slices'
+import { combinedAnswerQuerySlice } from '../../backoffice/combinedAnswer/slices'
 // import { baseQuerySlice } from '../../survey/slices/baseQuerySlice'
 
 //Redux-Persist config
@@ -21,6 +22,7 @@ export const persistConfig = {
     patientQuerySlice.reducerPath,
     backofficeQuerySlice.reducerPath,
     userQuerySlice.reducerPath,
+    combinedAnswerQuerySlice.reducerPath,
   ],
 }
 
@@ -34,4 +36,5 @@ export const rootReducer = combineReducers({
   [patientQuerySlice.reducerPath]: patientQuerySlice.reducer,
   [backofficeQuerySlice.reducerPath]: backofficeQuerySlice.reducer,
   [userQuerySlice.reducerPath]: userQuerySlice.reducer,
+  [combinedAnswerQuerySlice.reducerPath]: combinedAnswerQuerySlice.reducer,
 })

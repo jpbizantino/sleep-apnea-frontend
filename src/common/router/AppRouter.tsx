@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { useAuth } from '../../backoffice/auth/hooks'
 import BackofficeRoutes from '../../backoffice/common/routes/BackofficeRoutes'
 import { PublicSurveyRoutes } from '../../publicSurvey/routes/PublicSurveyRoutes'

@@ -1,5 +1,6 @@
 import { LazyExoticComponent } from 'react'
 import { CombineAnswerList } from '../views/CombinedAnswerList'
+import { CombinedAnswerForm } from '../views/CombinedAnswerForm'
 
 type JSXComponent = () => JSX.Element
 
@@ -18,16 +19,16 @@ export const routes: Route[] = [
     to: '/',
     name: 'Resultados Combinados',
   },
-  // {
-  //   path: '/:surveyId',
-  //   Component: SurveySumary,
-  //   to: '/:surveyId',
-  //   name: 'Encuesta',
-  // },
-  // {
-  //   path: '/new',
-  //   Component: SurveySumary,
-  //   to: '/new',
-  //   name: 'Encuesta',
-  // },
+  {
+    path: '/:combinedAnswerId',
+    Component: CombinedAnswerForm,
+    to: '/:surveyId',
+    name: 'Encuesta',
+  },
+  {
+    path: '/new',
+    Component: CombinedAnswerForm,
+    to: '/new',
+    name: 'Encuesta',
+  },
 ]

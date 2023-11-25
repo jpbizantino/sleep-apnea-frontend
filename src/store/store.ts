@@ -16,6 +16,7 @@ import { patientQuerySlice } from '../patient/slices'
 import { backofficeQuerySlice } from '../backoffice/common/slices'
 import { questionQuerySlice } from '../publicSurvey/slices'
 import { userQuerySlice } from '../backoffice/user/slices'
+import { combinedAnswerQuerySlice } from '../backoffice/combinedAnswer/slices'
 
 export type AppDispatch = typeof store.dispatch
 export const useAppDispatch: () => AppDispatch = useDispatch
@@ -33,6 +34,7 @@ export const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }).concat([
+      combinedAnswerQuerySlice.middleware,
       questionQuerySlice.middleware,
       patientQuerySlice.middleware,
       backofficeQuerySlice.middleware,

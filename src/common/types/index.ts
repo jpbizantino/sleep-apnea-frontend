@@ -1,5 +1,7 @@
+export * from './calculatedFild'
 export * from './choice.type'
 export * from './common.type'
 export * from './gender.type'
+export * from './index'
 export * from './question.type'
 export * from './rule.type'

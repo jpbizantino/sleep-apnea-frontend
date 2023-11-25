@@ -1,15 +1,13 @@
 import {
   Add,
-  ArrowDownward,
-  ArrowUpward,
   CheckCircle,
   CleaningServices,
   Edit,
   ExpandMore,
-  Search,
-  Unpublished,
-  Straight,
   Merge,
+  Search,
+  Straight,
+  Unpublished,
 } from '@mui/icons-material'
 import {
   Accordion,
@@ -17,16 +15,13 @@ import {
   AccordionSummary,
   Button,
   Grid,
-  IconButton,
-  TextField,
   Tooltip,
   Typography,
 } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { SkipToken, skipToken } from '@reduxjs/toolkit/dist/query'
 import { useFormik } from 'formik'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Loader } from '../../../common/components/Loader'
 import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
 import {
@@ -34,13 +29,12 @@ import {
   translateProcessingRule,
 } from '../../../common/enum/processingRule.enum'
 import { translateQuestionType } from '../../../common/enum/question.enum'
-import { Question, QuestionFilter } from '../../../common/types'
 import {
-  useGetQuestionsQuery,
-  useMoveDownQuestionMutation,
-  useMoveUpQuestionMutation,
-} from '../slices/questionQuerySlice'
-import { Loader } from '../../../common/components/Loader'
+  CalculatedField,
+  Question,
+  QuestionFilter,
+} from '../../../common/types'
+import { useGetCalculatedFieldsQuery } from '../slices/combinedAnsweQuerySlice'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const CombinedAnswerGrid = () => {
@@ -53,17 +47,6 @@ export const CombinedAnswerGrid = () => {
     imageLink: '',
     active: false,
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [filter, setFilter] = useState<QuestionFilter | SkipToken>(
-    patientLocalFilter
-  )
-
-  const [moveUpQuestion, { isLoading: isLoadingUp }] =
-    useMoveUpQuestionMutation()
-
-  const [moveDownQuestion, { isLoading: isLoadingDown }] =
-    useMoveDownQuestionMutation()
 
   const columns: GridColDef[] = [
     {
@@ -170,34 +153,6 @@ export const CombinedAnswerGrid = () => {
         )
       },
     },
-    {
-      field: 'order',
-      headerName: 'Orden',
-      width: 120,
-      renderCell: (cellValues) => {
-        return (
-          <>
-            <Typography sx={{ mr: 1 }}> {cellValues.row.order}</Typography>
-
-            <IconButton
-              onClick={async () => {
-                await moveUpQuestion(cellValues.row)
-              }}
-            >
-              <ArrowUpward />
-            </IconButton>
-
-            <IconButton
-              onClick={async () => {
-                await moveDownQuestion(cellValues.row)
-              }}
-            >
-              <ArrowDownward />
-            </IconButton>
-          </>
-        )
-      },
-    },
   ]
 
   const getTogglableColumns = (columns: GridColDef[]) => {
@@ -210,22 +165,16 @@ export const CombinedAnswerGrid = () => {
   const formik = useFormik({
     // validationSchema: validationSchema,
     initialValues: patientLocalFilter,
-    onSubmit: async (values: QuestionFilter) => {
-      setFilter(values)
-    },
+    onSubmit: async () => {},
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onReset: (values: QuestionFilter) => {
-      console.log(values)
-      formik.resetForm
-      setFilter(skipToken)
-    },
+    onReset: () => {},
   })
 
-  const { isFetching, data } = useGetQuestionsQuery(filter)
+  const { isFetching, data } = useGetCalculatedFieldsQuery(null)
 
   return (
     <>
-      <Loader open={isLoadingDown || isLoadingUp} />
+      <Loader open={isFetching} />
       <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
         <Accordion sx={{ mb: 1 }} disableGutters={true} defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMore />}>
@@ -235,42 +184,6 @@ export const CombinedAnswerGrid = () => {
           </AccordionSummary>
 
           <AccordionDetails>
-            <Grid container direction={{ xs: 'column', md: 'row' }} spacing={1}>
-              <Grid item sm={4}>
-                <TextField
-                  name="question"
-                  label="Pregunta"
-                  variant="standard"
-                  fullWidth
-                  onChange={formik.handleChange}
-                  error={
-                    formik.touched.question && Boolean(formik.errors.question)
-                  }
-                  helperText={formik.touched.question && formik.errors.question}
-                  value={formik.values.question}
-                  disabled={isFetching}
-                />
-              </Grid>
-              <Grid item sm={4}>
-                <TextField
-                  name="description"
-                  label="Descripcion"
-                  variant="standard"
-                  fullWidth
-                  onChange={formik.handleChange}
-                  error={
-                    formik.touched.description &&
-                    Boolean(formik.errors.description)
-                  }
-                  helperText={
-                    formik.touched.description && formik.errors.description
-                  }
-                  value={formik.values.description}
-                  disabled={isFetching}
-                />
-              </Grid>
-            </Grid>
-
             <Grid
               container
               direction={{ xs: 'column', md: 'row' }}
@@ -307,7 +220,7 @@ export const CombinedAnswerGrid = () => {
                   variant="contained"
                   disabled={isFetching}
                   onClick={() => {
-                    navigate('/backoffice/questions/new')
+                    navigate('/backoffice/combinedAnswer/new')
                   }}
                 >
                   Nuevo
@@ -333,8 +246,8 @@ export const CombinedAnswerGrid = () => {
           backgroundColor: 'white',
           mt: 1,
         }}
-        getRowId={(row: Question) => row.questionId}
-        rows={filter === skipToken ? [] : data ?? []}
+        getRowId={(row: CalculatedField) => row.calculatedFieldId}
+        rows={data ?? []}
         columns={columns}
         slots={{
           noRowsOverlay: NoRowsOverlay,

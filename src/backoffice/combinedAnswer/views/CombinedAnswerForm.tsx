@@ -12,13 +12,11 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { skipToken } from '@reduxjs/toolkit/query'
 import { useFormik } from 'formik'
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 import { CustomSnackbar } from '../../../common/components/CustomSnackbar'
-import { Loader } from '../../../common/components/Loader'
 import { ProcessingRule } from '../../../common/enum/processingRule.enum'
 import { QuestionType } from '../../../common/enum/question.enum'
 import {
@@ -33,11 +31,9 @@ import { BackofficePage } from '../../common/pages/BackofficePage'
 import { QuestionTypeCombo } from '../components'
 import { ChoiceModal } from '../components/ChoiceModal'
 import { RuleTypeCombo } from '../components/RuleTypeCombo'
-import {
-  useCreateQuestionMutation,
-  useGetQuestionQuery,
-  useUpdateQuestionMutation,
-} from '../slices/questionQuerySlice'
+// import {
+//   useGetQuestionQuery
+// } from '../slices/combinedAnsweQuerySlice'
 
 const ruleSchema = yup.object().shape({
   processingRule: yup.string().required('Seleccione una regla'),
@@ -65,25 +61,21 @@ const validationSchema = yup.object({
   // choices: yup.array().min(2, 'Ingrese al menos 2 opciones'),
 })
 
-export const QuestionForm = () => {
+export const CombinedAnswerForm = () => {
   const navigate = useNavigate()
-  const {
-    setSelectedQuestion,
-    openNewChoice,
-    toggleChoiceModal,
-    setSelectedChoice,
-  } = useBackoffice()
+  const { openNewChoice, toggleChoiceModal, setSelectedChoice } =
+    useBackoffice()
 
   //Get de URL Param
-  const { questionId } = useParams()
+  // const { questionId } = useParams()
 
-  const [createQuestion, { isLoading: isLoadingCreate }] =
-    useCreateQuestionMutation()
-  const [updateQuestion, { isLoading: isLoadingUpdate }] =
-    useUpdateQuestionMutation()
-  const { data, isFetching, isSuccess } = useGetQuestionQuery(
-    questionId ?? skipToken
-  )
+  // const [createQuestion, { isLoading: isLoadingCreate }] =
+  //   useCreateQuestionMutation()
+  // const [updateQuestion, { isLoading: isLoadingUpdate }] =
+  //   useUpdateQuestionMutation()
+  // const { data, isFetching, isSuccess } = useGetQuestionQuery(
+  //   questionId ?? skipToken
+  // )
 
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
@@ -111,13 +103,13 @@ export const QuestionForm = () => {
     active: true,
   }
 
-  const processValues = (values: Question): Question => {
-    return {
-      ...values,
-      question: values.question.trim().toUpperCase(),
-      description: values.description.trim().toUpperCase(),
-    }
-  }
+  // const processValues = (values: Question): Question => {
+  //   return {
+  //     ...values,
+  //     question: values.question.trim().toUpperCase(),
+  //     description: values.description.trim().toUpperCase(),
+  //   }
+  // }
 
   const formik = useFormik({
     initialValues: initialValue,
@@ -130,40 +122,40 @@ export const QuestionForm = () => {
       })
 
       if (values.questionId == '') {
-        createQuestion(processValues(values))
-          .unwrap()
-          .then((result: Question) => {
-            formik.setFieldValue('questionId', result.questionId)
-            setAlert({
-              isAlertOpen: true,
-              message: 'Datos guardados exitosamente',
-              color: 'success',
-            })
-          })
-          .catch((error) => {
-            setAlert({
-              isAlertOpen: true,
-              message: error.data.message,
-              color: 'error',
-            })
-          })
+        // createQuestion(processValues(values))
+        //   .unwrap()
+        //   .then((result: Question) => {
+        //     formik.setFieldValue('questionId', result.questionId)
+        //     setAlert({
+        //       isAlertOpen: true,
+        //       message: 'Datos guardados exitosamente',
+        //       color: 'success',
+        //     })
+        //   })
+        //   .catch((error) => {
+        //     setAlert({
+        //       isAlertOpen: true,
+        //       message: error.data.message,
+        //       color: 'error',
+        //     })
+        //   })
       } else {
-        updateQuestion(processValues(values))
-          .unwrap()
-          .then(() => {
-            setAlert({
-              isAlertOpen: true,
-              message: 'Datos modificados exitosamente',
-              color: 'success',
-            })
-          })
-          .catch((error) => {
-            setAlert({
-              isAlertOpen: true,
-              message: error.data.message,
-              color: 'error',
-            })
-          })
+        //   updateQuestion(processValues(values))
+        //     .unwrap()
+        //     .then(() => {
+        //       setAlert({
+        //         isAlertOpen: true,
+        //         message: 'Datos modificados exitosamente',
+        //         color: 'success',
+        //       })
+        //     })
+        //     .catch((error) => {
+        //       setAlert({
+        //         isAlertOpen: true,
+        //         message: error.data.message,
+        //         color: 'error',
+        //       })
+        //     })
       }
     },
 
@@ -172,19 +164,19 @@ export const QuestionForm = () => {
     },
   })
 
-  useEffect(() => {
-    if (data) {
-      const choice = [...data.choices].sort((a, b) => a.order - b.order)
+  // useEffect(() => {
+  //   if (data) {
+  //     const choice = [...data.choices].sort((a, b) => a.order - b.order)
 
-      formik.setValues({
-        ...data,
-        choices: choice,
-      })
-      setSelectedQuestion(data)
-    }
+  //     formik.setValues({
+  //       ...data,
+  //       choices: choice,
+  //     })
+  //     setSelectedQuestion(data)
+  //   }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess])
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isSuccess])
 
   const handleChoice = (choice: Choice) => {
     const index = formik.values.choices.findIndex(
@@ -331,7 +323,7 @@ export const QuestionForm = () => {
   return (
     <>
       <BackofficePage>
-        <Loader open={isFetching || isLoadingCreate || isLoadingUpdate} />
+        {/* <Loader open={isFetching || isLoadingCreate || isLoadingUpdate} /> */}
         <CustomSnackbar alert={alert} />
         <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
           <Box sx={{ mt: 1 }}>
