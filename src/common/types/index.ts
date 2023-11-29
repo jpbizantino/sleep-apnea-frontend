@@ -1,4 +1,4 @@
-export * from './calculatedFild'
+export * from './calculatedField.type'
 export * from './choice.type'
 export * from './common.type'
 export * from './gender.type'

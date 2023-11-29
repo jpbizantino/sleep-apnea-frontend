@@ -10,15 +10,14 @@ import {
   Typography,
 } from '@mui/material'
 import { useFormik } from 'formik'
-import { useEffect } from 'react'
 import * as yup from 'yup'
 import { Choice, ModalReason } from '../../../common/types'
-import { useBackoffice } from '../../common/hooks/userBackoffice'
+import { QuestionModalProps } from '../views/CombinedAnswerForm'
 
-export const ChoiceModal = (props: { handleChoice: any }) => {
-  const { toggleChoiceModal, isChoiceModalOpen, selectedChoice } =
-    useBackoffice()
-
+export const QuestionModal = (props: {
+  questionModal: QuestionModalProps
+  setQuestionModal: React.Dispatch<React.SetStateAction<QuestionModalProps>>
+}) => {
   const initialValue: Choice = {
     choiceId: crypto.randomUUID().toString(),
     description: '',
@@ -45,24 +44,23 @@ export const ChoiceModal = (props: { handleChoice: any }) => {
     validationSchema: validationSchema,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSubmit: (values: Choice) => {
-      props.handleChoice(values)
-      toggleChoiceModal()
+      // toggleChoiceModal()
     },
     onReset: () => {
-      toggleChoiceModal()
+      props.setQuestionModal({ ...props.questionModal, open: false })
     },
   })
 
-  useEffect(() => {
-    if (selectedChoice !== null) {
-      formik.setValues(selectedChoice)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChoice])
+  // useEffect(() => {
+  //   if (selectedChoice !== null) {
+  //     formik.setValues(selectedChoice)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [selectedChoice])
 
   return (
     <Dialog
-      open={isChoiceModalOpen}
+      open={props.questionModal.open}
       onClose={(_event, reason) => {
         if (reason && reason == ModalReason.backdropClick) return
         // ReportModal()
@@ -78,19 +76,6 @@ export const ChoiceModal = (props: { handleChoice: any }) => {
         </DialogTitle>
         <DialogContent>
           <Grid container columns={12} spacing={1} rowSpacing={1}>
-            <Grid item xs={2}>
-              <TextField
-                name="order"
-                variant="standard"
-                label="Orden"
-                fullWidth
-                type="number"
-                value={formik.values.order}
-                onChange={formik.handleChange}
-                error={formik.touched.order && Boolean(formik.errors.order)}
-                helperText={formik.touched.order && formik.errors.order}
-              />
-            </Grid>
             <Grid item xs={8}>
               <TextField
                 name="description"
@@ -105,24 +90,6 @@ export const ChoiceModal = (props: { handleChoice: any }) => {
                 }
                 helperText={
                   formik.touched.description && formik.errors.description
-                }
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <TextField
-                name="choiceValue"
-                variant="standard"
-                label="Valor score"
-                fullWidth
-                type="number"
-                value={formik.values.choiceValue}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.choiceValue &&
-                  Boolean(formik.errors.choiceValue)
-                }
-                helperText={
-                  formik.touched.choiceValue && formik.errors.choiceValue
                 }
               />
             </Grid>

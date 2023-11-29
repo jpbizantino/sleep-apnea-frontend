@@ -5,48 +5,36 @@ import {
   AccordionSummary,
   Box,
   Button,
-  FormControlLabel,
   Grid,
   Paper,
-  Switch,
   TextField,
   Typography,
 } from '@mui/material'
+import { skipToken } from '@reduxjs/toolkit/query'
 import { useFormik } from 'formik'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import * as yup from 'yup'
 import { CustomSnackbar } from '../../../common/components/CustomSnackbar'
-import { ProcessingRule } from '../../../common/enum/processingRule.enum'
-import { QuestionType } from '../../../common/enum/question.enum'
+import { Loader } from '../../../common/components/Loader'
+import { OperatorType } from '../../../common/enum/calculatedFiled.enus'
 import {
   AlertOption,
-  Choice,
+  CalculatedField,
   GenericDictionary,
   Question,
 } from '../../../common/types'
-import { Rule } from '../../../common/types/rule.type'
-import { useBackoffice } from '../../common/hooks/userBackoffice'
 import { BackofficePage } from '../../common/pages/BackofficePage'
-import { QuestionTypeCombo } from '../components'
-import { ChoiceModal } from '../components/ChoiceModal'
-import { RuleTypeCombo } from '../components/RuleTypeCombo'
-// import {
-//   useGetQuestionQuery
-// } from '../slices/combinedAnsweQuerySlice'
+import { OperatorTypeCombo, QuestionModal } from '../components'
+import {
+  useCreateCalculatedFieldMutation,
+  useGetCalculatedFieldQuery,
+  useUpdateCalculatedFieldMutation,
+} from '../slices/combinedAnsweQuerySlice'
 
 const ruleSchema = yup.object().shape({
-  processingRule: yup.string().required('Seleccione una regla'),
-  valueA: yup
-    .number()
-    .required('Ingrese un valor')
-    .min(0, 'El valor debe ser entre 0 y 100')
-    .max(100, 'El valor debe ser entre 0 y 100'),
-  valueB: yup
-    .number()
-    .required('Ingrese un valor')
-    .min(0, 'El valor debe ser entre 0 y 100')
-    .max(100, 'El valor debe ser entre 0 y 100'),
+  question: yup.array().min(2, 'Ingrese al menos 2 opciones'),
+
   scoreToAdd: yup
     .number()
     .required('Ingrese un valor')
@@ -61,21 +49,25 @@ const validationSchema = yup.object({
   // choices: yup.array().min(2, 'Ingrese al menos 2 opciones'),
 })
 
+export interface QuestionModalProps {
+  open: boolean
+  question: Question | null
+  handleQuestion: any
+}
+
 export const CombinedAnswerForm = () => {
   const navigate = useNavigate()
-  const { openNewChoice, toggleChoiceModal, setSelectedChoice } =
-    useBackoffice()
 
-  //Get de URL Param
-  // const { questionId } = useParams()
+  // Get de URL Param
+  const { combinedAnswerId } = useParams()
 
-  // const [createQuestion, { isLoading: isLoadingCreate }] =
-  //   useCreateQuestionMutation()
-  // const [updateQuestion, { isLoading: isLoadingUpdate }] =
-  //   useUpdateQuestionMutation()
-  // const { data, isFetching, isSuccess } = useGetQuestionQuery(
-  //   questionId ?? skipToken
-  // )
+  const [createCalculatedField, { isLoading: isLoadingCreate }] =
+    useCreateCalculatedFieldMutation()
+  const [updateCalculatedField, { isLoading: isLoadingUpdate }] =
+    useUpdateCalculatedFieldMutation()
+  const { data, isFetching, isSuccess } = useGetCalculatedFieldQuery(
+    combinedAnswerId ?? skipToken
+  )
 
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
@@ -83,120 +75,93 @@ export const CombinedAnswerForm = () => {
     color: 'error',
   })
 
-  const rule: Rule = {
-    processingRule: ProcessingRule.EQUAL,
-    valueA: 0,
-    valueB: 0,
+  let initialValue: CalculatedField = {
+    calculatedFieldId: '',
+    questions: [],
+    operator: OperatorType.OR,
     scoreToAdd: 0,
-    singleResult: true,
   }
-
-  let initialValue: Question = {
-    questionId: '',
-    question: '',
-    description: '',
-    order: 0,
-    questionType: QuestionType.FIX_NUMBER,
-    imageLink: '',
-    choices: [],
-    rule: rule,
-    active: true,
-  }
-
-  // const processValues = (values: Question): Question => {
-  //   return {
-  //     ...values,
-  //     question: values.question.trim().toUpperCase(),
-  //     description: values.description.trim().toUpperCase(),
-  //   }
-  // }
 
   const formik = useFormik({
     initialValues: initialValue,
     validationSchema: validationSchema,
-    onSubmit: (values: Question) => {
+    onSubmit: (values: CalculatedField) => {
       setAlert({
         isAlertOpen: false,
         message: '',
         color: 'info',
       })
 
-      if (values.questionId == '') {
-        // createQuestion(processValues(values))
-        //   .unwrap()
-        //   .then((result: Question) => {
-        //     formik.setFieldValue('questionId', result.questionId)
-        //     setAlert({
-        //       isAlertOpen: true,
-        //       message: 'Datos guardados exitosamente',
-        //       color: 'success',
-        //     })
-        //   })
-        //   .catch((error) => {
-        //     setAlert({
-        //       isAlertOpen: true,
-        //       message: error.data.message,
-        //       color: 'error',
-        //     })
-        //   })
+      if (values.calculatedFieldId == '') {
+        createCalculatedField(values)
+          .unwrap()
+          .then((result: CalculatedField) => {
+            formik.setFieldValue('questionId', result.calculatedFieldId)
+            setAlert({
+              isAlertOpen: true,
+              message: 'Datos guardados exitosamente',
+              color: 'success',
+            })
+          })
+          .catch((error) => {
+            setAlert({
+              isAlertOpen: true,
+              message: error.data.message,
+              color: 'error',
+            })
+          })
       } else {
-        //   updateQuestion(processValues(values))
-        //     .unwrap()
-        //     .then(() => {
-        //       setAlert({
-        //         isAlertOpen: true,
-        //         message: 'Datos modificados exitosamente',
-        //         color: 'success',
-        //       })
-        //     })
-        //     .catch((error) => {
-        //       setAlert({
-        //         isAlertOpen: true,
-        //         message: error.data.message,
-        //         color: 'error',
-        //       })
-        //     })
+        updateCalculatedField(values)
+          .unwrap()
+          .then(() => {
+            setAlert({
+              isAlertOpen: true,
+              message: 'Datos modificados exitosamente',
+              color: 'success',
+            })
+          })
+          .catch((error) => {
+            setAlert({
+              isAlertOpen: true,
+              message: error.data.message,
+              color: 'error',
+            })
+          })
       }
     },
 
-    onReset: (values: Question) => {
+    onReset: (values: CalculatedField) => {
       initialValue = values
     },
   })
 
-  // useEffect(() => {
-  //   if (data) {
-  //     const choice = [...data.choices].sort((a, b) => a.order - b.order)
+  useEffect(() => {
+    if (data) {
+      formik.setValues(data)
+    }
 
-  //     formik.setValues({
-  //       ...data,
-  //       choices: choice,
-  //     })
-  //     setSelectedQuestion(data)
-  //   }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess])
 
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [isSuccess])
-
-  const handleChoice = (choice: Choice) => {
-    const index = formik.values.choices.findIndex(
-      (a) => a.choiceId === choice.choiceId
+  const handleQuestion = (question: Question) => {
+    const index = formik.values.questions.findIndex(
+      (a) => a.questionId === question.questionId
     )
 
-    const tempChoices = [...formik.values.choices]
+    const tempQuestions = [...formik.values.questions]
 
     if (index < 0) {
-      tempChoices.push(choice)
-      formik.setFieldValue('choices', tempChoices)
+      tempQuestions.push(question)
+      formik.setFieldValue('questions', tempQuestions)
     } else {
-      tempChoices[index] = choice
-      formik.setFieldValue('choices', tempChoices)
+      tempQuestions[index] = question
+      formik.setFieldValue('questions', tempQuestions)
     }
   }
 
-  const handleDeleteChoice = (choice: Choice) => {
-    const index = formik.values.choices.findIndex(
-      (a) => a.choiceId === choice.choiceId
+  const handleDeleteQuestion = (choice: Question) => {
+    const index = formik.values.questions.findIndex(
+      (a) => a.questionId === choice.questionId
     )
 
     setAlert({
@@ -214,12 +179,14 @@ export const CombinedAnswerForm = () => {
     } else {
       formik.setFieldValue(
         'choices',
-        formik.values.choices.filter((p) => p.choiceId !== choice.choiceId)
+        formik.values.questions.filter(
+          (p) => p.questionId !== choice.questionId
+        )
       )
     }
   }
 
-  const InternalChoiceCard = (props: { choice: Choice }) => {
+  const InternalChoiceCard = (props: { choice: Question }) => {
     return (
       <>
         <Paper elevation={1} sx={{ mt: 1, p: 1 }}>
@@ -246,21 +213,21 @@ export const CombinedAnswerForm = () => {
                 <Typography variant="caption">Descripción</Typography>
                 <br />
                 <Typography sx={{ fontWeight: 'bold' }}>
-                  {props.choice.description}
+                  {props.choice.question}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={2} md={2}>
                 <Typography variant="caption">Valor</Typography>
                 <br />
                 <Typography sx={{ fontWeight: 'bold' }}>
-                  {props.choice.choiceValue}
+                  {props.choice.rule.processingRule}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={2} md={2}>
                 <Typography variant="caption">Orden</Typography>
                 <br />
                 <Typography sx={{ fontWeight: 'bold' }}>
-                  {props.choice.order}
+                  {props.choice.rule.valueA}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={2} md={2}>
@@ -281,8 +248,7 @@ export const CombinedAnswerForm = () => {
                   startIcon={<Delete />}
                   fullWidth
                   onClick={() => {
-                    setSelectedChoice(null)
-                    handleDeleteChoice(props.choice)
+                    handleDeleteQuestion(props.choice)
                   }}
                 >
                   Eliminar
@@ -295,27 +261,38 @@ export const CombinedAnswerForm = () => {
     )
   }
 
+  const [questionModal, setQuestionModal] = useState<QuestionModalProps>({
+    open: false,
+    question: null,
+    handleQuestion,
+  })
+
   const InternalChoiceList = () => {
     return (
       <>
         <Grid container columns={12}>
           <Grid item xs={12}>
-            <Button onClick={() => openNewChoice()}>
+            <Button
+              onClick={() => setQuestionModal({ ...questionModal, open: true })}
+            >
               <Add />
-              Nueva opción
+              Nueva pregunta
             </Button>
           </Grid>
           <Grid item xs={12}>
-            {formik.values.choices.map((item: Choice) => {
+            {formik.values.questions.map((item: Question) => {
               return (
-                <div key={item.choiceId}>
+                <div key={item.questionId}>
                   <InternalChoiceCard choice={item} />
                 </div>
               )
             })}
           </Grid>
         </Grid>
-        <ChoiceModal handleChoice={handleChoice} />
+        <QuestionModal
+          questionModal={questionModal}
+          setQuestionModal={setQuestionModal}
+        />
       </>
     )
   }
@@ -323,7 +300,7 @@ export const CombinedAnswerForm = () => {
   return (
     <>
       <BackofficePage>
-        {/* <Loader open={isFetching || isLoadingCreate || isLoadingUpdate} /> */}
+        <Loader open={isFetching || isLoadingCreate || isLoadingUpdate} />
         <CustomSnackbar alert={alert} />
         <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
           <Box sx={{ mt: 1 }}>
@@ -335,260 +312,48 @@ export const CombinedAnswerForm = () => {
             >
               <AccordionSummary>
                 <Typography variant="h6">
-                  {formik.values.questionId
-                    ? 'Editar Pregunta'
-                    : 'Nueva Pregunta'}
+                  {formik.values.calculatedFieldId
+                    ? 'Editar Respuesta Combinada'
+                    : 'Nueva Respuesta Combinada'}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Grid
-                  container
-                  direction={{ xs: 'column', md: 'row' }}
-                  spacing={1}
-                  rowSpacing={1}
-                  columns={12}
-                >
-                  <Grid item xs={12}>
-                    <TextField
-                      name="question"
-                      label="Pregunta"
-                      variant="standard"
-                      fullWidth
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.question &&
-                        Boolean(formik.errors.question)
-                      }
-                      helperText={
-                        formik.touched.question && formik.errors.question
-                      }
-                      value={formik.values.question}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <TextField
-                      name="description"
-                      label="Descripción"
-                      variant="standard"
-                      fullWidth
-                      multiline
-                      minRows={1}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.description &&
-                        Boolean(formik.errors.description)
-                      }
-                      helperText={
-                        formik.touched.description && formik.errors.description
-                      }
-                      value={formik.values.description}
-                    />
-
-                    {
-                      <Typography
-                        color="error"
-                        variant="caption"
-                        //fontWeight="bold"
-                        display="block"
-                      >
-                        {formik.errors.choices as string}
-                      </Typography>
-                    }
-                  </Grid>
-
-                  <Grid item xs={2} sx={{ mt: 1, mb: 1 }}>
-                    <FormControlLabel
-                      label="Activo"
-                      control={
-                        <Switch
-                          checked={formik.values.active}
-                          name="active"
-                          value={formik.values.active}
-                          onChange={formik.handleChange}
-                        />
-                      }
-                    />
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <QuestionTypeCombo
-                      label="Tipo de Pregunta"
-                      name="questionType"
-                      disabled={false}
-                      value={formik.values.questionType}
-                      error={formik.errors.questionType}
-                      helperText={
-                        formik.touched.questionType &&
-                        formik.errors.questionType
-                      }
-                      onChange={(_: unknown, value: GenericDictionary) => {
-                        formik.setFieldValue('questionType', value.name)
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      name="imageLink"
-                      label="Link a Imagen"
-                      variant="standard"
-                      fullWidth
-                      multiline
-                      maxRows={1}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.imageLink &&
-                        Boolean(formik.errors.imageLink)
-                      }
-                      helperText={
-                        formik.touched.imageLink && formik.errors.imageLink
-                      }
-                      value={formik.values.imageLink}
-                    />
-
-                    <Box
-                      sx={{
-                        overflow: 'auto',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        pt: 2,
-                      }}
-                    >
-                      {/* Signature error message */}
-                      {formik.values.imageLink && (
-                        <Typography
-                          color="error"
-                          variant="caption"
-                          display="block"
-                        >
-                          {formik.touched.imageLink && formik.errors.imageLink}
-                        </Typography>
-                      )}
-
-                      {formik.values.imageLink && (
-                        <img
-                          src={formik.values.imageLink}
-                          style={{ width: 300 }}
-                        />
-                      )}
-                    </Box>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <>
-                      {formik.values.questionType == QuestionType.CHOICE && (
-                        <Box sx={{ pt: 1, pb: 4 }}>
-                          <InternalChoiceList />
-                          {formik.errors.choices && formik.touched.choices && (
-                            <Typography
-                              color="error"
-                              variant="caption"
-                              //fontWeight="bold"
-                              display="block"
-                            >
-                              {formik.errors.choices as string}
-                            </Typography>
-                          )}
-                        </Box>
-                      )}
-                    </>
-                  </Grid>
-
-                  <Grid item xs={2} sx={{ mt: 1, mb: 1 }}>
-                    <FormControlLabel
-                      label="Resultado simple"
-                      control={
-                        <Switch
-                          checked={formik.values.rule.singleResult}
-                          name="rule.singleResult"
-                          value={formik.values.rule.singleResult}
-                          onChange={formik.handleChange}
-                        />
-                      }
-                    />
-                  </Grid>
-
+                <Box sx={{ pt: 1, pb: 4 }}>
+                  <InternalChoiceList />
+                </Box>
+                <Grid container>
                   <Grid item xs={3}>
-                    <RuleTypeCombo
-                      label="Regla de procesamiento"
-                      name="rule.processingRule"
+                    <OperatorTypeCombo
+                      label="Operador"
+                      name="operator"
                       disabled={false}
-                      value={formik.values.rule.processingRule}
-                      error={formik.errors.rule?.processingRule}
+                      value={formik.values.operator}
+                      error={formik.errors.operator}
                       helperText={
-                        formik.touched.rule?.processingRule &&
-                        formik.errors.rule?.processingRule
+                        formik.touched.operator && formik.errors.operator
                       }
                       onChange={(_: unknown, value: GenericDictionary) => {
-                        formik.setFieldValue('rule', {
-                          ...rule,
-                          processingRule: value.name,
-                        })
+                        formik.setFieldValue('operator', value.name)
                       }}
                     />
                   </Grid>
 
                   <Grid item xs={2}>
                     <TextField
-                      name="rule.valueA"
-                      label="Valor A"
-                      variant="standard"
-                      type="number"
-                      fullWidth
-                      value={formik.values.rule.valueA}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.rule?.valueA &&
-                        Boolean(formik.errors.rule?.valueA)
-                      }
-                      helperText={
-                        formik.touched.rule?.valueA &&
-                        formik.errors.rule?.valueA
-                      }
-                    />
-                  </Grid>
-
-                  <Grid item xs={2}>
-                    <TextField
-                      name="rule.valueB"
-                      label="Valor B"
-                      variant="standard"
-                      type="number"
-                      fullWidth
-                      disabled={[ProcessingRule.BETWEEN].some(
-                        (p) => p !== formik.values.rule.processingRule
-                      )}
-                      value={formik.values.rule.valueB}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.rule?.valueB &&
-                        Boolean(formik.errors.rule?.valueB)
-                      }
-                      helperText={
-                        formik.touched.rule?.valueB &&
-                        formik.errors.rule?.valueB
-                      }
-                    />
-                  </Grid>
-
-                  <Grid item xs={2}>
-                    <TextField
-                      name="rule.scoreToAdd"
+                      name="scoreToAdd"
                       label="Score a sumar"
                       variant="standard"
                       type="number"
                       fullWidth
-                      value={formik.values.rule.scoreToAdd}
+                      value={formik.values.scoreToAdd}
                       onChange={formik.handleChange}
                       error={
-                        formik.touched.rule?.scoreToAdd &&
-                        Boolean(formik.errors.rule?.scoreToAdd)
+                        formik.touched.scoreToAdd &&
+                        Boolean(formik.errors.scoreToAdd)
                       }
                       helperText={
-                        formik.touched.rule?.scoreToAdd &&
-                        formik.errors.rule?.scoreToAdd
+                        formik.touched.scoreToAdd && formik.errors.scoreToAdd
                       }
-                      disabled={!formik.values.rule.singleResult}
                     />
                   </Grid>
                 </Grid>

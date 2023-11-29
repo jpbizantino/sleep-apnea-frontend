@@ -1,7 +1,7 @@
 import { Autocomplete, TextField } from '@mui/material'
-import { ruleTypeDictionary } from '../../../common/enum/processingRule.enum'
+import { operatorTypeDictionary } from '../../../common/enum/calculatedFiled.enus'
 
-export const RuleTypeCombo = (props: {
+export const OperatorTypeCombo = (props: {
   disabled: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any
@@ -21,11 +21,11 @@ export const RuleTypeCombo = (props: {
       disabled={props.disabled}
       // disablePortal
       disableClearable={true}
-      options={ruleTypeDictionary}
+      options={operatorTypeDictionary}
       onChange={props.onChange}
       getOptionLabel={(option) => option.translation}
-      value={ruleTypeDictionary.find(
-        (ruleTypeDictionary) => ruleTypeDictionary.name === props.value
+      value={operatorTypeDictionary.find(
+        (operatorTypeDictionary) => operatorTypeDictionary.name === props.value
       )}
       renderInput={(params) => (
         <TextField
