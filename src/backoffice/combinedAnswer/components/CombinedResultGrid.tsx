@@ -1,13 +1,9 @@
 import {
   Add,
-  CheckCircle,
   CleaningServices,
   Edit,
   ExpandMore,
-  Merge,
   Search,
-  Straight,
-  Unpublished,
 } from '@mui/icons-material'
 import {
   Accordion,
@@ -15,25 +11,16 @@ import {
   AccordionSummary,
   Button,
   Grid,
-  Tooltip,
   Typography,
 } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useFormik } from 'formik'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Loader } from '../../../common/components/Loader'
 import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
-import {
-  ProcessingRule,
-  translateProcessingRule,
-} from '../../../common/enum/processingRule.enum'
-import { translateQuestionType } from '../../../common/enum/question.enum'
-import {
-  CalculatedField,
-  Question,
-  QuestionFilter,
-} from '../../../common/types'
+import { CalculatedField, QuestionFilter } from '../../../common/types'
 import { useGetCalculatedFieldsQuery } from '../slices/combinedAnsweQuerySlice'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -50,7 +37,7 @@ export const CombinedAnswerGrid = () => {
 
   const columns: GridColDef[] = [
     {
-      field: 'questionId',
+      field: 'calculatedFieldId',
       headerName: 'id',
     },
     {
@@ -66,7 +53,9 @@ export const CombinedAnswerGrid = () => {
             color="colorLevel4White"
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             onClick={() => {
-              navigate(`/backoffice/questions/${cellValues.id}`)
+              navigate(
+                `/backoffice/combinedAnswer/${cellValues.row.calculatedFieldId}`
+              )
             }}
           >
             Editar
@@ -75,82 +64,21 @@ export const CombinedAnswerGrid = () => {
       },
     },
     {
-      field: 'question',
-      headerName: 'Pregunta',
-      width: 400,
+      field: 'operator',
+      headerName: 'Operador',
+      width: 200,
     },
     {
-      field: 'description',
-      headerName: 'Descripción',
-      width: 250,
+      field: 'scoreToAdd',
+      headerName: 'score',
+      width: 200,
     },
     {
-      field: 'questionType',
-      headerName: 'Tipo de Pregunta',
+      field: 'questions',
+      headerName: 'Preguntas',
       width: 150,
       renderCell: (cellValues) => {
-        return translateQuestionType(cellValues.value)
-      },
-    },
-    {
-      field: 'singleResult',
-      headerName: 'Resultado',
-      width: 100,
-      renderCell: (cellValues) => {
-        return (
-          <>
-            {cellValues.row.rule.singleResult ? (
-              <Tooltip title="Resultado Simple" followCursor>
-                <Straight color="success" />
-              </Tooltip>
-            ) : (
-              <Tooltip title="Resultado Combinado" followCursor>
-                <Merge color="warning" />
-              </Tooltip>
-            )}
-          </>
-        )
-      },
-    },
-    {
-      field: 'rule',
-      headerName: 'Regla',
-      width: 100,
-      renderCell: (cellValues) => {
-        const ruleType = cellValues.value.processingRule
-
-        if (ruleType == ProcessingRule.BETWEEN)
-          return `${translateProcessingRule(ruleType)} ${
-            cellValues.value.valueA
-          } y ${cellValues.value.valueB} ::: ${cellValues.value.scoreToAdd}`
-        else
-          return `${translateProcessingRule(ruleType)} ${
-            cellValues.value.valueA
-          } :::  ${cellValues.value.scoreToAdd}`
-      },
-    },
-    {
-      field: 'active',
-      headerName: 'Estado',
-      align: 'center',
-      width: 100,
-      //valueGetter: (params: GridValueGetterParams) => params.row.inactive ? 'INACTIVO' : 'ACTIVO'
-      renderCell: (cellValues) => {
-        const user: Question = cellValues.row
-
-        return (
-          <>
-            {user.active ? (
-              <Tooltip title="Pregunta Activa" followCursor>
-                <CheckCircle color="success" />
-              </Tooltip>
-            ) : (
-              <Tooltip title="Pregunta Inactiva" followCursor>
-                <Unpublished color="disabled" />
-              </Tooltip>
-            )}
-          </>
-        )
+        return cellValues.row.questions ? cellValues.row.questions.length : 0
       },
     },
   ]
@@ -158,7 +86,7 @@ export const CombinedAnswerGrid = () => {
   const getTogglableColumns = (columns: GridColDef[]) => {
     // hide the column with field `id` from list of togglable columns
     return columns
-      .filter((column) => column.field !== '_id')
+      .filter((column) => column.field !== 'calculatedFieldId')
       .map((column) => column.field)
   }
 
@@ -171,6 +99,10 @@ export const CombinedAnswerGrid = () => {
   })
 
   const { isFetching, data } = useGetCalculatedFieldsQuery(null)
+
+  useEffect(() => {
+    console.log(data)
+  }, [])
 
   return (
     <>
@@ -234,7 +166,7 @@ export const CombinedAnswerGrid = () => {
       <DataGrid
         columnVisibilityModel={{
           // Hide columns status and traderName, the other columns will remain visible
-          questionId: false,
+          calculatedFieldId: false,
         }}
         disableColumnSelector
         slotProps={{

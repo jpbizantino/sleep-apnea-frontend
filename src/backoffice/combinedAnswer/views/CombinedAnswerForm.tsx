@@ -1,4 +1,4 @@
-import { Add, Close, Delete, Edit, Save } from '@mui/icons-material'
+import { Add, Close, Delete, Save } from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
@@ -25,55 +25,49 @@ import {
   Question,
 } from '../../../common/types'
 import { BackofficePage } from '../../common/pages/BackofficePage'
-import { OperatorTypeCombo, QuestionModal } from '../components'
+import { questionText } from '../../question/helper/question.helper'
+import { useGetSingleResultsQuestionsQuery } from '../../question/slices/questionQuerySlice'
+import { OperatorTypeCombo } from '../components'
+import { QuestionCombo } from '../components/QuestionCombo'
 import {
   useCreateCalculatedFieldMutation,
   useGetCalculatedFieldQuery,
   useUpdateCalculatedFieldMutation,
 } from '../slices/combinedAnsweQuerySlice'
 
-const ruleSchema = yup.object().shape({
-  question: yup.array().min(2, 'Ingrese al menos 2 opciones'),
-
+const validationSchema = yup.object({
   scoreToAdd: yup
     .number()
     .required('Ingrese un valor')
-    .min(0, 'El valor debe ser entre 0 y 10')
-    .max(10, 'El valor debe ser entre 0 y 10'),
+    .min(1, 'El valor debe ser entre 1 y 10')
+    .max(10, 'El valor debe ser entre 1 y 10'),
+  questions: yup.array().min(2, 'Ingrese al menos 2 opciones'),
 })
-
-const validationSchema = yup.object({
-  question: yup.string().trim().required('El campo es requerido'),
-  description: yup.string().trim().required('El campo es requerido'),
-  rule: ruleSchema,
-  // choices: yup.array().min(2, 'Ingrese al menos 2 opciones'),
-})
-
-export interface QuestionModalProps {
-  open: boolean
-  question: Question | null
-  handleQuestion: any
-}
 
 export const CombinedAnswerForm = () => {
   const navigate = useNavigate()
 
   // Get de URL Param
-  const { combinedAnswerId } = useParams()
+
+  const { calculatedFieldId } = useParams()
 
   const [createCalculatedField, { isLoading: isLoadingCreate }] =
     useCreateCalculatedFieldMutation()
   const [updateCalculatedField, { isLoading: isLoadingUpdate }] =
     useUpdateCalculatedFieldMutation()
   const { data, isFetching, isSuccess } = useGetCalculatedFieldQuery(
-    combinedAnswerId ?? skipToken
+    calculatedFieldId ?? skipToken
   )
+  const { data: questionData, isFetching: isfetchingQuestions } =
+    useGetSingleResultsQuestionsQuery('')
 
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
     message: '',
     color: 'error',
   })
+
+  const [tempQuestion, setTempQuestion] = useState<Question | null>(null)
 
   let initialValue: CalculatedField = {
     calculatedFieldId: '',
@@ -159,9 +153,9 @@ export const CombinedAnswerForm = () => {
     }
   }
 
-  const handleDeleteQuestion = (choice: Question) => {
+  const handleDeleteQuestion = (question: Question) => {
     const index = formik.values.questions.findIndex(
-      (a) => a.questionId === choice.questionId
+      (a) => a.questionId === question.questionId
     )
 
     setAlert({
@@ -178,15 +172,15 @@ export const CombinedAnswerForm = () => {
       })
     } else {
       formik.setFieldValue(
-        'choices',
+        'questions',
         formik.values.questions.filter(
-          (p) => p.questionId !== choice.questionId
+          (p) => p.questionId !== question.questionId
         )
       )
     }
   }
 
-  const InternalChoiceCard = (props: { choice: Question }) => {
+  const InternalChoiceCard = (props: { question: Question }) => {
     return (
       <>
         <Paper elevation={1} sx={{ mt: 1, p: 1 }}>
@@ -209,46 +203,20 @@ export const CombinedAnswerForm = () => {
                 minHeight: '100%',
               }}
             >
-              <Grid item xs={12} sm={4} md={4}>
-                <Typography variant="caption">Descripción</Typography>
+              <Grid item xs={12} sm={10} md={10}>
+                <Typography variant="caption">Pregunta</Typography>
                 <br />
                 <Typography sx={{ fontWeight: 'bold' }}>
-                  {props.choice.question}
+                  {questionText(props.question)}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={2} md={2}>
-                <Typography variant="caption">Valor</Typography>
-                <br />
-                <Typography sx={{ fontWeight: 'bold' }}>
-                  {props.choice.rule.processingRule}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={2} md={2}>
-                <Typography variant="caption">Orden</Typography>
-                <br />
-                <Typography sx={{ fontWeight: 'bold' }}>
-                  {props.choice.rule.valueA}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={2} md={2}>
-                <Button
-                  startIcon={<Edit />}
-                  // variant="outlined"
-                  fullWidth
-                  onClick={() => {
-                    setSelectedChoice(props.choice)
-                    toggleChoiceModal()
-                  }}
-                >
-                  Editar
-                </Button>
-              </Grid>
+
               <Grid item xs={12} sm={2} md={2}>
                 <Button
                   startIcon={<Delete />}
                   fullWidth
                   onClick={() => {
-                    handleDeleteQuestion(props.choice)
+                    handleDeleteQuestion(props.question)
                   }}
                 >
                   Eliminar
@@ -261,38 +229,50 @@ export const CombinedAnswerForm = () => {
     )
   }
 
-  const [questionModal, setQuestionModal] = useState<QuestionModalProps>({
-    open: false,
-    question: null,
-    handleQuestion,
-  })
-
-  const InternalChoiceList = () => {
+  const InternalQuestionList = () => {
     return (
       <>
-        <Grid container columns={12}>
-          <Grid item xs={12}>
+        <Grid container columns={12} spacing={1}>
+          <Grid item xs={12} md={10}>
+            <QuestionCombo
+              label="Pregunta a incluir"
+              name="question"
+              disabled={isfetchingQuestions}
+              value={tempQuestion}
+              error={formik.errors.operator}
+              helperText={formik.touched.operator && formik.errors.operator}
+              onChange={(_: unknown, value: Question) => {
+                if (value) {
+                  setTempQuestion(value)
+                }
+              }}
+              questions={questionData ?? []}
+            />
+          </Grid>
+          <Grid item xs={12} md={2}>
             <Button
-              onClick={() => setQuestionModal({ ...questionModal, open: true })}
+              // variant="contained"
+              onClick={() => {
+                if (tempQuestion) {
+                  handleQuestion(tempQuestion)
+                  setTempQuestion(null)
+                }
+              }}
             >
               <Add />
-              Nueva pregunta
+              Agregar
             </Button>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ pt: 2 }}>
             {formik.values.questions.map((item: Question) => {
               return (
                 <div key={item.questionId}>
-                  <InternalChoiceCard choice={item} />
+                  <InternalChoiceCard question={item} />
                 </div>
               )
             })}
           </Grid>
         </Grid>
-        <QuestionModal
-          questionModal={questionModal}
-          setQuestionModal={setQuestionModal}
-        />
       </>
     )
   }
@@ -318,11 +298,22 @@ export const CombinedAnswerForm = () => {
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Box sx={{ pt: 1, pb: 4 }}>
-                  <InternalChoiceList />
+                <Box sx={{ pb: 2 }}>
+                  <InternalQuestionList />
+                  {formik.errors.questions && formik.touched.questions && (
+                    <Typography
+                      color="error"
+                      variant="caption"
+                      //fontWeight="bold"
+                      display="block"
+                    >
+                      {formik.errors.questions as string}
+                    </Typography>
+                  )}
                 </Box>
-                <Grid container>
-                  <Grid item xs={3}>
+
+                <Grid container columns={12} spacing={1} rowSpacing={1}>
+                  <Grid item xs={2}>
                     <OperatorTypeCombo
                       label="Operador"
                       name="operator"

@@ -11,6 +11,13 @@ export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
       }),
       providesTags: ['Question'],
     }),
+    getSingleResultsQuestions: builder.query<Question[], string>({
+      query: () => ({
+        url: `/questions/singleResults`,
+        method: 'GET',
+      }),
+      providesTags: ['Question'],
+    }),
     getQuestion: builder.query<Question, string>({
       query: (id: string) => ({
         url: `/questions/${id}`,
@@ -68,6 +75,7 @@ export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
 export const {
   useGetQuestionsQuery,
   useGetQuestionQuery,
+  useGetSingleResultsQuestionsQuery,
   useCreateQuestionMutation,
   useUpdateQuestionMutation,
   useMoveUpQuestionMutation,
