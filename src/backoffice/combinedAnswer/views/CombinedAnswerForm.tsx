@@ -1,10 +1,20 @@
-import { Add, Close, Delete, Save } from '@mui/icons-material'
+import {
+  Add,
+  Close,
+  Delete,
+  DeleteOutline,
+  Save,
+  ThumbUpOffAlt,
+} from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
   Grid,
   Paper,
   TextField,
@@ -31,11 +41,13 @@ import { OperatorTypeCombo } from '../components'
 import { QuestionCombo } from '../components/QuestionCombo'
 import {
   useCreateCalculatedFieldMutation,
+  useDeleteCalculatedFieldMutation,
   useGetCalculatedFieldQuery,
   useUpdateCalculatedFieldMutation,
 } from '../slices/combinedAnsweQuerySlice'
 
 const validationSchema = yup.object({
+  name: yup.string().required('Ingrese un nombre'),
   scoreToAdd: yup
     .number()
     .required('Ingrese un valor')
@@ -49,15 +61,22 @@ export const CombinedAnswerForm = () => {
 
   // Get de URL Param
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { calculatedFieldId } = useParams()
 
   const [createCalculatedField, { isLoading: isLoadingCreate }] =
     useCreateCalculatedFieldMutation()
+
   const [updateCalculatedField, { isLoading: isLoadingUpdate }] =
     useUpdateCalculatedFieldMutation()
+
+  const [deleteCalculatedField, { isLoading: isLoadingDelete }] =
+    useDeleteCalculatedFieldMutation()
+
   const { data, isFetching, isSuccess } = useGetCalculatedFieldQuery(
     calculatedFieldId ?? skipToken
   )
+
   const { data: questionData, isFetching: isfetchingQuestions } =
     useGetSingleResultsQuestionsQuery('')
 
@@ -68,8 +87,10 @@ export const CombinedAnswerForm = () => {
   })
 
   const [tempQuestion, setTempQuestion] = useState<Question | null>(null)
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
 
   let initialValue: CalculatedField = {
+    name: '',
     calculatedFieldId: '',
     questions: [],
     operator: OperatorType.OR,
@@ -136,6 +157,65 @@ export const CombinedAnswerForm = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess])
+
+  const DeleteCalculatedField = () => {
+    return (
+      <Dialog fullWidth open={openDeleteDialog}>
+        <DialogTitle>¿Desea eliminar el registro?</DialogTitle>
+
+        <DialogActions>
+          <Grid
+            container
+            direction={'row'}
+            alignItems={'center'}
+            justifyContent={'space-between'}
+            sx={{ mb: 1, mt: 1, p: 1 }}
+          >
+            <Grid item>
+              <Button
+                startIcon={<Close />}
+                disabled={isLoadingDelete}
+                variant="outlined"
+                onClick={() => {
+                  setOpenDeleteDialog(false)
+                }}
+              >
+                Cerrar
+              </Button>
+            </Grid>
+
+            <Grid item>
+              <Button
+                startIcon={<ThumbUpOffAlt />}
+                disabled={isLoadingDelete}
+                variant="contained"
+                onClick={() => {
+                  deleteCalculatedField(formik.values)
+                    .unwrap()
+                    .then((result: CalculatedField) => {
+                      formik.setFieldValue(
+                        'questionId',
+                        result.calculatedFieldId
+                      )
+                      navigate(-1)
+                    })
+                    .catch((error) => {
+                      setAlert({
+                        isAlertOpen: true,
+                        message: error.data.message,
+                        color: 'error',
+                      })
+                    })
+                }}
+              >
+                CONFIRMAR
+              </Button>
+            </Grid>
+          </Grid>
+        </DialogActions>
+      </Dialog>
+    )
+  }
 
   const handleQuestion = (question: Question) => {
     const index = formik.values.questions.findIndex(
@@ -280,7 +360,11 @@ export const CombinedAnswerForm = () => {
   return (
     <>
       <BackofficePage>
-        <Loader open={isFetching || isLoadingCreate || isLoadingUpdate} />
+        <Loader
+          open={
+            isFetching || isLoadingCreate || isLoadingUpdate || isLoadingDelete
+          }
+        />
         <CustomSnackbar alert={alert} />
         <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
           <Box sx={{ mt: 1 }}>
@@ -313,6 +397,19 @@ export const CombinedAnswerForm = () => {
                 </Box>
 
                 <Grid container columns={12} spacing={1} rowSpacing={1}>
+                  <Grid item xs={12}>
+                    <TextField
+                      name="name"
+                      label="Nombre"
+                      variant="standard"
+                      fullWidth
+                      onChange={formik.handleChange}
+                      error={formik.touched.name && Boolean(formik.errors.name)}
+                      helperText={formik.touched.name && formik.errors.name}
+                      value={formik.values.name}
+                    />
+                  </Grid>
+
                   <Grid item xs={2}>
                     <OperatorTypeCombo
                       label="Operador"
@@ -369,6 +466,16 @@ export const CombinedAnswerForm = () => {
                   </Grid>
                   <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
                     <Button
+                      startIcon={<DeleteOutline />}
+                      fullWidth
+                      onClick={() => setOpenDeleteDialog(true)}
+                      disabled={formik.values.calculatedFieldId ? false : true}
+                    >
+                      Eliminar
+                    </Button>
+                  </Grid>
+                  <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
+                    <Button
                       startIcon={<Save />}
                       fullWidth
                       variant="contained"
@@ -382,6 +489,7 @@ export const CombinedAnswerForm = () => {
             </Accordion>
           </Box>
         </form>
+        <DeleteCalculatedField />
       </BackofficePage>
     </>
   )

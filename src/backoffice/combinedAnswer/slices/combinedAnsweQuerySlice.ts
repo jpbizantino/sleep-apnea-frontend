@@ -19,6 +19,17 @@ export const combinedAnswerQuerySlice = backofficeQuerySlice.injectEndpoints({
 
       providesTags: ['CalculatedFields'],
     }),
+    deleteCalculatedField: builder.mutation<CalculatedField, CalculatedField>({
+      query: (item) => ({
+        url: `/calculated-fields/${item.calculatedFieldId}`,
+        method: 'DELETE',
+        body: item,
+      }),
+
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'CalculatedFields', physicianId: arg.calculatedFieldId },
+      ],
+    }),
     createCalculatedField: builder.mutation<CalculatedField, CalculatedField>({
       query: (item) => ({
         url: `/calculated-fields`,
@@ -49,4 +60,5 @@ export const {
   useGetCalculatedFieldQuery,
   useCreateCalculatedFieldMutation,
   useUpdateCalculatedFieldMutation,
+  useDeleteCalculatedFieldMutation,
 } = combinedAnswerQuerySlice

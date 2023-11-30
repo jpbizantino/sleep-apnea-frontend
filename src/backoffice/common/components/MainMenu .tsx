@@ -21,18 +21,6 @@ export const MainMenu = () => {
       </ListItemButton>
 
       <ListItemButton
-        selected={location.pathname === '/backoffice/surveys'}
-        onClick={() => {
-          navigate('/backoffice/surveys')
-        }}
-      >
-        <ListItemIcon>
-          <Poll />
-        </ListItemIcon>
-        <ListItemText primary="Encuestas" />
-      </ListItemButton>
-
-      <ListItemButton
         selected={location.pathname === '/backoffice/combinedAnswer'}
         onClick={() => {
           navigate('/backoffice/combinedAnswer')
@@ -42,6 +30,18 @@ export const MainMenu = () => {
           <Merge />
         </ListItemIcon>
         <ListItemText primary="Rtas. Combinadas" />
+      </ListItemButton>
+
+      <ListItemButton
+        selected={location.pathname === '/backoffice/surveys'}
+        onClick={() => {
+          navigate('/backoffice/surveys')
+        }}
+      >
+        <ListItemIcon>
+          <Poll />
+        </ListItemIcon>
+        <ListItemText primary="Encuestas" />
       </ListItemButton>
 
       <ListItemButton

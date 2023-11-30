@@ -64,6 +64,11 @@ export const CombinedAnswerGrid = () => {
       },
     },
     {
+      field: 'name',
+      headerName: 'Nombre',
+      width: 500,
+    },
+    {
       field: 'operator',
       headerName: 'Operador',
       width: 200,
