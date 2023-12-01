@@ -12,7 +12,7 @@ export const SurveyAnswers = (props: { answers: Answer[] }) => {
         elevation={3}
         sx={{ mt: 2, p: 2 }}
       >
-        <Grid container>
+        <Grid container key={crypto.randomUUID()}>
           {props.answers.map((survey) => {
             const question: Question = JSON.parse(survey.jsonQuestion)
 

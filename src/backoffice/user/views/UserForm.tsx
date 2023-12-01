@@ -74,6 +74,16 @@ export const UserForm = () => {
     role: undefined,
   }
 
+  useEffect(() => {
+    if (data) {
+      const temp: User = { ...data }
+      temp.password = undefined
+      formik.setValues(temp)
+      console.log(temp)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess])
+
   const formik = useFormik({
     initialValues: user,
     validationSchema: validationSchema,
@@ -87,7 +97,7 @@ export const UserForm = () => {
       values = {
         ...values,
         email: values.email.trim().toLocaleLowerCase(),
-        name: values.name.trim().toLocaleLowerCase(),
+        name: values.name.trim().toLocaleUpperCase(),
         roleId: '653e47d4b5a7f8beb2066c80',
       }
 
@@ -133,13 +143,6 @@ export const UserForm = () => {
       formik.resetForm()
     },
   })
-
-  useEffect(() => {
-    if (data) {
-      formik.setValues(data)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess])
 
   return (
     <>
@@ -190,7 +193,7 @@ export const UserForm = () => {
                       onChange={formik.handleChange}
                       error={formik.touched.name && Boolean(formik.errors.name)}
                       helperText={formik.touched.name && formik.errors.name}
-                      value={formik.values.name.toLowerCase()}
+                      value={formik.values.name}
                     />
                   </Grid>
 

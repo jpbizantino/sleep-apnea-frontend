@@ -5,7 +5,7 @@ export interface User {
   userId: string
   email: string
   name: string
-  password: string
+  password: string | undefined
   roleId: string
   active: boolean
   creaAt?: Date | undefined
