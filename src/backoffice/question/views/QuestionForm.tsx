@@ -1,4 +1,4 @@
-import { Add, Close, Delete, Edit, Save } from '@mui/icons-material'
+import { Add, Close, Delete, Edit, ExpandMore, Save } from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
@@ -12,6 +12,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import { lightBlue } from '@mui/material/colors'
 import { skipToken } from '@reduxjs/toolkit/query'
 import { useFormik } from 'formik'
 import { useEffect, useState } from 'react'
@@ -21,6 +22,7 @@ import { CustomSnackbar } from '../../../common/components/CustomSnackbar'
 import { Loader } from '../../../common/components/Loader'
 import { ProcessingRuleEnum } from '../../../common/enum/processingRule.enum'
 import { QuestionType } from '../../../common/enum/question.enum'
+import { scoreActionEnum } from '../../../common/enum/scoreAction.enum'
 import {
   AlertOption,
   Choice,
@@ -28,6 +30,7 @@ import {
   Question,
 } from '../../../common/types'
 import { Rule } from '../../../common/types/rule.type'
+import { ScoreActionCombo } from '../../common/components/ScoreActionCombo'
 import { useBackoffice } from '../../common/hooks/userBackoffice'
 import { BackofficePage } from '../../common/pages/BackofficePage'
 import { QuestionTypeCombo } from '../components'
@@ -38,8 +41,6 @@ import {
   useGetQuestionQuery,
   useUpdateQuestionMutation,
 } from '../slices/questionQuerySlice'
-import { ScoreActionCombo } from '../../common/components/ScoreActionCombo'
-import { scoreActionEnum } from '../../../common/enum/scoreAction.enum'
 
 const ruleSchema = yup.object().shape({
   processingRule: yup.string().required('Seleccione una regla'),
@@ -232,7 +233,10 @@ export const QuestionForm = () => {
   const InternalChoiceCard = (props: { choice: Choice }) => {
     return (
       <>
-        <Paper elevation={1} sx={{ mt: 1, p: 1 }}>
+        <Paper
+          elevation={1}
+          sx={{ mt: 1, p: 1, backgroundColor: lightBlue[100] }}
+        >
           <Box
             sx={{
               flex: 1,
@@ -308,24 +312,35 @@ export const QuestionForm = () => {
   const InternalChoiceList = () => {
     return (
       <>
-        <Grid container columns={12}>
-          <Grid item xs={12}>
-            <Button onClick={() => openNewChoice()}>
-              <Add />
-              Nueva opción
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            {formik.values.choices.map((item: Choice) => {
-              return (
-                <div key={item.choiceId}>
-                  <InternalChoiceCard key={item.choiceId} choice={item} />
-                </div>
-              )
-            })}
-          </Grid>
-        </Grid>
-        <ChoiceModal handleChoice={handleChoice} />
+        <Accordion
+          sx={{ mb: 1, backgroundColor: lightBlue[50] }}
+          disableGutters={true}
+          defaultExpanded
+        >
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography variant="h6">Opciones</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container columns={12}>
+              <Grid item xs={12}>
+                <Button onClick={() => openNewChoice()}>
+                  <Add />
+                  Nueva opción
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                {formik.values.choices.map((item: Choice) => {
+                  return (
+                    <div key={item.choiceId}>
+                      <InternalChoiceCard key={item.choiceId} choice={item} />
+                    </div>
+                  )
+                })}
+              </Grid>
+            </Grid>
+            <ChoiceModal handleChoice={handleChoice} />
+          </AccordionDetails>
+        </Accordion>
       </>
     )
   }
@@ -333,310 +348,284 @@ export const QuestionForm = () => {
   return (
     <>
       <BackofficePage>
-        <Loader open={isFetching || isLoadingCreate || isLoadingUpdate} />
-        <CustomSnackbar alert={alert} />
-        <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
-          <Box sx={{ mt: 1 }}>
-            <Accordion
-              expanded={true}
-              sx={{ m: 1, p: 1 }}
-              disableGutters={true}
-              //onChange={() => setExpanded(!expanded)}
+        <Paper sx={{ p: 2, m: 2 }}>
+          <Loader open={isFetching || isLoadingCreate || isLoadingUpdate} />
+          <CustomSnackbar alert={alert} />
+          <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
+            <Typography variant="h6">
+              {formik.values.questionId ? 'Editar Pregunta' : 'Nueva Pregunta'}
+            </Typography>
+
+            <Grid
+              container
+              direction={{ xs: 'column', md: 'row' }}
+              spacing={1}
+              rowSpacing={1}
+              columns={12}
             >
-              <AccordionSummary>
-                <Typography variant="h6">
-                  {formik.values.questionId
-                    ? 'Editar Pregunta'
-                    : 'Nueva Pregunta'}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Grid
-                  container
-                  direction={{ xs: 'column', md: 'row' }}
-                  spacing={1}
-                  rowSpacing={1}
-                  columns={12}
+              <Grid item xs={12} sx={{ mt: 2 }}>
+                <TextField
+                  name="question"
+                  label="Pregunta"
+                  variant="standard"
+                  fullWidth
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.question && Boolean(formik.errors.question)
+                  }
+                  helperText={formik.touched.question && formik.errors.question}
+                  value={formik.values.question}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  name="description"
+                  label="Descripción"
+                  variant="standard"
+                  fullWidth
+                  multiline
+                  minRows={1}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.description &&
+                    Boolean(formik.errors.description)
+                  }
+                  helperText={
+                    formik.touched.description && formik.errors.description
+                  }
+                  value={formik.values.description}
+                />
+
+                {
+                  <Typography
+                    color="error"
+                    variant="caption"
+                    //fontWeight="bold"
+                    display="block"
+                  >
+                    {formik.errors.choices as string}
+                  </Typography>
+                }
+              </Grid>
+              <Grid item xs={2} sx={{ mt: 1, mb: 1 }}>
+                <FormControlLabel
+                  label="Activo"
+                  control={
+                    <Switch
+                      checked={formik.values.active}
+                      name="active"
+                      value={formik.values.active}
+                      onChange={formik.handleChange}
+                    />
+                  }
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <QuestionTypeCombo
+                  label="Tipo de Pregunta"
+                  name="questionType"
+                  disabled={false}
+                  value={formik.values.questionType}
+                  error={formik.errors.questionType}
+                  helperText={
+                    formik.touched.questionType && formik.errors.questionType
+                  }
+                  onChange={(_: unknown, value: GenericDictionary) => {
+                    formik.setFieldValue('questionType', value.name)
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  name="imageLink"
+                  label="Link a Imagen"
+                  variant="standard"
+                  fullWidth
+                  multiline
+                  maxRows={1}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.imageLink && Boolean(formik.errors.imageLink)
+                  }
+                  helperText={
+                    formik.touched.imageLink && formik.errors.imageLink
+                  }
+                  value={formik.values.imageLink}
+                />
+
+                <Box
+                  sx={{
+                    overflow: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    pt: 2,
+                  }}
                 >
-                  <Grid item xs={12}>
-                    <TextField
-                      name="question"
-                      label="Pregunta"
-                      variant="standard"
-                      fullWidth
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.question &&
-                        Boolean(formik.errors.question)
-                      }
-                      helperText={
-                        formik.touched.question && formik.errors.question
-                      }
-                      value={formik.values.question}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      name="description"
-                      label="Descripción"
-                      variant="standard"
-                      fullWidth
-                      multiline
-                      minRows={1}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.description &&
-                        Boolean(formik.errors.description)
-                      }
-                      helperText={
-                        formik.touched.description && formik.errors.description
-                      }
-                      value={formik.values.description}
-                    />
+                  {/* Signature error message */}
+                  {formik.values.imageLink && (
+                    <Typography color="error" variant="caption" display="block">
+                      {formik.touched.imageLink && formik.errors.imageLink}
+                    </Typography>
+                  )}
 
-                    {
-                      <Typography
-                        color="error"
-                        variant="caption"
-                        //fontWeight="bold"
-                        display="block"
-                      >
-                        {formik.errors.choices as string}
-                      </Typography>
-                    }
-                  </Grid>
-                  <Grid item xs={2} sx={{ mt: 1, mb: 1 }}>
-                    <FormControlLabel
-                      label="Activo"
-                      control={
-                        <Switch
-                          checked={formik.values.active}
-                          name="active"
-                          value={formik.values.active}
-                          onChange={formik.handleChange}
-                        />
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <QuestionTypeCombo
-                      label="Tipo de Pregunta"
-                      name="questionType"
-                      disabled={false}
-                      value={formik.values.questionType}
-                      error={formik.errors.questionType}
-                      helperText={
-                        formik.touched.questionType &&
-                        formik.errors.questionType
-                      }
-                      onChange={(_: unknown, value: GenericDictionary) => {
-                        formik.setFieldValue('questionType', value.name)
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      name="imageLink"
-                      label="Link a Imagen"
-                      variant="standard"
-                      fullWidth
-                      multiline
-                      maxRows={1}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.imageLink &&
-                        Boolean(formik.errors.imageLink)
-                      }
-                      helperText={
-                        formik.touched.imageLink && formik.errors.imageLink
-                      }
-                      value={formik.values.imageLink}
-                    />
-
-                    <Box
-                      sx={{
-                        overflow: 'auto',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        pt: 2,
-                      }}
-                    >
-                      {/* Signature error message */}
-                      {formik.values.imageLink && (
+                  {formik.values.imageLink && (
+                    <img src={formik.values.imageLink} style={{ width: 300 }} />
+                  )}
+                </Box>
+              </Grid>
+              <Grid item xs={12}>
+                <>
+                  {formik.values.questionType == QuestionType.CHOICE && (
+                    <Box sx={{ pt: 1, pb: 4 }}>
+                      <InternalChoiceList />
+                      {formik.errors.choices && formik.touched.choices && (
                         <Typography
                           color="error"
                           variant="caption"
+                          //fontWeight="bold"
                           display="block"
                         >
-                          {formik.touched.imageLink && formik.errors.imageLink}
+                          {formik.errors.choices as string}
                         </Typography>
                       )}
-
-                      {formik.values.imageLink && (
-                        <img
-                          src={formik.values.imageLink}
-                          style={{ width: 300 }}
-                        />
-                      )}
                     </Box>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <>
-                      {formik.values.questionType == QuestionType.CHOICE && (
-                        <Box sx={{ pt: 1, pb: 4 }}>
-                          <InternalChoiceList />
-                          {formik.errors.choices && formik.touched.choices && (
-                            <Typography
-                              color="error"
-                              variant="caption"
-                              //fontWeight="bold"
-                              display="block"
-                            >
-                              {formik.errors.choices as string}
-                            </Typography>
-                          )}
-                        </Box>
-                      )}
-                    </>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <RuleTypeCombo
-                      label="Regla de procesamiento"
-                      name="rule.processingRule"
-                      disabled={false}
-                      value={formik.values.rule.processingRule}
-                      error={formik.errors.rule?.processingRule}
-                      helperText={
-                        formik.touched.rule?.processingRule &&
-                        formik.errors.rule?.processingRule
-                      }
-                      onChange={(_: unknown, value: GenericDictionary) => {
-                        formik.setFieldValue('rule', {
-                          ...rule,
-                          processingRule: value.name,
-                        })
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <TextField
-                      name="rule.valueA"
-                      label="Valor A"
-                      variant="standard"
-                      type="number"
-                      fullWidth
-                      value={formik.values.rule.valueA}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.rule?.valueA &&
-                        Boolean(formik.errors.rule?.valueA)
-                      }
-                      helperText={
-                        formik.touched.rule?.valueA &&
-                        formik.errors.rule?.valueA
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <TextField
-                      name="rule.valueB"
-                      label="Valor B"
-                      variant="standard"
-                      type="number"
-                      fullWidth
-                      disabled={[ProcessingRuleEnum.BETWEEN].some(
-                        (p) => p !== formik.values.rule.processingRule
-                      )}
-                      value={formik.values.rule.valueB}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.rule?.valueB &&
-                        Boolean(formik.errors.rule?.valueB)
-                      }
-                      helperText={
-                        formik.touched.rule?.valueB &&
-                        formik.errors.rule?.valueB
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <ScoreActionCombo
-                      name="rule.scoreAction"
-                      label="Acción"
-                      value={formik.values.rule.scoreAction}
-                      error={formik.errors.rule?.scoreAction}
-                      helperText={
-                        formik.touched.rule?.scoreAction &&
-                        formik.errors.rule?.scoreAction
-                      }
-                      onChange={(_: unknown, value: GenericDictionary) => {
-                        formik.setFieldValue('rule', {
-                          ...rule,
-                          scoreAction: value.name,
-                        })
-                      }}
-                      disabled={false}
-                    />
-                  </Grid>
-                  <Grid item xs={2}>
-                    <TextField
-                      name="rule.scoreToAdd"
-                      label="Score a sumar"
-                      variant="standard"
-                      type="number"
-                      fullWidth
-                      value={formik.values.rule.scoreToAdd}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.rule?.scoreToAdd &&
-                        Boolean(formik.errors.rule?.scoreToAdd)
-                      }
-                      helperText={
-                        formik.touched.rule?.scoreToAdd &&
-                        formik.errors.rule?.scoreToAdd
-                      }
-                      disabled={
-                        formik.values.rule.scoreAction ==
-                        scoreActionEnum.COMBINE_SCORE
-                      }
-                    />
-                  </Grid>
-                </Grid>
+                  )}
+                </>
+              </Grid>
+              <Grid item xs={2}>
+                <RuleTypeCombo
+                  label="Regla de procesamiento"
+                  name="rule.processingRule"
+                  disabled={false}
+                  value={formik.values.rule.processingRule}
+                  error={formik.errors.rule?.processingRule}
+                  helperText={
+                    formik.touched.rule?.processingRule &&
+                    formik.errors.rule?.processingRule
+                  }
+                  onChange={(_: unknown, value: GenericDictionary) => {
+                    formik.setFieldValue('rule', {
+                      ...rule,
+                      processingRule: value.name,
+                    })
+                  }}
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <TextField
+                  name="rule.valueA"
+                  label="Valor A"
+                  variant="standard"
+                  type="number"
+                  fullWidth
+                  value={formik.values.rule.valueA}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.rule?.valueA &&
+                    Boolean(formik.errors.rule?.valueA)
+                  }
+                  helperText={
+                    formik.touched.rule?.valueA && formik.errors.rule?.valueA
+                  }
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <TextField
+                  name="rule.valueB"
+                  label="Valor B"
+                  variant="standard"
+                  type="number"
+                  fullWidth
+                  disabled={[ProcessingRuleEnum.BETWEEN].some(
+                    (p) => p !== formik.values.rule.processingRule
+                  )}
+                  value={formik.values.rule.valueB}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.rule?.valueB &&
+                    Boolean(formik.errors.rule?.valueB)
+                  }
+                  helperText={
+                    formik.touched.rule?.valueB && formik.errors.rule?.valueB
+                  }
+                />
+              </Grid>
+              <Grid item xs={3}>
+                <ScoreActionCombo
+                  name="rule.scoreAction"
+                  label="Acción"
+                  value={formik.values.rule.scoreAction}
+                  error={formik.errors.rule?.scoreAction}
+                  helperText={
+                    formik.touched.rule?.scoreAction &&
+                    formik.errors.rule?.scoreAction
+                  }
+                  onChange={(_: unknown, value: GenericDictionary) => {
+                    formik.setFieldValue('rule', {
+                      ...rule,
+                      scoreAction: value.name,
+                    })
+                  }}
+                  disabled={false}
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <TextField
+                  name="rule.scoreToAdd"
+                  label="Score a sumar"
+                  variant="standard"
+                  type="number"
+                  fullWidth
+                  value={formik.values.rule.scoreToAdd}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.rule?.scoreToAdd &&
+                    Boolean(formik.errors.rule?.scoreToAdd)
+                  }
+                  helperText={
+                    formik.touched.rule?.scoreToAdd &&
+                    formik.errors.rule?.scoreToAdd
+                  }
+                  disabled={
+                    formik.values.rule.scoreAction ==
+                    scoreActionEnum.COMBINE_SCORE
+                  }
+                />
+              </Grid>
+            </Grid>
 
-                <Grid
-                  container
-                  direction={{ xs: 'column', md: 'row' }}
-                  justifyContent={'space-between'}
-                  sx={{ mb: 1, mt: 1 }}
+            <Grid
+              container
+              direction={{ xs: 'column', md: 'row' }}
+              justifyContent={'space-between'}
+              sx={{ mb: 1, mt: 1 }}
+            >
+              <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
+                <Button
+                  startIcon={<Close />}
+                  fullWidth
+                  variant="outlined"
+                  onClick={() => {
+                    navigate(-1)
+                  }}
                 >
-                  <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
-                    <Button
-                      startIcon={<Close />}
-                      fullWidth
-                      variant="outlined"
-                      onClick={() => {
-                        navigate(-1)
-                      }}
-                    >
-                      Cerrar
-                    </Button>
-                  </Grid>
-                  <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
-                    <Button
-                      startIcon={<Save />}
-                      fullWidth
-                      variant="contained"
-                      type="submit"
-                    >
-                      Guardar
-                    </Button>
-                  </Grid>
-                </Grid>
-              </AccordionDetails>
-            </Accordion>
-          </Box>
-        </form>
+                  Cerrar
+                </Button>
+              </Grid>
+              <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
+                <Button
+                  startIcon={<Save />}
+                  fullWidth
+                  variant="contained"
+                  type="submit"
+                >
+                  Guardar
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        </Paper>
       </BackofficePage>
     </>
   )

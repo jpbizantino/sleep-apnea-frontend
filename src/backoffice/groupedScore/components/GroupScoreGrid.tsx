@@ -3,10 +3,7 @@ import {
   CleaningServices,
   Edit,
   ExpandMore,
-  Merge,
   Search,
-  Straight,
-  Workspaces,
 } from '@mui/icons-material'
 import {
   Accordion,
@@ -14,7 +11,6 @@ import {
   AccordionSummary,
   Button,
   Grid,
-  Tooltip,
   Typography,
 } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
@@ -23,13 +19,13 @@ import { useNavigate } from 'react-router-dom'
 import { Loader } from '../../../common/components/Loader'
 import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
-import { CombinedField, QuestionFilter } from '../../../common/types'
-import { useGetCombinedFieldsQuery } from '../slices/GroupScoreQuerySlice'
 import {
   ProcessingRuleEnum,
   translateProcessingRule,
 } from '../../../common/enum/processingRule.enum'
-import { scoreActionEnum } from '../../../common/enum/scoreAction.enum'
+import { translateScoreAction } from '../../../common/enum/scoreAction.enum'
+import { GroupedField, QuestionFilter } from '../../../common/types'
+import { useGetGroupedFieldsQuery } from '../slices/groupScoreQuerySlice'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const GroupScoreGrid = () => {
@@ -45,7 +41,7 @@ export const GroupScoreGrid = () => {
 
   const columns: GridColDef[] = [
     {
-      field: 'combinedFieldId',
+      field: 'groupedFieldId',
       headerName: 'id',
     },
     {
@@ -62,7 +58,7 @@ export const GroupScoreGrid = () => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             onClick={() => {
               navigate(
-                `/backoffice/groupedScore/${cellValues.row.combinedFieldId}`
+                `/backoffice/groupedScore/${cellValues.row.groupedFieldId}`
               )
             }}
           >
@@ -77,39 +73,19 @@ export const GroupScoreGrid = () => {
       width: 500,
     },
     {
-      field: 'singleResult',
-      headerName: 'Resultado',
-      width: 100,
+      field: 'rule',
+      headerName: 'Acción',
+      width: 300,
       renderCell: (cellValues) => {
-        return (
-          <>
-            {cellValues.row.rule.scoreAction ==
-              scoreActionEnum.ADD_TO_FINAL_SCORE && (
-              <Tooltip title="Resultado Simple" followCursor>
-                <Straight color="success" />
-              </Tooltip>
-            )}
-            {cellValues.row.rule.scoreAction ==
-              scoreActionEnum.COMBINE_SCORE && (
-              <Tooltip title="Resultado Combinado" followCursor>
-                <Merge color="warning" />
-              </Tooltip>
-            )}
-            {cellValues.row.rule.scoreAction == scoreActionEnum.GROUP_SCORE && (
-              <Tooltip title="Resultado Agrupado" followCursor>
-                <Workspaces color="info" />
-              </Tooltip>
-            )}
-          </>
-        )
+        return translateScoreAction(cellValues.value.scoreAction)
       },
     },
     {
-      field: 'rule',
+      field: '',
       headerName: 'Regla',
-      width: 100,
+      width: 120,
       renderCell: (cellValues) => {
-        const ruleType = cellValues.value.processingRule
+        const ruleType = cellValues.row.rule.processingRule
 
         if (ruleType == ProcessingRuleEnum.BETWEEN)
           return `${translateProcessingRule(ruleType)} ${
@@ -117,8 +93,8 @@ export const GroupScoreGrid = () => {
           } y ${cellValues.value.valueB} ::: ${cellValues.value.scoreToAdd}`
         else
           return `${translateProcessingRule(ruleType)} ${
-            cellValues.value.valueA
-          } :::  ${cellValues.value.scoreToAdd}`
+            cellValues.row.rule.valueA
+          } :::  ${cellValues.row.rule.scoreToAdd}`
       },
     },
     {
@@ -134,7 +110,7 @@ export const GroupScoreGrid = () => {
   const getTogglableColumns = (columns: GridColDef[]) => {
     // hide the column with field `id` from list of togglable columns
     return columns
-      .filter((column) => column.field !== 'combinedFieldId')
+      .filter((column) => column.field !== 'groupedFieldId')
       .map((column) => column.field)
   }
 
@@ -146,7 +122,7 @@ export const GroupScoreGrid = () => {
     onReset: () => {},
   })
 
-  const { isFetching, data } = useGetCombinedFieldsQuery(null)
+  const { isFetching, data } = useGetGroupedFieldsQuery(null)
 
   return (
     <>
@@ -208,7 +184,7 @@ export const GroupScoreGrid = () => {
       <DataGrid
         columnVisibilityModel={{
           // Hide columns status and traderName, the other columns will remain visible
-          combinedFieldId: false,
+          groupedFieldId: false,
         }}
         disableColumnSelector
         slotProps={{
@@ -220,7 +196,7 @@ export const GroupScoreGrid = () => {
           backgroundColor: 'white',
           mt: 1,
         }}
-        getRowId={(row: CombinedField) => row.combinedFieldId}
+        getRowId={(row: GroupedField) => row.groupedFieldId}
         rows={data ?? []}
         columns={columns}
         slots={{

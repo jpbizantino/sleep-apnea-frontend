@@ -1,64 +1,77 @@
-import { CombinedField } from '../../../common/types/combinedFields.type'
+import { GroupedField } from '../../../common/types/groupFieldtype'
 import { backofficeQuerySlice } from '../../common/slices/backofficeQuerySlice'
 
-export const groupScoreQueryQuerySlice = backofficeQuerySlice.injectEndpoints({
-  endpoints: (builder) => ({
-    getCombinedFields: builder.query<CombinedField[], null>({
-      query: () => ({
-        url: `/combined-fields`,
-        method: 'GET',
-        //body: filter,
+const urlBase = 'grouped-fields'
+
+export const groupedScoreQueryQuerySlice = backofficeQuerySlice.injectEndpoints(
+  {
+    endpoints: (builder) => ({
+      findAllCombined: builder.query<GroupedField[], null>({
+        query: () => ({
+          url: `/${urlBase}/findAllCombined`,
+          method: 'GET',
+          //body: filter,
+        }),
+        providesTags: ['GroupedFields'],
       }),
-      providesTags: ['CombinedFields'],
-    }),
-    getCombinedField: builder.query<CombinedField, string>({
-      query: (id: string) => ({
-        url: `/combined-fields/${id}`,
-        method: 'GET',
+      getGroupedFields: builder.query<GroupedField[], null>({
+        query: () => ({
+          url: `/${urlBase}`,
+          method: 'GET',
+          //body: filter,
+        }),
+        providesTags: ['GroupedFields'],
+      }),
+      getGroupedField: builder.query<GroupedField, string>({
+        query: (id: string) => ({
+          url: `/${urlBase}/${id}`,
+          method: 'GET',
+        }),
+
+        providesTags: ['GroupedFields'],
+      }),
+      deleteGroupedField: builder.mutation<GroupedField, GroupedField>({
+        query: (item) => ({
+          url: `/${urlBase}/${item.groupedFieldId}`,
+          method: 'DELETE',
+          body: item,
+        }),
+
+        invalidatesTags: (_result, _error, arg) => [
+          { type: 'GroupedFields', physicianId: arg.groupedFieldId },
+        ],
+      }),
+      createGroupedField: builder.mutation<GroupedField, GroupedField>({
+        query: (item) => ({
+          url: `/${urlBase}`,
+          method: 'POST',
+          body: item,
+        }),
+
+        invalidatesTags: (_result, _error, arg) => [
+          { type: 'GroupedFields', physicianId: arg.groupedFieldId },
+        ],
       }),
 
-      providesTags: ['CombinedFields'],
-    }),
-    deleteCombinedField: builder.mutation<CombinedField, CombinedField>({
-      query: (item) => ({
-        url: `/combined-fields/${item.combinedFieldId}`,
-        method: 'DELETE',
-        body: item,
+      updateGroupedField: builder.mutation<GroupedField, GroupedField>({
+        query: (item) => ({
+          url: `/${urlBase}/${item.groupedFieldId}`,
+          method: 'PATCH',
+          body: item,
+        }),
+
+        invalidatesTags: (_result, _error, arg) => [
+          { type: 'GroupedFields', physicianId: arg.groupedFieldId },
+        ],
       }),
-
-      invalidatesTags: (_result, _error, arg) => [
-        { type: 'CombinedFields', physicianId: arg.combinedFieldId },
-      ],
     }),
-    createCombinedField: builder.mutation<CombinedField, CombinedField>({
-      query: (item) => ({
-        url: `/combined-fields`,
-        method: 'POST',
-        body: item,
-      }),
-
-      invalidatesTags: (_result, _error, arg) => [
-        { type: 'CombinedFields', physicianId: arg.combinedFieldId },
-      ],
-    }),
-
-    updateCombinedField: builder.mutation<CombinedField, CombinedField>({
-      query: (item) => ({
-        url: `/combined-fields/${item.combinedFieldId}`,
-        method: 'PATCH',
-        body: item,
-      }),
-
-      invalidatesTags: (_result, _error, arg) => [
-        { type: 'CombinedFields', physicianId: arg.combinedFieldId },
-      ],
-    }),
-  }),
-})
+  }
+)
 export const {
-  useGetCombinedFieldsQuery,
-  useGetCombinedFieldQuery,
-  useCreateCombinedFieldMutation,
-  useUpdateCombinedFieldMutation,
-  useDeleteCombinedFieldMutation,
-} = groupScoreQueryQuerySlice
+  useFindAllCombinedQuery,
+  useGetGroupedFieldsQuery,
+  useGetGroupedFieldQuery,
+  useCreateGroupedFieldMutation,
+  useUpdateGroupedFieldMutation,
+  useDeleteGroupedFieldMutation,
+} = groupedScoreQueryQuerySlice

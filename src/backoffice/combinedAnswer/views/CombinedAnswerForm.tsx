@@ -1,15 +1,5 @@
+import { Close, DeleteOutline, Save, ThumbUpOffAlt } from '@mui/icons-material'
 import {
-  Add,
-  Close,
-  Delete,
-  DeleteOutline,
-  Save,
-  ThumbUpOffAlt,
-} from '@mui/icons-material'
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Button,
   Dialog,
@@ -32,13 +22,13 @@ import {
   AlertOption,
   CalculatedField,
   GenericDictionary,
+  GroupedField,
   Question,
 } from '../../../common/types'
 import { BackofficePage } from '../../common/pages/BackofficePage'
-import { questionText } from '../../question/helper/question.helper'
-import { useGetSingleResultsQuestionsQuery } from '../../question/slices/questionQuerySlice'
 import { LogicalOperatorTypeCombo } from '../components'
-import { QuestionCombo } from '../components/QuestionCombo'
+import { GroupedQuestionComponent } from '../components/GroupedQuestionComponent'
+import { SimpleQuestionComponent } from '../components/SimpleQuestionComponent'
 import {
   useCreateCalculatedFieldMutation,
   useDeleteCalculatedFieldMutation,
@@ -77,22 +67,19 @@ export const CombinedAnswerForm = () => {
     calculatedFieldId ?? skipToken
   )
 
-  const { data: questionData, isFetching: isfetchingQuestions } =
-    useGetSingleResultsQuestionsQuery('')
-
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
     message: '',
     color: 'error',
   })
 
-  const [tempQuestion, setTempQuestion] = useState<Question | null>(null)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
 
   let initialValue: CalculatedField = {
     name: '',
     calculatedFieldId: '',
     questions: [],
+    groupedFields: [],
     operator: OperatorType.OR,
     scoreToAdd: 0,
   }
@@ -217,7 +204,7 @@ export const CombinedAnswerForm = () => {
     )
   }
 
-  const handleQuestion = (question: Question) => {
+  const handleAddQuestion = (question: Question) => {
     const index = formik.values.questions.findIndex(
       (a) => a.questionId === question.questionId
     )
@@ -260,236 +247,189 @@ export const CombinedAnswerForm = () => {
     }
   }
 
-  const InternalChoiceCard = (props: { question: Question }) => {
-    return (
-      <>
-        <Paper elevation={1} sx={{ mt: 1, p: 1 }}>
-          <Box
-            sx={{
-              flex: 1,
-              display: 'flex',
-              verticalAlign: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Grid
-              container
-              columns={12}
-              spacing={1}
-              rowSpacing={1}
-              sx={{
-                justify: 'center',
-                alignItems: 'center',
-                minHeight: '100%',
-              }}
-            >
-              <Grid item xs={12} sm={10} md={10}>
-                <Typography variant="caption">Pregunta</Typography>
-                <br />
-                <Typography sx={{ fontWeight: 'bold' }}>
-                  {questionText(props.question)}
-                </Typography>
-              </Grid>
-
-              <Grid item xs={12} sm={2} md={2}>
-                <Button
-                  startIcon={<Delete />}
-                  fullWidth
-                  onClick={() => {
-                    handleDeleteQuestion(props.question)
-                  }}
-                >
-                  Eliminar
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
-        </Paper>
-      </>
+  const handleAddGroupedField = (groupedField: GroupedField) => {
+    const index = formik.values.groupedFields.findIndex(
+      (a) => a.groupedFieldId === groupedField.groupedFieldId
     )
+
+    const tempGroupedFields = [...formik.values.groupedFields]
+
+    if (index < 0) {
+      tempGroupedFields.push(groupedField)
+      formik.setFieldValue('groupedFields', tempGroupedFields)
+    } else {
+      tempGroupedFields[index] = groupedField
+      formik.setFieldValue('groupedFields', tempGroupedFields)
+    }
   }
 
-  const InternalQuestionList = () => {
-    return (
-      <>
-        <Grid container columns={12} spacing={1}>
-          <Grid item xs={12} md={10}>
-            <QuestionCombo
-              label="Pregunta a incluir"
-              name="question"
-              disabled={isfetchingQuestions}
-              value={tempQuestion}
-              error={formik.errors.operator}
-              helperText={formik.touched.operator && formik.errors.operator}
-              onChange={(_: unknown, value: Question) => {
-                if (value) {
-                  setTempQuestion(value)
-                }
-              }}
-              questions={questionData ?? []}
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <Button
-              // variant="contained"
-              onClick={() => {
-                if (tempQuestion) {
-                  handleQuestion(tempQuestion)
-                  setTempQuestion(null)
-                }
-              }}
-            >
-              <Add />
-              Agregar
-            </Button>
-          </Grid>
-          <Grid item xs={12} sx={{ pt: 2 }}>
-            {formik.values.questions.map((item: Question) => {
-              return (
-                <div key={item.questionId}>
-                  <InternalChoiceCard question={item} />
-                </div>
-              )
-            })}
-          </Grid>
-        </Grid>
-      </>
+  const handleDeleteGroupedField = (groupedField: GroupedField) => {
+    const index = formik.values.groupedFields.findIndex(
+      (a) => a.groupedFieldId === groupedField.groupedFieldId
     )
+
+    setAlert({
+      isAlertOpen: false,
+      message: '',
+      color: 'info',
+    })
+
+    if (index < 0) {
+      setAlert({
+        isAlertOpen: true,
+        message: 'Error al eliminar item',
+        color: 'error',
+      })
+    } else {
+      formik.setFieldValue(
+        'groupedFields',
+        formik.values.groupedFields.filter(
+          (p) => p.groupedFieldId !== groupedField.groupedFieldId
+        )
+      )
+    }
   }
 
   return (
     <>
       <BackofficePage>
-        <Loader
-          open={
-            isFetching || isLoadingCreate || isLoadingUpdate || isLoadingDelete
-          }
-        />
-        <CustomSnackbar alert={alert} />
-        <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
-          <Box sx={{ mt: 1 }}>
-            <Accordion
-              expanded={true}
-              sx={{ m: 1, p: 1 }}
-              disableGutters={true}
-              //onChange={() => setExpanded(!expanded)}
-            >
-              <AccordionSummary>
-                <Typography variant="h6">
-                  {formik.values.calculatedFieldId
-                    ? 'Editar Respuesta Combinada'
-                    : 'Nueva Respuesta Combinada'}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Box sx={{ pb: 2 }}>
-                  <InternalQuestionList />
-                  {formik.errors.questions && formik.touched.questions && (
-                    <Typography
-                      color="error"
-                      variant="caption"
-                      //fontWeight="bold"
-                      display="block"
-                    >
-                      {formik.errors.questions as string}
-                    </Typography>
-                  )}
-                </Box>
+        <Paper sx={{ p: 2, m: 2 }}>
+          <Loader
+            open={
+              isFetching ||
+              isLoadingCreate ||
+              isLoadingUpdate ||
+              isLoadingDelete
+            }
+          />
+          <CustomSnackbar alert={alert} />
+          <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
+            <Typography variant="h6">
+              {formik.values.calculatedFieldId
+                ? 'Editar Respuesta Combinada'
+                : 'Nueva Respuesta Combinada'}
+            </Typography>
+            <Box sx={{ pb: 2, pt: 2 }}>
+              {/* <InternalQuestionList /> */}
+              <SimpleQuestionComponent
+                questionsData={formik.values.questions}
+                handleAddQuestion={(question) => handleAddQuestion(question)}
+                handleDeleteQuestion={(question) =>
+                  handleDeleteQuestion(question)
+                }
+              />
+              <GroupedQuestionComponent
+                groupedFieldData={formik.values.groupedFields}
+                handleAddQuestion={(groupedField) =>
+                  handleAddGroupedField(groupedField)
+                }
+                handleDeleteQuestion={(groupedField) =>
+                  handleDeleteGroupedField(groupedField)
+                }
+              />
 
-                <Grid container columns={12} spacing={1} rowSpacing={1}>
-                  <Grid item xs={12}>
-                    <TextField
-                      name="name"
-                      label="Nombre"
-                      variant="standard"
-                      fullWidth
-                      onChange={formik.handleChange}
-                      error={formik.touched.name && Boolean(formik.errors.name)}
-                      helperText={formik.touched.name && formik.errors.name}
-                      value={formik.values.name}
-                    />
-                  </Grid>
-
-                  <Grid item xs={2}>
-                    <LogicalOperatorTypeCombo
-                      label="Operador"
-                      name="operator"
-                      disabled={false}
-                      value={formik.values.operator}
-                      error={formik.errors.operator}
-                      helperText={
-                        formik.touched.operator && formik.errors.operator
-                      }
-                      onChange={(_: unknown, value: GenericDictionary) => {
-                        formik.setFieldValue('operator', value.name)
-                      }}
-                    />
-                  </Grid>
-
-                  <Grid item xs={2}>
-                    <TextField
-                      name="scoreToAdd"
-                      label="Score a sumar"
-                      variant="standard"
-                      type="number"
-                      fullWidth
-                      value={formik.values.scoreToAdd}
-                      onChange={formik.handleChange}
-                      error={
-                        formik.touched.scoreToAdd &&
-                        Boolean(formik.errors.scoreToAdd)
-                      }
-                      helperText={
-                        formik.touched.scoreToAdd && formik.errors.scoreToAdd
-                      }
-                    />
-                  </Grid>
-                </Grid>
-
-                <Grid
-                  container
-                  direction={{ xs: 'column', md: 'row' }}
-                  justifyContent={'space-between'}
-                  sx={{ mb: 1, mt: 1 }}
+              {formik.errors.questions && formik.touched.questions && (
+                <Typography
+                  color="error"
+                  variant="caption"
+                  //fontWeight="bold"
+                  display="block"
                 >
-                  <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
-                    <Button
-                      startIcon={<Close />}
-                      fullWidth
-                      variant="outlined"
-                      onClick={() => {
-                        navigate(-1)
-                      }}
-                    >
-                      Cerrar
-                    </Button>
-                  </Grid>
-                  <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
-                    <Button
-                      startIcon={<DeleteOutline />}
-                      fullWidth
-                      onClick={() => setOpenDeleteDialog(true)}
-                      disabled={formik.values.calculatedFieldId ? false : true}
-                    >
-                      Eliminar
-                    </Button>
-                  </Grid>
-                  <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
-                    <Button
-                      startIcon={<Save />}
-                      fullWidth
-                      variant="contained"
-                      type="submit"
-                    >
-                      Guardar
-                    </Button>
-                  </Grid>
-                </Grid>
-              </AccordionDetails>
-            </Accordion>
-          </Box>
-        </form>
-        <DeleteCalculatedField />
+                  {formik.errors.questions as string}
+                </Typography>
+              )}
+            </Box>
+
+            <Grid container columns={12} spacing={1} rowSpacing={1}>
+              <Grid item xs={12}>
+                <TextField
+                  name="name"
+                  label="Nombre"
+                  variant="standard"
+                  fullWidth
+                  onChange={formik.handleChange}
+                  error={formik.touched.name && Boolean(formik.errors.name)}
+                  helperText={formik.touched.name && formik.errors.name}
+                  value={formik.values.name}
+                />
+              </Grid>
+
+              <Grid item xs={2}>
+                <LogicalOperatorTypeCombo
+                  label="Operador"
+                  name="operator"
+                  disabled={false}
+                  value={formik.values.operator}
+                  error={formik.errors.operator}
+                  helperText={formik.touched.operator && formik.errors.operator}
+                  onChange={(_: unknown, value: GenericDictionary) => {
+                    formik.setFieldValue('operator', value.name)
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={2}>
+                <TextField
+                  name="scoreToAdd"
+                  label="Score a sumar"
+                  variant="standard"
+                  type="number"
+                  fullWidth
+                  value={formik.values.scoreToAdd}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.scoreToAdd &&
+                    Boolean(formik.errors.scoreToAdd)
+                  }
+                  helperText={
+                    formik.touched.scoreToAdd && formik.errors.scoreToAdd
+                  }
+                />
+              </Grid>
+            </Grid>
+
+            <Grid
+              container
+              direction={{ xs: 'column', md: 'row' }}
+              justifyContent={'space-between'}
+              sx={{ mb: 1, mt: 1 }}
+            >
+              <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
+                <Button
+                  startIcon={<Close />}
+                  fullWidth
+                  variant="outlined"
+                  onClick={() => {
+                    navigate(-1)
+                  }}
+                >
+                  Cerrar
+                </Button>
+              </Grid>
+              <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
+                <Button
+                  startIcon={<DeleteOutline />}
+                  fullWidth
+                  onClick={() => setOpenDeleteDialog(true)}
+                  disabled={formik.values.calculatedFieldId ? false : true}
+                >
+                  Eliminar
+                </Button>
+              </Grid>
+              <Grid item xs={2} sx={{ mt: 2, ml: { xl: 1, xs: 0 } }}>
+                <Button
+                  startIcon={<Save />}
+                  fullWidth
+                  variant="contained"
+                  type="submit"
+                >
+                  Guardar
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+          <DeleteCalculatedField />
+        </Paper>
       </BackofficePage>
     </>
   )

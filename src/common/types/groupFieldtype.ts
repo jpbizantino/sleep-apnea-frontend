@@ -1,7 +1,7 @@
 import { Question, Rule } from '.'
 
-export interface CombinedField {
-  combinedFieldId: string
+export interface GroupedField {
+  groupedFieldId: string
   name: string
   questions: Question[]
   rule: Rule

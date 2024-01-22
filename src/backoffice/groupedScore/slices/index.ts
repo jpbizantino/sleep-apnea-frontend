@@ -1,2 +1,2 @@
-export * from './GroupScoreQuerySlice'
+export * from './groupScoreQuerySlice'
 export * from './index'

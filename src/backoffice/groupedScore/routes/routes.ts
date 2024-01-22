@@ -20,9 +20,9 @@ export const routes: Route[] = [
     name: 'Resultados Combinados',
   },
   {
-    path: '/:calculatedFieldId',
+    path: '/:groupedFieldId',
     Component: GroupScoreForm,
-    to: '/:calculatedFieldId',
+    to: '/:groupedFieldId',
     name: 'Encuesta',
   },
   {
