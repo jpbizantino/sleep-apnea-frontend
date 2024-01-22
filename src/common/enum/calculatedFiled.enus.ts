@@ -5,7 +5,7 @@ export enum OperatorType {
   OR = 'OR',
 }
 
-export const operatorTypeDictionary: GenericDictionary[] = [
+export const logicalOperatorTypeDictionary: GenericDictionary[] = [
   { name: OperatorType.AND, translation: 'Y (AND)' },
   { name: OperatorType.OR, translation: ' O (OR)' },
 ]

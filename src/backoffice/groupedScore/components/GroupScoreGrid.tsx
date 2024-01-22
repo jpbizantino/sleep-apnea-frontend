@@ -3,7 +3,10 @@ import {
   CleaningServices,
   Edit,
   ExpandMore,
+  Merge,
   Search,
+  Straight,
+  Workspaces,
 } from '@mui/icons-material'
 import {
   Accordion,
@@ -11,20 +14,25 @@ import {
   AccordionSummary,
   Button,
   Grid,
+  Tooltip,
   Typography,
 } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { useFormik } from 'formik'
-import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Loader } from '../../../common/components/Loader'
 import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
-import { CalculatedField, QuestionFilter } from '../../../common/types'
-import { useGetCalculatedFieldsQuery } from '../slices/combinedAnsweQuerySlice'
+import { CombinedField, QuestionFilter } from '../../../common/types'
+import { useGetCombinedFieldsQuery } from '../slices/GroupScoreQuerySlice'
+import {
+  ProcessingRuleEnum,
+  translateProcessingRule,
+} from '../../../common/enum/processingRule.enum'
+import { scoreActionEnum } from '../../../common/enum/scoreAction.enum'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const CombinedAnswerGrid = () => {
+export const GroupScoreGrid = () => {
   const navigate = useNavigate()
 
   const patientLocalFilter: QuestionFilter = {
@@ -37,7 +45,7 @@ export const CombinedAnswerGrid = () => {
 
   const columns: GridColDef[] = [
     {
-      field: 'calculatedFieldId',
+      field: 'combinedFieldId',
       headerName: 'id',
     },
     {
@@ -54,7 +62,7 @@ export const CombinedAnswerGrid = () => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             onClick={() => {
               navigate(
-                `/backoffice/combinedAnswer/${cellValues.row.calculatedFieldId}`
+                `/backoffice/groupedScore/${cellValues.row.combinedFieldId}`
               )
             }}
           >
@@ -69,14 +77,49 @@ export const CombinedAnswerGrid = () => {
       width: 500,
     },
     {
-      field: 'operator',
-      headerName: 'Operador',
-      width: 200,
+      field: 'singleResult',
+      headerName: 'Resultado',
+      width: 100,
+      renderCell: (cellValues) => {
+        return (
+          <>
+            {cellValues.row.rule.scoreAction ==
+              scoreActionEnum.ADD_TO_FINAL_SCORE && (
+              <Tooltip title="Resultado Simple" followCursor>
+                <Straight color="success" />
+              </Tooltip>
+            )}
+            {cellValues.row.rule.scoreAction ==
+              scoreActionEnum.COMBINE_SCORE && (
+              <Tooltip title="Resultado Combinado" followCursor>
+                <Merge color="warning" />
+              </Tooltip>
+            )}
+            {cellValues.row.rule.scoreAction == scoreActionEnum.GROUP_SCORE && (
+              <Tooltip title="Resultado Agrupado" followCursor>
+                <Workspaces color="info" />
+              </Tooltip>
+            )}
+          </>
+        )
+      },
     },
     {
-      field: 'scoreToAdd',
-      headerName: 'Score',
-      width: 200,
+      field: 'rule',
+      headerName: 'Regla',
+      width: 100,
+      renderCell: (cellValues) => {
+        const ruleType = cellValues.value.processingRule
+
+        if (ruleType == ProcessingRuleEnum.BETWEEN)
+          return `${translateProcessingRule(ruleType)} ${
+            cellValues.value.valueA
+          } y ${cellValues.value.valueB} ::: ${cellValues.value.scoreToAdd}`
+        else
+          return `${translateProcessingRule(ruleType)} ${
+            cellValues.value.valueA
+          } :::  ${cellValues.value.scoreToAdd}`
+      },
     },
     {
       field: 'questions',
@@ -91,7 +134,7 @@ export const CombinedAnswerGrid = () => {
   const getTogglableColumns = (columns: GridColDef[]) => {
     // hide the column with field `id` from list of togglable columns
     return columns
-      .filter((column) => column.field !== 'calculatedFieldId')
+      .filter((column) => column.field !== 'combinedFieldId')
       .map((column) => column.field)
   }
 
@@ -103,11 +146,7 @@ export const CombinedAnswerGrid = () => {
     onReset: () => {},
   })
 
-  const { isFetching, data } = useGetCalculatedFieldsQuery(null)
-
-  useEffect(() => {
-    console.log(data)
-  }, [])
+  const { isFetching, data } = useGetCombinedFieldsQuery(null)
 
   return (
     <>
@@ -115,9 +154,7 @@ export const CombinedAnswerGrid = () => {
       <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
         <Accordion sx={{ mb: 1 }} disableGutters={true} defaultExpanded>
           <AccordionSummary expandIcon={<ExpandMore />}>
-            <Typography variant="h6">
-              Filtros - Respuestas Combinadas
-            </Typography>
+            <Typography variant="h6">Filtros - Score Agrupado</Typography>
           </AccordionSummary>
 
           <AccordionDetails>
@@ -157,7 +194,7 @@ export const CombinedAnswerGrid = () => {
                   variant="contained"
                   disabled={isFetching}
                   onClick={() => {
-                    navigate('/backoffice/combinedAnswer/new')
+                    navigate('/backoffice/groupedScore/new')
                   }}
                 >
                   Nuevo
@@ -171,7 +208,7 @@ export const CombinedAnswerGrid = () => {
       <DataGrid
         columnVisibilityModel={{
           // Hide columns status and traderName, the other columns will remain visible
-          calculatedFieldId: false,
+          combinedFieldId: false,
         }}
         disableColumnSelector
         slotProps={{
@@ -183,7 +220,7 @@ export const CombinedAnswerGrid = () => {
           backgroundColor: 'white',
           mt: 1,
         }}
-        getRowId={(row: CalculatedField) => row.calculatedFieldId}
+        getRowId={(row: CombinedField) => row.combinedFieldId}
         rows={data ?? []}
         columns={columns}
         slots={{

@@ -1,6 +1,6 @@
 import { GenericDictionary } from '../types'
 
-export enum ProcessingRule {
+export enum ProcessingRuleEnum {
   // DATA_AS_RECEIVED = 'DATA_AS_RECEIVED',
   LESS_THAN = 'LESS_THAN',
   EQUAL_OR_LESS_THAN = 'EQUAL_OR_LESS_THAN',
@@ -15,13 +15,13 @@ export const translateProcessingRule = (input: string) => {
 }
 
 export const ruleTypeDictionary: GenericDictionary[] = [
-  { name: ProcessingRule.EQUAL, translation: '=' },
-  { name: ProcessingRule.LESS_THAN, translation: '<' },
-  { name: ProcessingRule.EQUAL_OR_LESS_THAN, translation: '< =' },
-  { name: ProcessingRule.GREATER_THAN, translation: '>' },
+  { name: ProcessingRuleEnum.EQUAL, translation: '=' },
+  { name: ProcessingRuleEnum.LESS_THAN, translation: '<' },
+  { name: ProcessingRuleEnum.EQUAL_OR_LESS_THAN, translation: '< =' },
+  { name: ProcessingRuleEnum.GREATER_THAN, translation: '>' },
   {
-    name: ProcessingRule.EQUAL_OR_GREATER_THAN,
+    name: ProcessingRuleEnum.EQUAL_OR_GREATER_THAN,
     translation: '> =',
   },
-  { name: ProcessingRule.BETWEEN, translation: 'ENTRE' },
+  { name: ProcessingRuleEnum.BETWEEN, translation: 'ENTRE' },
 ]

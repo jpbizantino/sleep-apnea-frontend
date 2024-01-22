@@ -3,6 +3,7 @@ import QuestionRoutes from '../../question/routes/QuestionRoutes'
 import SurveyRoutes from '../../survey/routes/SurveyRoutes'
 import { UserRoutes } from '../../user/routes/UserRoutes'
 import { CombinedAnswerRoutes } from '../../combinedAnswer/routes/combinedAnswerRoutes'
+import GroupScoreRoutes from '../../groupedScore/routes/GroupScoreRoutes'
 
 type JSXComponent = () => JSX.Element
 
@@ -34,12 +35,19 @@ export const routes: Route[] = [
     to: '/',
     name: 'Encuestas',
   },
-  // Survey
+  // Combines Answer
   {
     path: '/combinedAnswer/*',
     Component: CombinedAnswerRoutes,
     to: '/',
     name: 'Resultados Combinadas',
+  },
+  // Group Score
+  {
+    path: '/groupedScore/*',
+    Component: GroupScoreRoutes,
+    to: '/',
+    name: 'Score Agrupado',
   },
   // Usersd
   {

@@ -1,7 +1,11 @@
 import { Autocomplete, TextField } from '@mui/material'
-import { operatorTypeDictionary } from '../../../common/enum/calculatedFiled.enus'
+import {
+  scoreActionEnum,
+  scoreActionDictionary,
+} from '../../../common/enum/scoreAction.enum'
+import { useMemo } from 'react'
 
-export const OperatorTypeCombo = (props: {
+export const ScoreActionCombo = (props: {
   disabled: boolean
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any
@@ -15,17 +19,22 @@ export const OperatorTypeCombo = (props: {
   label: any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   name: any
+  exclude?: scoreActionEnum
 }) => {
+  const data = useMemo(() => {
+    return scoreActionDictionary.filter((p) => p.name != props.exclude)
+  }, [props.exclude])
+
   return (
     <Autocomplete
       disabled={props.disabled}
       // disablePortal
       disableClearable={true}
-      options={operatorTypeDictionary}
+      options={data} //{scoreActionDictionary}
       onChange={props.onChange}
       getOptionLabel={(option) => option.translation}
-      value={operatorTypeDictionary.find(
-        (operatorTypeDictionary) => operatorTypeDictionary.name === props.value
+      value={scoreActionDictionary.find(
+        (scoreActionDictionary) => scoreActionDictionary.name === props.value
       )}
       renderInput={(params) => (
         <TextField

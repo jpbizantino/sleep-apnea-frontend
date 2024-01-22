@@ -27,58 +27,61 @@ import { useNavigate, useParams } from 'react-router-dom'
 import * as yup from 'yup'
 import { CustomSnackbar } from '../../../common/components/CustomSnackbar'
 import { Loader } from '../../../common/components/Loader'
-import { OperatorType } from '../../../common/enum/calculatedFiled.enus'
+import { ProcessingRuleEnum } from '../../../common/enum/processingRule.enum'
+import { scoreActionEnum } from '../../../common/enum/scoreAction.enum'
 import {
   AlertOption,
-  CalculatedField,
+  CombinedField,
   GenericDictionary,
   Question,
+  Rule,
 } from '../../../common/types'
+import { QuestionCombo } from '../../combinedAnswer/components/QuestionCombo'
+import { ScoreActionCombo } from '../../common/components/ScoreActionCombo'
 import { BackofficePage } from '../../common/pages/BackofficePage'
+import { RuleTypeCombo } from '../../question/components'
 import { questionText } from '../../question/helper/question.helper'
-import { useGetSingleResultsQuestionsQuery } from '../../question/slices/questionQuerySlice'
-import { LogicalOperatorTypeCombo } from '../components'
-import { QuestionCombo } from '../components/QuestionCombo'
+import { useGetGroupScoreQuestionsQuery } from '../../question/slices/questionQuerySlice'
 import {
-  useCreateCalculatedFieldMutation,
-  useDeleteCalculatedFieldMutation,
-  useGetCalculatedFieldQuery,
-  useUpdateCalculatedFieldMutation,
-} from '../slices/combinedAnsweQuerySlice'
+  useCreateCombinedFieldMutation,
+  useDeleteCombinedFieldMutation,
+  useGetCombinedFieldQuery,
+  useUpdateCombinedFieldMutation,
+} from '../slices/GroupScoreQuerySlice'
 
 const validationSchema = yup.object({
   name: yup.string().required('Ingrese un nombre'),
-  scoreToAdd: yup
-    .number()
-    .required('Ingrese un valor')
-    .min(1, 'El valor debe ser entre 1 y 10')
-    .max(10, 'El valor debe ser entre 1 y 10'),
+  // scoreToAdd: yup
+  //   .number()
+  //   .required('Ingrese un valor')
+  //   .min(1, 'El valor debe ser entre 1 y 10')
+  //   .max(10, 'El valor debe ser entre 1 y 10'),
   questions: yup.array().min(2, 'Ingrese al menos 2 opciones'),
 })
 
-export const CombinedAnswerForm = () => {
+export const GroupScoreForm = () => {
   const navigate = useNavigate()
 
   // Get de URL Param
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { calculatedFieldId } = useParams()
+  const { CombinedFieldId } = useParams()
 
-  const [createCalculatedField, { isLoading: isLoadingCreate }] =
-    useCreateCalculatedFieldMutation()
+  const [createCombinedField, { isLoading: isLoadingCreate }] =
+    useCreateCombinedFieldMutation()
 
-  const [updateCalculatedField, { isLoading: isLoadingUpdate }] =
-    useUpdateCalculatedFieldMutation()
+  const [updateCombinedField, { isLoading: isLoadingUpdate }] =
+    useUpdateCombinedFieldMutation()
 
-  const [deleteCalculatedField, { isLoading: isLoadingDelete }] =
-    useDeleteCalculatedFieldMutation()
+  const [deleteCombinedField, { isLoading: isLoadingDelete }] =
+    useDeleteCombinedFieldMutation()
 
-  const { data, isFetching, isSuccess } = useGetCalculatedFieldQuery(
-    calculatedFieldId ?? skipToken
+  const { data, isFetching, isSuccess } = useGetCombinedFieldQuery(
+    CombinedFieldId ?? skipToken
   )
 
   const { data: questionData, isFetching: isfetchingQuestions } =
-    useGetSingleResultsQuestionsQuery('')
+    useGetGroupScoreQuestionsQuery('')
 
   const [alert, setAlert] = useState<AlertOption>({
     isAlertOpen: false,
@@ -89,29 +92,37 @@ export const CombinedAnswerForm = () => {
   const [tempQuestion, setTempQuestion] = useState<Question | null>(null)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
 
-  let initialValue: CalculatedField = {
-    name: '',
-    calculatedFieldId: '',
-    questions: [],
-    operator: OperatorType.OR,
+  const rule: Rule = {
+    processingRule: ProcessingRuleEnum.EQUAL,
+    valueA: 0,
+    valueB: 0,
     scoreToAdd: 0,
+    scoreAction: scoreActionEnum.ADD_TO_FINAL_SCORE,
+  }
+
+  let initialValue: CombinedField = {
+    combinedFieldId: '',
+    name: '',
+    questions: [],
+    scoreToAdd: 0,
+    rule: rule,
   }
 
   const formik = useFormik({
     initialValues: initialValue,
     validationSchema: validationSchema,
-    onSubmit: (values: CalculatedField) => {
+    onSubmit: (values: CombinedField) => {
       setAlert({
         isAlertOpen: false,
         message: '',
         color: 'info',
       })
 
-      if (values.calculatedFieldId == '') {
-        createCalculatedField(values)
+      if (values.combinedFieldId == '') {
+        createCombinedField(values)
           .unwrap()
-          .then((result: CalculatedField) => {
-            formik.setFieldValue('questionId', result.calculatedFieldId)
+          .then((result: CombinedField) => {
+            formik.setFieldValue('questionId', result.combinedFieldId)
             setAlert({
               isAlertOpen: true,
               message: 'Datos guardados exitosamente',
@@ -126,7 +137,7 @@ export const CombinedAnswerForm = () => {
             })
           })
       } else {
-        updateCalculatedField(values)
+        updateCombinedField(values)
           .unwrap()
           .then(() => {
             setAlert({
@@ -145,7 +156,7 @@ export const CombinedAnswerForm = () => {
       }
     },
 
-    onReset: (values: CalculatedField) => {
+    onReset: (values: CombinedField) => {
       initialValue = values
     },
   })
@@ -158,7 +169,7 @@ export const CombinedAnswerForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess])
 
-  const DeleteCalculatedField = () => {
+  const DeleteCombinedField = () => {
     return (
       <Dialog fullWidth open={openDeleteDialog}>
         <DialogTitle>¿Desea eliminar el registro?</DialogTitle>
@@ -190,13 +201,10 @@ export const CombinedAnswerForm = () => {
                 disabled={isLoadingDelete}
                 variant="contained"
                 onClick={() => {
-                  deleteCalculatedField(formik.values)
+                  deleteCombinedField(formik.values)
                     .unwrap()
-                    .then((result: CalculatedField) => {
-                      formik.setFieldValue(
-                        'questionId',
-                        result.calculatedFieldId
-                      )
+                    .then((result: CombinedField) => {
+                      formik.setFieldValue('questionId', result.combinedFieldId)
                       navigate(-1)
                     })
                     .catch((error) => {
@@ -319,8 +327,8 @@ export const CombinedAnswerForm = () => {
               name="question"
               disabled={isfetchingQuestions}
               value={tempQuestion}
-              error={formik.errors.operator}
-              helperText={formik.touched.operator && formik.errors.operator}
+              error=""
+              helperText=""
               onChange={(_: unknown, value: Question) => {
                 if (value) {
                   setTempQuestion(value)
@@ -376,9 +384,9 @@ export const CombinedAnswerForm = () => {
             >
               <AccordionSummary>
                 <Typography variant="h6">
-                  {formik.values.calculatedFieldId
-                    ? 'Editar Respuesta Combinada'
-                    : 'Nueva Respuesta Combinada'}
+                  {`${
+                    formik.values.combinedFieldId ? 'Editar' : 'Nuevo'
+                  } Score Agrupado (Suma de Scores)`}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
@@ -410,37 +418,119 @@ export const CombinedAnswerForm = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={2}>
-                    <LogicalOperatorTypeCombo
-                      label="Operador"
-                      name="operator"
-                      disabled={false}
-                      value={formik.values.operator}
-                      error={formik.errors.operator}
-                      helperText={
-                        formik.touched.operator && formik.errors.operator
-                      }
-                      onChange={(_: unknown, value: GenericDictionary) => {
-                        formik.setFieldValue('operator', value.name)
-                      }}
-                    />
+                  <Grid item xs={12}>
+                    <Typography
+                      fontStyle="italic"
+                      fontWeight="bold"
+                      sx={{ pt: 2, pb: 2 }}
+                    >
+                      Si la suma de los score de las preguntas incluidas es ....
+                    </Typography>
                   </Grid>
 
                   <Grid item xs={2}>
+                    <RuleTypeCombo
+                      label="Regla de procesamiento"
+                      name="rule.processingRule"
+                      value={formik.values.rule.processingRule}
+                      error={formik.errors.rule?.processingRule}
+                      helperText={
+                        formik.touched.rule?.processingRule &&
+                        formik.errors.rule?.processingRule
+                      }
+                      onChange={(_: unknown, value: GenericDictionary) => {
+                        formik.setFieldValue('rule', {
+                          ...rule,
+                          processingRule: value.name,
+                        })
+                      }}
+                      disabled={false}
+                    />
+                  </Grid>
+                  <Grid item xs={2}>
                     <TextField
-                      name="scoreToAdd"
+                      name="rule.valueA"
+                      label="Valor A"
+                      variant="standard"
+                      type="number"
+                      fullWidth
+                      value={formik.values.rule.valueA}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.rule?.valueA &&
+                        Boolean(formik.errors.rule?.valueA)
+                      }
+                      helperText={
+                        formik.touched.rule?.valueA &&
+                        formik.errors.rule?.valueA
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <TextField
+                      name="rule.valueB"
+                      label="Valor B"
+                      variant="standard"
+                      type="number"
+                      fullWidth
+                      disabled={[ProcessingRuleEnum.BETWEEN].some(
+                        (p) => p !== formik.values.rule.processingRule
+                      )}
+                      value={formik.values.rule.valueB}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.rule?.valueB &&
+                        Boolean(formik.errors.rule?.valueB)
+                      }
+                      helperText={
+                        formik.touched.rule?.valueB &&
+                        formik.errors.rule?.valueB
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <ScoreActionCombo
+                      name="rule.scoreAction"
+                      value={formik.values.rule.scoreAction}
+                      error={
+                        formik.touched.rule?.scoreAction &&
+                        Boolean(formik.errors.rule?.scoreAction)
+                      }
+                      helperText={
+                        formik.touched.rule?.scoreAction &&
+                        formik.errors.rule?.scoreAction
+                      }
+                      onChange={(_: unknown, value: GenericDictionary) => {
+                        formik.setFieldValue('rule', {
+                          ...rule,
+                          scoreAction: value.name,
+                        })
+                      }}
+                      label="Acción"
+                      exclude={scoreActionEnum.GROUP_SCORE}
+                      disabled={false}
+                    />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <TextField
+                      name="rule.scoreToAdd"
                       label="Score a sumar"
                       variant="standard"
                       type="number"
                       fullWidth
-                      value={formik.values.scoreToAdd}
+                      value={formik.values.rule.scoreToAdd}
                       onChange={formik.handleChange}
                       error={
-                        formik.touched.scoreToAdd &&
-                        Boolean(formik.errors.scoreToAdd)
+                        formik.touched.rule?.scoreToAdd &&
+                        Boolean(formik.errors.rule?.scoreToAdd)
                       }
                       helperText={
-                        formik.touched.scoreToAdd && formik.errors.scoreToAdd
+                        formik.touched.rule?.scoreToAdd &&
+                        formik.errors.rule?.scoreToAdd
+                      }
+                      disabled={
+                        formik.values.rule.scoreAction ==
+                        scoreActionEnum.COMBINE_SCORE
                       }
                     />
                   </Grid>
@@ -469,7 +559,7 @@ export const CombinedAnswerForm = () => {
                       startIcon={<DeleteOutline />}
                       fullWidth
                       onClick={() => setOpenDeleteDialog(true)}
-                      disabled={formik.values.calculatedFieldId ? false : true}
+                      disabled={formik.values.combinedFieldId ? false : true}
                     >
                       Eliminar
                     </Button>
@@ -489,7 +579,7 @@ export const CombinedAnswerForm = () => {
             </Accordion>
           </Box>
         </form>
-        <DeleteCalculatedField />
+        <DeleteCombinedField />
       </BackofficePage>
     </>
   )

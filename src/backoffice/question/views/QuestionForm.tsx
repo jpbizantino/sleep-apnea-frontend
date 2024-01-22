@@ -19,7 +19,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import * as yup from 'yup'
 import { CustomSnackbar } from '../../../common/components/CustomSnackbar'
 import { Loader } from '../../../common/components/Loader'
-import { ProcessingRule } from '../../../common/enum/processingRule.enum'
+import { ProcessingRuleEnum } from '../../../common/enum/processingRule.enum'
 import { QuestionType } from '../../../common/enum/question.enum'
 import {
   AlertOption,
@@ -38,6 +38,8 @@ import {
   useGetQuestionQuery,
   useUpdateQuestionMutation,
 } from '../slices/questionQuerySlice'
+import { ScoreActionCombo } from '../../common/components/ScoreActionCombo'
+import { scoreActionEnum } from '../../../common/enum/scoreAction.enum'
 
 const ruleSchema = yup.object().shape({
   processingRule: yup.string().required('Seleccione una regla'),
@@ -92,11 +94,11 @@ export const QuestionForm = () => {
   })
 
   const rule: Rule = {
-    processingRule: ProcessingRule.EQUAL,
+    processingRule: ProcessingRuleEnum.EQUAL,
     valueA: 0,
     valueB: 0,
     scoreToAdd: 0,
-    singleResult: true,
+    scoreAction: scoreActionEnum.ADD_TO_FINAL_SCORE,
   }
 
   let initialValue: Question = {
@@ -317,7 +319,7 @@ export const QuestionForm = () => {
             {formik.values.choices.map((item: Choice) => {
               return (
                 <div key={item.choiceId}>
-                  <InternalChoiceCard choice={item} />
+                  <InternalChoiceCard key={item.choiceId} choice={item} />
                 </div>
               )
             })}
@@ -373,7 +375,6 @@ export const QuestionForm = () => {
                       value={formik.values.question}
                     />
                   </Grid>
-
                   <Grid item xs={12}>
                     <TextField
                       name="description"
@@ -404,7 +405,6 @@ export const QuestionForm = () => {
                       </Typography>
                     }
                   </Grid>
-
                   <Grid item xs={2} sx={{ mt: 1, mb: 1 }}>
                     <FormControlLabel
                       label="Activo"
@@ -418,7 +418,6 @@ export const QuestionForm = () => {
                       }
                     />
                   </Grid>
-
                   <Grid item xs={12}>
                     <QuestionTypeCombo
                       label="Tipo de Pregunta"
@@ -501,22 +500,7 @@ export const QuestionForm = () => {
                       )}
                     </>
                   </Grid>
-
-                  <Grid item xs={2} sx={{ mt: 1, mb: 1 }}>
-                    <FormControlLabel
-                      label="Resultado simple"
-                      control={
-                        <Switch
-                          checked={formik.values.rule.singleResult}
-                          name="rule.singleResult"
-                          value={formik.values.rule.singleResult}
-                          onChange={formik.handleChange}
-                        />
-                      }
-                    />
-                  </Grid>
-
-                  <Grid item xs={3}>
+                  <Grid item xs={2}>
                     <RuleTypeCombo
                       label="Regla de procesamiento"
                       name="rule.processingRule"
@@ -535,7 +519,6 @@ export const QuestionForm = () => {
                       }}
                     />
                   </Grid>
-
                   <Grid item xs={2}>
                     <TextField
                       name="rule.valueA"
@@ -555,7 +538,6 @@ export const QuestionForm = () => {
                       }
                     />
                   </Grid>
-
                   <Grid item xs={2}>
                     <TextField
                       name="rule.valueB"
@@ -563,7 +545,7 @@ export const QuestionForm = () => {
                       variant="standard"
                       type="number"
                       fullWidth
-                      disabled={[ProcessingRule.BETWEEN].some(
+                      disabled={[ProcessingRuleEnum.BETWEEN].some(
                         (p) => p !== formik.values.rule.processingRule
                       )}
                       value={formik.values.rule.valueB}
@@ -578,7 +560,25 @@ export const QuestionForm = () => {
                       }
                     />
                   </Grid>
-
+                  <Grid item xs={3}>
+                    <ScoreActionCombo
+                      name="rule.scoreAction"
+                      label="Acción"
+                      value={formik.values.rule.scoreAction}
+                      error={formik.errors.rule?.scoreAction}
+                      helperText={
+                        formik.touched.rule?.scoreAction &&
+                        formik.errors.rule?.scoreAction
+                      }
+                      onChange={(_: unknown, value: GenericDictionary) => {
+                        formik.setFieldValue('rule', {
+                          ...rule,
+                          scoreAction: value.name,
+                        })
+                      }}
+                      disabled={false}
+                    />
+                  </Grid>
                   <Grid item xs={2}>
                     <TextField
                       name="rule.scoreToAdd"
@@ -596,7 +596,10 @@ export const QuestionForm = () => {
                         formik.touched.rule?.scoreToAdd &&
                         formik.errors.rule?.scoreToAdd
                       }
-                      disabled={!formik.values.rule.singleResult}
+                      disabled={
+                        formik.values.rule.scoreAction ==
+                        scoreActionEnum.COMBINE_SCORE
+                      }
                     />
                   </Grid>
                 </Grid>

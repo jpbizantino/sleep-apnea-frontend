@@ -10,7 +10,7 @@ export const backofficeQuerySlice = createApi({
       return headers
     },
   }),
-  tagTypes: ['Question', 'Survey', 'CalculatedFields'],
+  tagTypes: ['Question', 'Survey', 'CalculatedFields', 'CombinedFields'],
 
   endpoints: () => ({}),
 })

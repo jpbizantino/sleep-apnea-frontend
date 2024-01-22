@@ -1,2 +1,2 @@
 export * from './CombinedResultGrid'
-export * from './OperatorTypeCombo'
+export * from './LogicalOperatorTypeCombo'

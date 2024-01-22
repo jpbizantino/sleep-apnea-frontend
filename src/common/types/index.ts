@@ -1,5 +1,6 @@
 export * from './calculatedField.type'
 export * from './choice.type'
+export * from './combinedFields.type'
 export * from './common.type'
 export * from './gender.type'
 export * from './index'

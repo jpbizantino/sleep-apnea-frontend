@@ -10,6 +10,7 @@ import {
   Unpublished,
   Straight,
   Merge,
+  Workspaces,
 } from '@mui/icons-material'
 import {
   Accordion,
@@ -30,7 +31,7 @@ import { useNavigate } from 'react-router-dom'
 import { NoResultsOverlay } from '../../../common/components/NoResultsOverlay'
 import { NoRowsOverlay } from '../../../common/components/NoRowsOverlay'
 import {
-  ProcessingRule,
+  ProcessingRuleEnum,
   translateProcessingRule,
 } from '../../../common/enum/processingRule.enum'
 import { translateQuestionType } from '../../../common/enum/question.enum'
@@ -41,6 +42,7 @@ import {
   useMoveUpQuestionMutation,
 } from '../slices/questionQuerySlice'
 import { Loader } from '../../../common/components/Loader'
+import { scoreActionEnum } from '../../../common/enum/scoreAction.enum'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const QuestionGrid = () => {
@@ -116,13 +118,21 @@ export const QuestionGrid = () => {
       renderCell: (cellValues) => {
         return (
           <>
-            {cellValues.row.rule.singleResult ? (
+            {cellValues.row.rule.scoreAction ==
+              scoreActionEnum.ADD_TO_FINAL_SCORE && (
               <Tooltip title="Resultado Simple" followCursor>
                 <Straight color="success" />
               </Tooltip>
-            ) : (
+            )}
+            {cellValues.row.rule.scoreAction ==
+              scoreActionEnum.COMBINE_SCORE && (
               <Tooltip title="Resultado Combinado" followCursor>
                 <Merge color="warning" />
+              </Tooltip>
+            )}
+            {cellValues.row.rule.scoreAction == scoreActionEnum.GROUP_SCORE && (
+              <Tooltip title="Resultado Agrupado" followCursor>
+                <Workspaces color="info" />
               </Tooltip>
             )}
           </>
@@ -136,7 +146,7 @@ export const QuestionGrid = () => {
       renderCell: (cellValues) => {
         const ruleType = cellValues.value.processingRule
 
-        if (ruleType == ProcessingRule.BETWEEN)
+        if (ruleType == ProcessingRuleEnum.BETWEEN)
           return `${translateProcessingRule(ruleType)} ${
             cellValues.value.valueA
           } y ${cellValues.value.valueB} ::: ${cellValues.value.scoreToAdd}`
