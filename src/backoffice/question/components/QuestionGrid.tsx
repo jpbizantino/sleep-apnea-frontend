@@ -142,20 +142,21 @@ export const QuestionGrid = () => {
     {
       field: 'rule',
       headerName: 'Regla',
-      width: 100,
+      width: 120,
       renderCell: (cellValues) => {
-        const ruleType = cellValues.value.processingRule
+        const { valueA, valueB, scoreToAdd, processingRule } = cellValues.value
 
-        if (ruleType == ProcessingRuleEnum.BETWEEN)
-          return `${translateProcessingRule(ruleType)} ${
-            cellValues.value.valueA
-          } y ${cellValues.value.valueB} ::: ${cellValues.value.scoreToAdd}`
+        if (processingRule == ProcessingRuleEnum.BETWEEN)
+          return `${translateProcessingRule(
+            processingRule
+          )} ${valueA} y ${valueB} ::: ${scoreToAdd}`
         else
-          return `${translateProcessingRule(ruleType)} ${
-            cellValues.value.valueA
-          } :::  ${cellValues.value.scoreToAdd}`
+          return `${translateProcessingRule(
+            processingRule
+          )} ${valueA} :::  ${scoreToAdd}`
       },
     },
+
     {
       field: 'active',
       headerName: 'Estado',

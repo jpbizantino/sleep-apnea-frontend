@@ -81,20 +81,20 @@ export const GroupScoreGrid = () => {
       },
     },
     {
-      field: '',
+      field: 'rule',
       headerName: 'Regla',
       width: 120,
       renderCell: (cellValues) => {
-        const ruleType = cellValues.row.rule.processingRule
+        const { valueA, valueB, scoreToAdd, processingRule } = cellValues.value
 
-        if (ruleType == ProcessingRuleEnum.BETWEEN)
-          return `${translateProcessingRule(ruleType)} ${
-            cellValues.value.valueA
-          } y ${cellValues.value.valueB} ::: ${cellValues.value.scoreToAdd}`
+        if (processingRule == ProcessingRuleEnum.BETWEEN)
+          return `${translateProcessingRule(
+            processingRule
+          )} ${valueA} y ${valueB} ::: ${scoreToAdd}`
         else
-          return `${translateProcessingRule(ruleType)} ${
-            cellValues.row.rule.valueA
-          } :::  ${cellValues.row.rule.scoreToAdd}`
+          return `${translateProcessingRule(
+            processingRule
+          )} ${valueA} :::  ${scoreToAdd}`
       },
     },
     {

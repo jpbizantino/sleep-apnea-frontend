@@ -454,10 +454,7 @@ export const GroupScoreForm = () => {
                     formik.errors.rule?.processingRule
                   }
                   onChange={(_: unknown, value: GenericDictionary) => {
-                    formik.setFieldValue('rule', {
-                      ...rule,
-                      processingRule: value.name,
-                    })
+                    formik.setFieldValue('rule.processingRule', value.name)
                   }}
                   disabled={false}
                 />
@@ -470,7 +467,12 @@ export const GroupScoreForm = () => {
                   type="number"
                   fullWidth
                   value={formik.values.rule.valueA}
-                  onChange={formik.handleChange}
+                  onChange={(event) => {
+                    formik.setFieldValue(
+                      'rule.valueA',
+                      parseInt(event.target.value)
+                    )
+                  }}
                   error={
                     formik.touched.rule?.valueA &&
                     Boolean(formik.errors.rule?.valueA)
@@ -491,7 +493,12 @@ export const GroupScoreForm = () => {
                     (p) => p !== formik.values.rule.processingRule
                   )}
                   value={formik.values.rule.valueB}
-                  onChange={formik.handleChange}
+                  onChange={(event) => {
+                    formik.setFieldValue(
+                      'rule.valueB',
+                      parseInt(event.target.value)
+                    )
+                  }}
                   error={
                     formik.touched.rule?.valueB &&
                     Boolean(formik.errors.rule?.valueB)
@@ -514,10 +521,7 @@ export const GroupScoreForm = () => {
                     formik.errors.rule?.scoreAction
                   }
                   onChange={(_: unknown, value: GenericDictionary) => {
-                    formik.setFieldValue('rule', {
-                      ...rule,
-                      scoreAction: value.name,
-                    })
+                    formik.setFieldValue('rule.scoreAction', value.name)
                   }}
                   label="Acción"
                   exclude={scoreActionEnum.GROUP_SCORE}
