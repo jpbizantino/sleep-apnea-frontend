@@ -6,10 +6,10 @@ export const BackofficeRoutes = () => {
     <Routes>
       <Route path="/*" element={<Navigate to="/backoffice/questions" />} />
 
-      {routes.map(({ path, Component, to }) => (
+      {routes.map(({ path, Component }) => (
         <>
           {/* <Route path={path} element={<Navigate to={to} />} /> */}
-          <Route key={to} path={path} element={<Component />} />
+          <Route key={path} path={path} element={<Component />} />
         </>
       ))}
     </Routes>

@@ -43,7 +43,8 @@ const validationSchema = yup.object({
     .required('Ingrese un valor')
     .min(1, 'El valor debe ser entre 1 y 10')
     .max(10, 'El valor debe ser entre 1 y 10'),
-  questions: yup.array().min(2, 'Ingrese al menos 2 opciones'),
+  questions: yup.array().min(0, 'Ingrese al menos 2 opciones'),
+  groupedFields: yup.array().min(0, 'Ingrese al menos 2 opciones'),
 })
 
 export const CombinedAnswerForm = () => {
