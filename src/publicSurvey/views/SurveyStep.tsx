@@ -19,7 +19,7 @@ export const SurveyStep = (props: { question: Question }) => {
   const initialValue: Answer = {
     questionId: props.question.questionId,
     jsonQuestion: JSON.stringify(props.question),
-    selectedValue: 0,
+    selectedValue: '',
     selectedText: '',
   }
   const validationSchema = yup.object({

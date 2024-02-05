@@ -41,6 +41,7 @@ import {
   useGetQuestionQuery,
   useUpdateQuestionMutation,
 } from '../slices/questionQuerySlice'
+import { getSize } from '../../../common/utilities'
 
 const ruleSchema = yup.object().shape({
   processingRule: yup.string().required('Seleccione una regla'),
@@ -63,19 +64,22 @@ const ruleSchema = yup.object().shape({
 
 const validationSchema = yup.object({
   question: yup.string().trim().required('El campo es requerido'),
-  description: yup.string().trim().required('El campo es requerido'),
+  // description: yup.string().trim().required('El campo es requerido'),
   rule: ruleSchema,
   // choices: yup.array().min(2, 'Ingrese al menos 2 opciones'),
 })
 
 export const QuestionForm = () => {
   const navigate = useNavigate()
+
   const {
     setSelectedQuestion,
     openNewChoice,
     toggleChoiceModal,
     setSelectedChoice,
   } = useBackoffice()
+
+  const isSmallSize = getSize('xs', 'sm')
 
   //Get de URL Param
   const { questionId } = useParams()
@@ -470,7 +474,10 @@ export const QuestionForm = () => {
                   )}
 
                   {formik.values.imageLink && (
-                    <img src={formik.values.imageLink} style={{ width: 300 }} />
+                    <img
+                      src={formik.values.imageLink}
+                      style={{ width: isSmallSize ? 300 : 600 }}
+                    />
                   )}
                 </Box>
               </Grid>
