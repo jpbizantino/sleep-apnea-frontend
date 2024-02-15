@@ -46,7 +46,7 @@ export const SurveySumary = () => {
               Resúmen de respuestas
             </Typography>
             <Typography variant="body1" gutterBottom>
-              Encuesta basada en la configuración existente en ese momento.
+              Encuesta basada en la configuración existente.
             </Typography>
             <br />
 

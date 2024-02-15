@@ -4,10 +4,10 @@ import { backofficeQuerySlice } from '../../common/slices/backofficeQuerySlice'
 export const questionQuerySlice = backofficeQuerySlice.injectEndpoints({
   endpoints: (builder) => ({
     getQuestions: builder.query<Question[], QuestionFilter>({
-      query: () => ({
-        url: `/questions`,
-        method: 'GET',
-        //body: filter,
+      query: (filter) => ({
+        url: `/questions/byFilter`,
+        method: 'POST',
+        body: filter,
       }),
       providesTags: ['Question'],
     }),

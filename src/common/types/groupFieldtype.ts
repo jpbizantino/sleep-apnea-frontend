@@ -6,4 +6,5 @@ export interface GroupedField {
   questions: Question[]
   rule: Rule
   scoreToAdd: number
+  derivedPatology: ''
 }

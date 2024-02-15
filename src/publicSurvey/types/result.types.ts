@@ -1,6 +1,5 @@
 export interface Result {
   positive: boolean
-  message: string
-  recomendation: string
+  determinations: string[]
   score: number
 }

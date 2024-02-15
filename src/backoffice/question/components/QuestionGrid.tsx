@@ -225,8 +225,7 @@ export const QuestionGrid = () => {
       setFilter(values)
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onReset: (values: QuestionFilter) => {
-      console.log(values)
+    onReset: () => {
       formik.resetForm
       setFilter(skipToken)
     },

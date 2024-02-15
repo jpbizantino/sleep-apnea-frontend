@@ -62,6 +62,7 @@ import { lightBlue } from '@mui/material/colors'
 const validationSchema = yup.object({
   name: yup.string().required('Ingrese un nombre'),
   questions: yup.array().min(2, 'Ingrese al menos 2 opciones'),
+  derivedPatology: yup.string().required('Ingrese un texto'),
   //rule: ruleValidation,
 })
 
@@ -112,6 +113,7 @@ export const GroupScoreForm = () => {
     questions: [],
     scoreToAdd: 0,
     rule: rule,
+    derivedPatology: '',
   }
 
   const formik = useFormik({
@@ -439,7 +441,7 @@ export const GroupScoreForm = () => {
                   fontWeight="bold"
                   sx={{ pt: 2, pb: 2 }}
                 >
-                  Si la suma de los score de las preguntas incluidas es ....
+                  Si la suma de los valores de las respuestas es ....
                 </Typography>
               </Grid>
 
@@ -549,6 +551,25 @@ export const GroupScoreForm = () => {
                     formik.values.rule.scoreAction ==
                     scoreActionEnum.COMBINE_SCORE
                   }
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  name="derivedPatology"
+                  label="Patología derivada (si se cumple la condición)"
+                  variant="standard"
+                  fullWidth
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.name &&
+                    Boolean(formik.errors.derivedPatology)
+                  }
+                  helperText={
+                    formik.touched.derivedPatology &&
+                    formik.errors.derivedPatology
+                  }
+                  value={formik.values.derivedPatology}
                 />
               </Grid>
             </Grid>

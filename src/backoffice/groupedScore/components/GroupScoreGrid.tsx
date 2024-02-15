@@ -23,7 +23,6 @@ import {
   ProcessingRuleEnum,
   translateProcessingRule,
 } from '../../../common/enum/processingRule.enum'
-import { translateScoreAction } from '../../../common/enum/scoreAction.enum'
 import { GroupedField, QuestionFilter } from '../../../common/types'
 import { useGetGroupedFieldsQuery } from '../slices/groupScoreQuerySlice'
 
@@ -72,14 +71,14 @@ export const GroupScoreGrid = () => {
       headerName: 'Nombre',
       width: 500,
     },
-    {
-      field: 'rule',
-      headerName: 'Acción',
-      width: 300,
-      renderCell: (cellValues) => {
-        return translateScoreAction(cellValues.value.scoreAction)
-      },
-    },
+    // {
+    //   field: 'rule',
+    //   headerName: 'Acción',
+    //   width: 300,
+    //   renderCell: (cellValues) => {
+    //     return translateScoreAction(cellValues.value.scoreAction)
+    //   },
+    // },
     {
       field: 'rule',
       headerName: 'Regla',
@@ -104,6 +103,11 @@ export const GroupScoreGrid = () => {
       renderCell: (cellValues) => {
         return cellValues.row.questions ? cellValues.row.questions.length : 0
       },
+    },
+    {
+      field: 'derivedPatology',
+      headerName: 'Patología Derivada',
+      width: 500,
     },
   ]
 

@@ -43,11 +43,16 @@ export const ResultStep = () => {
         <Typography variant="h6" gutterBottom>
           Resultado de la encuesta
         </Typography>
-        <Typography variant="body1" gutterBottom>
-          {result?.message}
-        </Typography>
-        <br />
-        {result?.recomendation}
+        {/* {result?.message} */}
+        {result?.determinations.map((p, index) => {
+          return (
+            <>
+              <Typography key={index} variant="body1" gutterBottom>
+                <li>{p}</li>
+              </Typography>
+            </>
+          )
+        })}
         <br />
         <br />
         Score de referencia: {result?.score}
